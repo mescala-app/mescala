@@ -24,7 +24,8 @@ import {
   Send,
   User,
   Trash2,
-  Save
+  Save,
+  Copy
 } from 'lucide-react';
 
 interface Equipe {
@@ -66,6 +67,7 @@ interface ConvitePendente {
   id: string;
   email: string;
   status: string;
+  token: string;
 }
 
 export default function EquipePainel() {
@@ -182,7 +184,7 @@ export default function EquipePainel() {
       // Fetch pending member invites (legacy system)
       const { data: convitesData, error: convitesError } = await supabase
         .from('convites')
-        .select('id, email, status')
+        .select('id, email, status, token')
         .eq('equipe_id', equipeId)
         .eq('tipo', 'membro')
         .eq('status', 'pending');
@@ -285,7 +287,9 @@ export default function EquipePainel() {
         .update({ status: 'invited' })
         .eq('id', memberContact.id);
 
-      toast.success('Convite criado! Clique em "Enviar Convites" para enviar por email.');
+      toast.success('Convite criado!', {
+        description: 'Envie por email ou copie o link para compartilhar.',
+      });
       fetchEquipeData();
     } catch (error: any) {
       console.error('Error creating invite:', error);
@@ -555,9 +559,27 @@ export default function EquipePainel() {
                   </div>
                   <div className="space-y-1">
                     {convitesPendentes.map((convite) => (
-                      <div key={convite.id} className="flex items-center gap-2 text-sm text-amber-700 dark:text-amber-300">
-                        <Mail className="h-3 w-3" />
-                        <span>{convite.email}</span>
+                      <div key={convite.id} className="flex items-center justify-between gap-2 text-sm text-amber-700 dark:text-amber-300">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <Mail className="h-3 w-3 shrink-0" />
+                          <span className="truncate">{convite.email}</span>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 shrink-0 text-amber-700 hover:text-amber-900 dark:text-amber-300"
+                          onClick={() => {
+                            const link = `${window.location.origin}/aceitar-convite?token=${convite.token}`;
+                            navigator.clipboard.writeText(link);
+                            toast.success('Link copiado!', {
+                              description: 'Envie por WhatsApp ou como preferir.',
+                            });
+                          }}
+                          title="Copiar link do convite"
+                        >
+                          <Copy className="h-3 w-3 mr-1" />
+                          Copiar link
+                        </Button>
                       </div>
                     ))}
                   </div>
