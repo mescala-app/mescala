@@ -97,6 +97,11 @@ export default function LiderPainel() {
         })
       );
 
+      if (equipesWithCounts.length === 0) {
+        navigate('/auth');
+        return;
+      }
+
       setMinhasEquipes(equipesWithCounts);
 
       // Fetch outras equipes da mesma igreja (read-only)
@@ -120,10 +125,10 @@ export default function LiderPainel() {
               if (equipe.lider_id) {
                 const { data: profile } = await supabase
                   .from('profiles')
-                  .select('nome_completo')
+                  .select('nome_completo, apelido')
                   .eq('user_id', equipe.lider_id)
                   .single();
-                liderNome = profile?.nome_completo || null;
+                liderNome = profile?.apelido || profile?.nome_completo || null;
               }
 
               const { count } = await supabase
@@ -193,7 +198,7 @@ export default function LiderPainel() {
       <main className="container mx-auto px-4 py-8 max-w-4xl animate-fade-in">
         <div className="mb-8">
           <h1 className="text-2xl font-display font-bold text-foreground mb-2">
-            Olá, {user?.user_metadata?.nome_completo?.split(' ')[0] || 'Líder'}!
+            Olá, {user?.user_metadata?.apelido || user?.user_metadata?.nome_completo?.split(' ')[0] || 'Líder'}!
           </h1>
           <p className="text-muted-foreground">
             Gerencie suas equipes e visualize as escalas

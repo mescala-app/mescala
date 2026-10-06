@@ -43,57 +43,32 @@ export default function Dashboard() {
     }
 
     if (user) {
-      checkUserRoleAndRedirect();
+      checkOrganizadorAccess();
     }
   }, [user, authLoading, navigate]);
 
-  const checkUserRoleAndRedirect = async () => {
+  // This panel is only for the "Líder de Igreja" profile (organizador),
+  // chosen explicitly at login. Users who aren't organizador of any igreja
+  // don't belong here - send them back to pick the right profile.
+  const checkOrganizadorAccess = async () => {
     try {
-      // 1. Check if user is organizador of any igreja
       const { data: igrejasData, error: igrejasError } = await supabase
         .from('igrejas')
         .select('id')
         .eq('organizador_id', user!.id)
         .limit(1);
 
-      if (!igrejasError && igrejasData && igrejasData.length > 0) {
-        // User is organizador - stay on dashboard
-        fetchUserData();
+      if (igrejasError) throw igrejasError;
+
+      if (!igrejasData || igrejasData.length === 0) {
+        navigate('/auth');
         return;
       }
 
-      // 2. Check if user is lider
-      const { data: liderEquipes, error: liderError } = await supabase
-        .from('equipes')
-        .select('id')
-        .eq('lider_id', user!.id)
-        .limit(1);
-
-      if (!liderError && liderEquipes && liderEquipes.length > 0) {
-        // User is lider - redirect to lider panel
-        navigate('/lider');
-        return;
-      }
-
-      // 3. Check if user is membro
-      const { data: membroRoles, error: membroError } = await supabase
-        .from('user_roles')
-        .select('id')
-        .eq('user_id', user!.id)
-        .eq('role', 'membro')
-        .limit(1);
-
-      if (!membroError && membroRoles && membroRoles.length > 0) {
-        // User is membro - redirect to membro panel
-        navigate('/membro');
-        return;
-      }
-
-      // No specific role - show dashboard (to create igreja)
       fetchUserData();
     } catch (error) {
-      console.error('Error checking user role:', error);
-      fetchUserData();
+      console.error('Error checking organizador access:', error);
+      navigate('/auth');
     }
   };
 
@@ -176,7 +151,7 @@ export default function Dashboard() {
       <main className="container mx-auto px-4 py-8 animate-fade-in">
         <div className="mb-8">
           <h1 className="text-2xl font-display font-bold text-foreground mb-2">
-            Olá, {user?.user_metadata?.nome_completo?.split(' ')[0] || 'Usuário'}!
+            Olá, {user?.user_metadata?.apelido || user?.user_metadata?.nome_completo?.split(' ')[0] || 'Usuário'}!
           </h1>
           <p className="text-muted-foreground">
             {hasIgreja 

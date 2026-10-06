@@ -1,0 +1,22 @@
+Resumo do dia - 11/07/2026
+
+O QUE FOI FEITO
+
+1. Corrigido o problema em que o líder de equipe não conseguia acessar a equipe dele depois de aceitar o convite por email. O sistema estava bloqueando essa gravação por uma regra de segurança do banco de dados que não tinha sido pensada para esse caso.
+
+2. Adicionado um seletor de "perfil" na tela de login (Líder de Igreja, Líder de Equipe ou Membro de Equipe), já que uma mesma pessoa (mesmo email) pode ter mais de um papel no sistema. Agora, ao entrar, a pessoa escolhe com qual papel quer acessar.
+
+3. Ajustado o cadastro de conta nova: quem se cadastra sem receber um convite por email agora é sempre direcionado para o cadastro de uma igreja (fluxo do Líder de Igreja). Antes disso, quem se cadastrava assim ficava "perdido", sem nenhum vínculo no sistema - esse era o bug relatado hoje de manhã.
+
+4. Adicionado um campo "como quer ser chamado" (apelido) no cadastro de quem aceita um convite. Esse apelido passa a aparecer nas listas de equipe e nas saudações do sistema, no lugar do nome completo, quando preenchido.
+
+5. Reforçada a regra de quem pode convidar quem: Líder de Igreja só pode convidar Líder de Equipe; Líder de Equipe só pode convidar Membro de Equipe. Antes, tecnicamente, qualquer pessoa logada conseguiria criar qualquer tipo de convite.
+
+6. Durante os testes de hoje à tarde, encontramos e resolvemos (junto com você) três travamentos causados por configurações do próprio Supabase (o serviço que hospeda o banco de dados e a autenticação), não por erro no código:
+   - A confirmação de email obrigatória estava impedindo os cadastros de completarem corretamente.
+   - Ao desligar essa confirmação, o cadastro por email acabou sendo desativado sem querer também.
+   - Depois de religar, o Supabase bloqueou temporariamente o envio de emails por excesso de tentativas nos testes (limite de segurança do próprio serviço, deve liberar sozinho em cerca de 1 hora).
+
+PRÓXIMO PASSO
+
+Aguardar o limite de envio de email do Supabase liberar (ou configurar um serviço de email próprio para não depender do limite padrão) e então testar novamente, do início ao fim, o cadastro de um Líder de Equipe e de um Membro de Equipe pelo link do convite, para confirmar que tudo está funcionando certinho.

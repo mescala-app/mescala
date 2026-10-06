@@ -154,7 +154,9 @@ export default function SelecionarEquipes() {
     } catch (error: any) {
       console.error('Error creating teams:', error);
       toast.error('Erro ao criar equipes', {
-        description: error.message,
+        description: error.code === '42501'
+          ? 'Você precisa ser o líder de igreja desta igreja para convidar líderes de equipe.'
+          : error.message,
       });
     } finally {
       setIsLoading(false);

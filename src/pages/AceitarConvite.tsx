@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { Loader2, CheckCircle, AlertCircle, Church, Users } from 'lucide-react';
+import { PROFILES } from '@/lib/profiles';
 
 interface ConviteData {
   id: string;
@@ -38,11 +39,14 @@ export default function AceitarConvite() {
 
   const [formData, setFormData] = useState({
     nome: '',
+    apelido: '',
     email: '',
     whatsapp: '',
     password: '',
     confirmPassword: '',
   });
+
+  const profileLabel = convite ? PROFILES.find((p) => p.value === convite.tipo)?.label : null;
 
   useEffect(() => {
     if (!token) {
@@ -163,6 +167,7 @@ export default function AceitarConvite() {
 
         if (equipeError) {
           console.error('Equipe update error:', equipeError);
+          throw equipeError;
         }
       }
 
@@ -234,44 +239,44 @@ export default function AceitarConvite() {
     setSubmitting(true);
 
     try {
-      // 1. Create the user account
-      const { data: authData, error: signUpError } = await supabase.auth.signUp({
+      // 1. Create the user account via edge function (service role) so it's
+      // already confirmed - the invite token itself is the identity proof,
+      // it doesn't need a second Supabase "confirm your email" step.
+      const { data: cadastroData, error: cadastroError } = await supabase.functions.invoke(
+        'aceitar-convite-cadastro',
+        {
+          body: {
+            token,
+            email: formData.email,
+            password: formData.password,
+            nome: formData.nome,
+            apelido: formData.apelido || undefined,
+            whatsapp: formData.whatsapp || undefined,
+          },
+        }
+      );
+
+      if (cadastroError || cadastroData?.error) {
+        throw new Error(cadastroData?.error || cadastroError?.message || 'Erro ao criar usuário');
+      }
+
+      // 2. Sign in - the account is already confirmed, so this works right away
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password,
-        options: {
-          emailRedirectTo: window.location.origin,
-          data: {
-            nome_completo: formData.nome,
-            whatsapp: formData.whatsapp || null,
-          },
-        },
       });
 
-      if (signUpError) throw signUpError;
-
-      if (!authData.user) {
-        throw new Error('Erro ao criar usuário');
+      if (signInError || !signInData.user) {
+        throw signInError || new Error('Erro ao entrar com a conta criada');
       }
 
-      // 2. Create profile
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          user_id: authData.user.id,
-          nome_completo: formData.nome,
-          email: formData.email,
-          whatsapp: formData.whatsapp || null,
-        });
-
-      if (profileError) {
-        console.error('Profile error:', profileError);
-      }
+      const userId = signInData.user.id;
 
       // 3. Create user_role
       const { error: roleError } = await supabase
         .from('user_roles')
         .insert({
-          user_id: authData.user.id,
+          user_id: userId,
           role: convite.tipo,
           igreja_id: convite.igreja_id,
           equipe_id: convite.equipe_id,
@@ -279,17 +284,19 @@ export default function AceitarConvite() {
 
       if (roleError) {
         console.error('Role error:', roleError);
+        throw roleError;
       }
 
       // 4. If lider, update equipe.lider_id
       if (convite.tipo === 'lider' && convite.equipe_id) {
         const { error: equipeError } = await supabase
           .from('equipes')
-          .update({ lider_id: authData.user.id })
+          .update({ lider_id: userId })
           .eq('id', convite.equipe_id);
 
         if (equipeError) {
           console.error('Equipe update error:', equipeError);
+          throw equipeError;
         }
       }
 
@@ -297,8 +304,8 @@ export default function AceitarConvite() {
       if (convite.tipo === 'membro' && convite.equipe_id) {
         const { error: memberContactError } = await supabase
           .from('member_contacts')
-          .update({ 
-            user_id: authData.user.id,
+          .update({
+            user_id: userId,
             status: 'active'
           })
           .eq('equipe_id', convite.equipe_id)
@@ -395,7 +402,7 @@ export default function AceitarConvite() {
                 </div>
               )}
               <div className="text-sm text-muted-foreground">
-                Função: {convite?.tipo === 'lider' ? 'Líder de Equipe' : 'Membro'}
+                Função: {profileLabel}
               </div>
             </div>
 
@@ -429,7 +436,7 @@ export default function AceitarConvite() {
           <Logo size="lg" className="mx-auto mb-4" />
           <CardTitle>Bem-vindo ao Escaleluia!</CardTitle>
           <CardDescription>
-            Complete seu cadastro para aceitar o convite{convite?.tipo === 'lider' ? ' como líder' : ''}
+            Complete seu cadastro para aceitar o convite como {profileLabel}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -457,6 +464,16 @@ export default function AceitarConvite() {
                 value={formData.nome}
                 onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
                 required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="apelido">Como quer ser chamado?</Label>
+              <Input
+                id="apelido"
+                placeholder="Apelido (opcional)"
+                value={formData.apelido}
+                onChange={(e) => setFormData({ ...formData, apelido: e.target.value })}
               />
             </div>
 

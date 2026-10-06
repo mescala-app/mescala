@@ -164,7 +164,11 @@ export default function CadastrarMembros() {
       fetchEquipeData();
     } catch (error: any) {
       console.error('Error creating invites:', error);
-      toast.error('Erro ao criar convites');
+      toast.error('Erro ao criar convites', {
+        description: error.code === '42501'
+          ? 'Você precisa ser o líder desta equipe para convidar membros.'
+          : undefined,
+      });
     } finally {
       setIsSubmitting(false);
     }

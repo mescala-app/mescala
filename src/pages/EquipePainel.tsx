@@ -58,6 +58,7 @@ interface Membro {
   user_id: string;
   profile?: {
     nome_completo: string;
+    apelido: string | null;
     email: string;
     whatsapp: string | null;
   };
@@ -131,7 +132,7 @@ export default function EquipePainel() {
       // If user is neither leader nor organizador, deny access
       if (!userIsLider && !userIsOrganizador) {
         toast.error('Acesso negado. Você não é líder desta equipe.');
-        navigate('/lider');
+        navigate('/auth');
         return;
       }
       
@@ -155,7 +156,7 @@ export default function EquipePainel() {
         (membrosData || []).map(async (membro) => {
           const { data: profile } = await supabase
             .from('profiles')
-            .select('nome_completo, email, whatsapp')
+            .select('nome_completo, apelido, email, whatsapp')
             .eq('user_id', membro.user_id)
             .single();
 
@@ -195,7 +196,7 @@ export default function EquipePainel() {
     } catch (error) {
       console.error('Error fetching equipe data:', error);
       toast.error('Erro ao carregar dados da equipe');
-      navigate('/lider');
+      navigate('/auth');
     } finally {
       setLoading(false);
     }
@@ -293,7 +294,11 @@ export default function EquipePainel() {
       fetchEquipeData();
     } catch (error: any) {
       console.error('Error creating invite:', error);
-      toast.error('Erro ao criar convite');
+      toast.error('Erro ao criar convite', {
+        description: error.code === '42501'
+          ? 'Você precisa ser o líder desta equipe para convidar membros.'
+          : undefined,
+      });
     }
   };
 
@@ -669,7 +674,7 @@ export default function EquipePainel() {
                           <div>
                             <div className="flex items-center gap-2">
                               <p className="font-medium">
-                                {membro.profile?.nome_completo || 'Sem nome'}
+                                {membro.profile?.apelido || membro.profile?.nome_completo || 'Sem nome'}
                               </p>
                               <Badge variant="default" className="text-xs">Ativo</Badge>
                             </div>

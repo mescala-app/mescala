@@ -1,0 +1,43 @@
+{
+	"nodes":[
+		{"id":"4b1641240521dc68","type":"group","x":-245,"y":-2100,"width":290,"height":240,"color":"1","label":"PERFIL"},
+		{"id":"cc408989ff4b3e8a","type":"group","x":-245,"y":-920,"width":290,"height":208,"color":"2","label":"PERFIL"},
+		{"id":"facfa92a5d0742a7","type":"group","x":-720,"y":-2080,"width":165,"height":220,"label":"PERFIL"},
+		{"id":"38cf8a63ba5000cb","type":"text","text":"ESCALAS","x":1040,"y":-682,"width":160,"height":60,"color":"#550729"},
+		{"id":"7cedc560393776a4","type":"text","text":"RECEBE:\n- MEMBROS","x":1040,"y":-622,"width":160,"height":130,"color":"#550729"},
+		{"id":"7fe9375d0c8dbec3","type":"text","text":"REUNIÕES","x":640,"y":-1080,"width":160,"height":50,"color":"#1f07cf"},
+		{"id":"dd6424ddd846b6b9","type":"text","text":"RECEBE:\n- MEMBROS\n- LÍDERES\n- ANCIÃO\n- PAUTA","x":640,"y":-1030,"width":160,"height":190,"color":"#1f07cf"},
+		{"id":"ce221376961e618c","type":"text","text":"OWNER","x":-700,"y":-2060,"width":125,"height":60,"color":"5"},
+		{"id":"58f10ec287ceb7f1","type":"text","text":"ACESSO LIVRE A TUDO","x":-700,"y":-2000,"width":125,"height":120,"color":"5"},
+		{"id":"628a16e8f323ae19","type":"text","text":"ADMIN(ANCIÃO)","x":-225,"y":-2080,"width":250,"height":60,"color":"1"},
+		{"id":"389edc07cdf7012b","type":"text","text":"CRIA CULTOS, ADMINISTRA AGENDA E CRONOGRAMA DE CULTOS, CADASTRA LÍDER, VISUALIZA ESCALAS N:1","x":-225,"y":-2020,"width":250,"height":140,"color":"1"},
+		{"id":"99efb56dd4a92d7f","type":"text","text":"COMISSÕES","x":-180,"y":-1480,"width":160,"height":60,"color":"#f8f7f7"},
+		{"id":"ab45950ec8608e6c","type":"text","text":"RECEBE:\n- LÍDERES\n- PAUTA","x":-180,"y":-1420,"width":160,"height":130,"color":"#f8f7f7"},
+		{"id":"5e258c2f0bfc4f38","type":"text","text":"LIDER DE MINISTÉRIO","x":-225,"y":-900,"width":250,"height":60,"color":"2"},
+		{"id":"4e2dbdea49e55c8d","type":"text","text":"ADMINISTRA AGENDA E CRONOGRAMA DE CULTOS, CADASTRA MEMBRO, ADMINISTRA ESCALAS N:1","x":-225,"y":-840,"width":250,"height":108,"color":"2"},
+		{"id":"bf6f8ba846cff1a4","type":"text","text":"CRONOGRAMA","x":440,"y":-2400,"width":250,"height":60,"color":"3"},
+		{"id":"24c371d2944d90f4","type":"text","text":"CULTO","x":1280,"y":-2110,"width":200,"height":60,"color":"4"},
+		{"id":"32e0505070c8d7cf","type":"text","text":"RECEBE:\n- ESCALA\n- CRONOGRAMA","x":1280,"y":-2050,"width":200,"height":130,"color":"4"},
+		{"id":"25f3b0bccaf425cb","type":"text","text":"AGENDA ","x":565,"y":-1670,"width":315,"height":99,"color":"#a814b3"},
+		{"id":"ede305d1ed6660db","type":"text","text":"RECEBE:\n- CULTOS\n- REUNIÕES","x":565,"y":-1571,"width":315,"height":216,"color":"#a814b3"},
+		{"id":"d9b91e8469c2809c","type":"text","text":"MEMBRO","x":1120,"y":-969,"width":125,"height":69,"color":"5"}
+	],
+	"edges":[
+		{"id":"dbb36610bc6c28e6","fromNode":"389edc07cdf7012b","fromSide":"right","toNode":"ede305d1ed6660db","toSide":"left","color":"1","label":"gerencia"},
+		{"id":"c3938ecacb5b7512","fromNode":"4e2dbdea49e55c8d","fromSide":"right","toNode":"ede305d1ed6660db","toSide":"left","color":"2"},
+		{"id":"87d44f9f2a2a7e91","fromNode":"32e0505070c8d7cf","fromSide":"bottom","toNode":"25f3b0bccaf425cb","toSide":"top","color":"4"},
+		{"id":"5bb772cc174999b5","fromNode":"4e2dbdea49e55c8d","fromSide":"right","toNode":"7cedc560393776a4","toSide":"left","color":"2","label":"gerencia"},
+		{"id":"6393acd7bcb84af7","fromNode":"58f10ec287ceb7f1","fromSide":"right","toNode":"389edc07cdf7012b","toSide":"left"},
+		{"id":"3ddf82d13e7df785","fromNode":"7cedc560393776a4","fromSide":"right","toNode":"32e0505070c8d7cf","toSide":"right","color":"#4d001f"},
+		{"id":"de3e14849d171f63","fromNode":"389edc07cdf7012b","fromSide":"bottom","toNode":"99efb56dd4a92d7f","toSide":"top","color":"1"},
+		{"id":"02c4383100a67c2c","fromNode":"4e2dbdea49e55c8d","fromSide":"right","toNode":"dd6424ddd846b6b9","toSide":"bottom","color":"2"},
+		{"id":"38502c997206fb76","fromNode":"389edc07cdf7012b","fromSide":"bottom","toNode":"dd6424ddd846b6b9","toSide":"left","color":"1"},
+		{"id":"7e738cbc3f86cdb0","fromNode":"ab45950ec8608e6c","fromSide":"right","toNode":"ede305d1ed6660db","toSide":"left","color":"#fafafa"},
+		{"id":"e5d241c322e6b1ec","fromNode":"5e258c2f0bfc4f38","fromSide":"top","toNode":"ab45950ec8608e6c","toSide":"bottom","color":"2"},
+		{"id":"e8d942820c2ad9ce","fromNode":"389edc07cdf7012b","fromSide":"right","toNode":"32e0505070c8d7cf","toSide":"left","color":"1"},
+		{"id":"186e473141b9f2f9","fromNode":"628a16e8f323ae19","fromSide":"top","toNode":"bf6f8ba846cff1a4","toSide":"left","color":"1"},
+		{"id":"5e5e266be9a022da","fromNode":"bf6f8ba846cff1a4","fromSide":"right","toNode":"24c371d2944d90f4","toSide":"top","color":"3"},
+		{"id":"255929538f6da002","fromNode":"7fe9375d0c8dbec3","fromSide":"top","toNode":"ede305d1ed6660db","toSide":"bottom","color":"#0911fb"},
+		{"id":"a95dc26e51d08e1a","fromNode":"d9b91e8469c2809c","fromSide":"left","toNode":"dd6424ddd846b6b9","toSide":"right","color":"5"}
+	]
+}

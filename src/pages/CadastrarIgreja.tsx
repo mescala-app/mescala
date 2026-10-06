@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { ArrowLeft, ArrowRight, Plus, Trash2, Loader2, Church } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Plus, Trash2, Loader2, Church, LogOut } from 'lucide-react';
 
 type DiaSemana = 'domingo' | 'segunda' | 'terca' | 'quarta' | 'quinta' | 'sexta' | 'sabado';
 
@@ -31,9 +31,14 @@ const DIAS_SEMANA = [
 ];
 
 export default function CadastrarIgreja() {
-  const { user } = useAuth();
+  const { user, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/auth');
+  };
 
   // Form state
   const [nome, setNome] = useState('');
@@ -41,6 +46,43 @@ export default function CadastrarIgreja() {
   const [eventos, setEventos] = useState<Evento[]>([
     { id: crypto.randomUUID(), dia_semana: 'domingo', horario: '10:00', nome: 'Culto' }
   ]);
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate('/auth');
+      return;
+    }
+
+    if (user) {
+      ensureProfileExists();
+    }
+  }, [user, authLoading, navigate]);
+
+  // The signup flow (Auth.tsx) no longer creates the profile row directly,
+  // since it happens before email confirmation grants a session. This is
+  // the first point after signup with a real session, so it backfills it.
+  const ensureProfileExists = async () => {
+    const { data: existing } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('user_id', user!.id)
+      .maybeSingle();
+
+    if (existing) return;
+
+    const { error } = await supabase
+      .from('profiles')
+      .insert({
+        user_id: user!.id,
+        nome_completo: user!.user_metadata?.nome_completo || user!.email || 'Usuário',
+        email: user!.email || '',
+        whatsapp: user!.user_metadata?.whatsapp || null,
+      });
+
+    if (error) {
+      console.error('Error creating profile:', error);
+    }
+  };
 
   const addEvento = () => {
     setEventos([
@@ -136,11 +178,17 @@ export default function CadastrarIgreja() {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card shadow-sm">
-        <div className="container mx-auto px-4 py-4 flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/dashboard')}>
-            <ArrowLeft className="h-5 w-5" />
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" onClick={() => navigate('/dashboard')}>
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <Logo size="md" />
+          </div>
+          <Button variant="ghost" onClick={handleSignOut}>
+            <LogOut className="h-4 w-4 mr-2" />
+            Sair
           </Button>
-          <Logo size="md" />
         </div>
       </header>
 

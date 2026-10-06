@@ -394,6 +394,8 @@ export type Database = {
       }
       profiles: {
         Row: {
+          apelido: string | null
+          confirmado: boolean
           created_at: string
           data_nascimento: string | null
           email: string
@@ -404,6 +406,8 @@ export type Database = {
           whatsapp: string | null
         }
         Insert: {
+          apelido?: string | null
+          confirmado?: boolean
           created_at?: string
           data_nascimento?: string | null
           email: string
@@ -414,6 +418,8 @@ export type Database = {
           whatsapp?: string | null
         }
         Update: {
+          apelido?: string | null
+          confirmado?: boolean
           created_at?: string
           data_nascimento?: string | null
           email?: string

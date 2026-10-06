@@ -1,0 +1,58 @@
+{
+  "collapse-filter": false,
+  "search": "",
+  "showTags": true,
+  "showAttachments": true,
+  "hideUnresolved": true,
+  "showOrphans": true,
+  "collapse-color-groups": false,
+  "colorGroups": [
+    {
+      "query": "MASTER",
+      "color": {
+        "a": 1,
+        "rgb": 14701138
+      }
+    },
+    {
+      "query": "LÍDER",
+      "color": {
+        "a": 1,
+        "rgb": 14725458
+      }
+    },
+    {
+      "query": "MEMBRO",
+      "color": {
+        "a": 1,
+        "rgb": 11657298
+      }
+    },
+    {
+      "query": "ESCALA",
+      "color": {
+        "a": 1,
+        "rgb": 6902496
+      }
+    },
+    {
+      "query": "AGENDA",
+      "color": {
+        "a": 1,
+        "rgb": 14701242
+      }
+    }
+  ],
+  "collapse-display": true,
+  "showArrow": true,
+  "textFadeMultiplier": -0.2,
+  "nodeSizeMultiplier": 1.29302415959583,
+  "lineSizeMultiplier": 1.29302415959583,
+  "collapse-forces": true,
+  "centerStrength": 0.156422048060108,
+  "repelStrength": 9.4676960585128,
+  "linkStrength": 0.736770516225144,
+  "linkDistance": 480,
+  "scale": 0.5149560847275698,
+  "close": true
+}

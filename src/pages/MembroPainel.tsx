@@ -84,6 +84,11 @@ export default function MembroPainel() {
           igreja: { nome: (r.equipes as any).igrejas?.nome || 'Igreja' }
         }));
 
+      if (equipesInfo.length === 0) {
+        navigate('/auth');
+        return;
+      }
+
       setEquipes(equipesInfo);
 
       // Fetch member's escala assignments
@@ -203,7 +208,7 @@ export default function MembroPainel() {
       <main className="container mx-auto px-4 py-8 max-w-2xl animate-fade-in">
         <div className="mb-8">
           <h1 className="text-2xl font-display font-bold text-foreground mb-2">
-            Olá, {user?.user_metadata?.nome_completo?.split(' ')[0] || 'Membro'}!
+            Olá, {user?.user_metadata?.apelido || user?.user_metadata?.nome_completo?.split(' ')[0] || 'Membro'}!
           </h1>
           <p className="text-muted-foreground">
             Visualize suas escalas e confirme sua presença

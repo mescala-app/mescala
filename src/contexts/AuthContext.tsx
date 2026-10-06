@@ -13,6 +13,12 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Test-only escape hatch: when Supabase's own "Confirm email" is off (to
+// avoid burning the project's email rate limit during testing), this makes
+// signUp() fake the same "pending confirmation" state locally instead of
+// silently leaving the user logged in. Must be off in production.
+const TEST_SKIP_EMAIL_CONFIRM = import.meta.env.VITE_TEST_SKIP_EMAIL_CONFIRM === 'true';
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -44,7 +50,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         email,
         password,
         options: {
-          emailRedirectTo: window.location.origin,
+          emailRedirectTo: `${window.location.origin}/cadastrar-igreja`,
           data: {
             nome_completo: nome,
             whatsapp: whatsapp || null,
@@ -54,22 +60,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (error) throw error;
 
-      // Create profile after signup
-      if (data.user) {
+      if (TEST_SKIP_EMAIL_CONFIRM && data.user) {
+        // Supabase's "Confirm email" is off in test mode, so signUp() just
+        // returned an active session. Create the profile flagged as
+        // unconfirmed and drop that session right away, so the app still
+        // goes through the same "pending confirmation" step as production
+        // (simulated later at login) instead of leaving the user logged in.
         const { error: profileError } = await supabase
           .from('profiles')
           .insert({
             user_id: data.user.id,
             nome_completo: nome,
-            email: email,
+            email,
             whatsapp: whatsapp || null,
+            confirmado: false,
           });
 
         if (profileError) {
           console.error('Error creating profile:', profileError);
         }
+
+        await supabase.auth.signOut();
+        return { error: null };
       }
 
+      // No active session exists yet - the account is only confirmed (and
+      // usable) once the user clicks the link in the confirmation email.
+      // The profile row is created later, in CadastrarIgreja.tsx, once a
+      // real session exists.
       return { error: null };
     } catch (error) {
       return { error: error as Error };
