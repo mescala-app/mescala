@@ -390,3 +390,5 @@ Essas decisões deverão ser tomadas separadamente quando necessárias e registr
 Relacionados: [[decisoes/ADR-001-ESTRUTURA-INICIAL]], [[02-ARQUITETURA]], [[tecnico/BACKEND]], [[tecnico/API]], [[tecnico/BANCO-DE-DADOS]], [[tecnico/FRONTEND]], [[seguranca/ISOLAMENTO-DE-DADOS]], [[seguranca/AUTORIZACAO]].
 
 Relacionados (acrescentados em 2026-10-06): [[features/FOUNDATION-001]], [[decisoes/PENDENCIAS]], [[tecnico/LEGADO-ATUAL]], [[tecnico/DIVERGENCIAS-LEGADO]].
+
+Relacionados (acrescentados em 2026-10-20): [[decisoes/DEC-08-DEPENDENCIAS-TRANSITIVAS]].

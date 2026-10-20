@@ -9,6 +9,7 @@ relacionado:
   - "[[agents/organizador]]"
   - "[[agents/qa]]"
   - "[[features/FOUNDATION-001]]"
+  - "[[decisoes/DEC-08-DEPENDENCIAS-TRANSITIVAS]]"
 ---
 # Fluxo de entrega de features
 
@@ -48,7 +49,8 @@ Cada agente para e reporta em vez de decidir sozinho:
 - Feature Contracts e QA Contracts: `docs/features/<ID>.md`.
 - Relatórios do Analista de Dados: `docs/data/` (hoje `docs/data/DATA-ARCHITECTURE-REPORT.md`).
 - Migrations: `supabase/migrations/` (único padrão existente; estratégia oficial pendente na [[decisoes/PENDENCIAS#DEC-04 — Estratégia de migrations e forma de acesso ao banco|DEC-04]]).
-- Código do backend oficial: `/backend` ([[decisoes/ADR-002-BACKEND-OFICIAL|ADR-002]]).
+- Código do backend oficial: `/backend` ([[decisoes/ADR-002-BACKEND-OFICIAL|ADR-002]]), versionado desde o commit `7f26d30`.
+- ARCHITECT REVIEW: até agora não foram gravadas em arquivo. As da FOUNDATION-001 estão registradas na nota da feature ([[features/FOUNDATION-001]]).
 - Definições dos agentes: `.claude/agents/*.md`.
 
 ## Regras que valem para todo o fluxo
@@ -57,11 +59,33 @@ Cada agente para e reporta em vez de decidir sozinho:
 - Código anterior ao ADR-002 ([[tecnico/LEGADO-ATUAL]]) não é ponto de extensão sem um Feature Contract que peça isso.
 - Decisões em aberto ([[decisoes/PENDENCIAS]]) bloqueiam os pontos que cobrem.
 
+## Checagens herdadas da FOUNDATION-001
+Aceitas pelo Arquiteto na revisão da [[features/FOUNDATION-001]]. Valem para toda feature do `/backend`:
+- **Estrutura:** nenhum `backend/app/`, `pages/`, `src/pages/`, `middleware.*` ou `proxy.*` (limite L-02, em [[features/FOUNDATION-001#Limites aceitos das guardas de lint|limites aceitos]]).
+- **`.jsx`:** nenhum em `backend/src` enquanto o [[decisoes/PENDENCIAS#L-06 — Arquivos .jsx fora das guardas de lint|L-06]] estiver aberto; o QA confere.
+- **Dependências:** listas de proibidas conforme a [[decisoes/DEC-08-DEPENDENCIAS-TRANSITIVAS|DEC-08]]; dependência fantasma checada no S5 (RT-FOUND-02).
+- **Feature que altere dependências do `/backend`:** `npm audit --omit=dev` = 0 é condição de encerramento ([[decisoes/PENDENCIAS#RT-FOUND-01 — Dívida de tooling no backend|RT-FOUND-01]]).
+- **Feature que altere o `backend/eslint.config.mjs`:** [[features/FOUNDATION-001#Verificação mínima de regressão do lint|verificação mínima de regressão do lint]]. Enquanto o L-06 estiver aberto, o contrato dessa feature também especifica a correção dele.
+
+## Primeira execução completa: FOUNDATION-001
+O fluxo rodou de ponta a ponta pela primeira vez na [[features/FOUNDATION-001]], sem a etapa 2 (a feature não tem banco), e incluiu uma rodada de correção:
+
+```text
+Arquiteto (READY) → Desenvolvedor (IMPLEMENTED) → Organizador (ORGANIZED) → QA (APPROVED) → Arquiteto (CHANGES_REQUIRED)
+→ Desenvolvedor (correções) → QA (revalidação, APPROVED) → Arquiteto (APPROVED, 2026-10-19)
+```
+
+- Na rodada de correção não houve etapa do [[agents/organizador|Organizador]], porque nada foi criado nem movido.
+- Entre as rodadas, o PO decidiu incluir na correção um limite apontado pelo Arquiteto (L-03).
+- As ARCHITECT REVIEW não foram gravadas em arquivo; o registro permanente está na nota da feature.
+- Depois do APPROVED, a entrega foi commitada (`7f26d30`).
+
 ## Features registradas
 | ID | Nome | Contrato | Implementação |
 |---|---|---|---|
-| [[features/FOUNDATION-001\|FOUNDATION-001]] | Inicialização do Backend Next.js | READY | não iniciada |
-| A DEFINIR | Fundação oficial de persistência | sem contrato | bloqueada pela FOUNDATION-001 e pelas [[decisoes/PENDENCIAS\|decisões pendentes]] |
+| [[features/FOUNDATION-001\|FOUNDATION-001]] | Inicialização do Backend Next.js | READY (v1, 2026-10-04) | implementada; ARCHITECT REVIEW APPROVED em 2026-10-19; commit `7f26d30`; **encerrada** |
+| [[decisoes/PENDENCIAS#AUTH-001 — Fundação de Autenticação\|AUTH-001]] | Fundação de Autenticação | emitido em 2026-10-06; BLOCKED, **aguardando aprovação do PO**; fora do git | não iniciada |
+| A DEFINIR | Fundação oficial de persistência | sem contrato | aguardando a DEC-04 e as decisões de dados ([[decisoes/PENDENCIAS\|decisões pendentes]]) |
 
 ## Observação sobre o relatório de dados
 O `docs/data/DATA-ARCHITECTURE-REPORT.md` (2026-10-04) foi produzido executando o papel do Analista de Dados diretamente, a partir de um Data Task do PO, sem Feature Contract do Arquiteto. O próprio relatório registra que a fase de migrations precisa de um contrato do Arquiteto ou de uma declaração do PO de que o Data Task vale como contrato.

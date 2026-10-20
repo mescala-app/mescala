@@ -2,10 +2,11 @@
 tipo: indice-pendencias
 status: pendente
 area: governanca
-atualizado: 2026-10-06
+atualizado: 2026-10-20
 relacionado:
   - "[[MOCs/MOC-GOVERNANCA]]"
   - "[[decisoes/ADR-002-BACKEND-OFICIAL]]"
+  - "[[decisoes/DEC-08-DEPENDENCIAS-TRANSITIVAS]]"
   - "[[features/FOUNDATION-001]]"
   - "[[tecnico/DIVERGENCIAS-LEGADO]]"
   - "[[seguranca/RISCOS-DO-LEGADO]]"
@@ -14,8 +15,12 @@ relacionado:
 
 > **Nada nesta nota está decidido.** Ela só lista as perguntas em aberto e o que cada uma bloqueia. Enquanto uma decisão estiver pendente, o ponto que ela cobre é **A DEFINIR**: o [[agents/arquiteto|Arquiteto]] o trata como BLOQUEIO DE DOMÍNIO e o [[agents/analista-de-dados|Analista de Dados]] como DATA MODEL BLOCKED.
 
+Exceção: [[#RT-FOUND-01 — Dívida de tooling no backend|RT-FOUND-01]] e [[#L-06 — Arquivos .jsx fora das guardas de lint|L-06]] são risco e limite **já aceitos** pelo Arquiteto. Estão aqui porque as condições e a reavaliação deles continuam abertas.
+
 ## Fontes
 - **DEC-02, DEC-03 e DEC-04:** seção "Decisões pendentes" do Feature Contract `docs/features/FOUNDATION-001.md` (fora do vault). Registro no vault: [[features/FOUNDATION-001]].
+- **AUTH-001 e as propostas DEC-05, DEC-06 e DEC-07:** análise e contrato `docs/features/AUTH-001.md` (fora do vault e fora do git), emitidos pelo Arquiteto em 2026-10-06 e **aguardando aprovação do PO**. Os números estão reservados; nada foi decidido.
+- **RT-FOUND-01 e L-06:** ARCHITECT REVIEW da FOUNDATION-001 (APPROVED em 2026-10-19), que não foi gravada em arquivo. Registro permanente: [[features/FOUNDATION-001]].
 - **DATA-DEC-001 a DATA-DEC-023:** seção 14 do relatório `docs/data/DATA-ARCHITECTURE-REPORT.md` (fora do vault), emitido pelo Analista de Dados em 2026-10-04 com status **AGUARDANDO DECISÕES DO PO**. As opções (A, B, C) e a recomendação do analista para cada uma estão no relatório. **Até 2026-10-06 nenhuma foi aceita.**
 - No relatório, as tabelas abreviam "DATA-DEC-0xx" como "DEC-0xx" (três dígitos). DEC-02, DEC-03 e DEC-04 (dois dígitos) são outra série: decisões técnicas da arquitetura.
 
@@ -23,26 +28,70 @@ relacionado:
 - [[decisoes/ADR-001-ESTRUTURA-INICIAL]]
 - [[decisoes/ADR-002-BACKEND-OFICIAL]]
 - [[decisoes/DEC-01-ROTA-TECNICA-HEALTH]]
+- [[decisoes/DEC-08-DEPENDENCIAS-TRANSITIVAS]] (ARQ-FOUND-02, aceita em 2026-10-19)
 
 ---
 
 ## Decisões técnicas da arquitetura (FOUNDATION-001)
 
-O [[decisoes/ADR-002-BACKEND-OFICIAL|ADR-002]] deixa essas escolhas fora do seu escopo ("Decisões ainda não definidas por este ADR"). Nenhuma bloqueia a [[features/FOUNDATION-001]]. O relatório de dados sugere registrar DEC-03 e DEC-04 como ADRs.
+O [[decisoes/ADR-002-BACKEND-OFICIAL|ADR-002]] deixa essas escolhas fora do seu escopo ("Decisões ainda não definidas por este ADR"). Nenhuma bloqueou a [[features/FOUNDATION-001]], encerrada em 2026-10-19; as três continuam abertas. O relatório de dados sugere registrar DEC-03 e DEC-04 como ADRs.
 
 ### DEC-02 — Biblioteca oficial de testes e quem escreve os testes
 - **Bloqueia:** a regressão automatizada dos cenários B1–B3 da FOUNDATION-001 e todas as features de negócio. O contrato pede a decisão antes da primeira feature de negócio.
+- **Também bloqueia:** o READY da [[#AUTH-001 — Fundação de Autenticação|AUTH-001]], cujo contrato depende de testes automatizados.
 - **Efeito atual:** o [[agents/qa|QA]] não cria arquivos de teste nem usa executor de testes; cenários que exigem teste automatizado ficam NOT TESTED.
+- **Quando for decidida:** a [[features/FOUNDATION-001#Verificação mínima de regressão do lint|verificação mínima de regressão do lint]] da FOUNDATION-001 vira o teste automatizado B3.
 - **Notas afetadas:** [[agents/qa]], [[agents/desenvolvedor-backend]], [[tecnico/BACKEND]], [[features/FLUXO-DE-ENTREGA]].
 
 ### DEC-03 — Autenticação
 - **Bloqueia:** o contexto de igreja e qualquer rota protegida. Bloqueia em parte a [[#DATA-DEC-019 — Identidade × provedor de autenticação|DATA-DEC-019]].
+- **Também bloqueia:** o READY da [[#AUTH-001 — Fundação de Autenticação|AUTH-001]].
+- **Proposta aguardando aprovação:** a AUTH-001 propõe um ADR-003 para resolver esta decisão (recomendação: Supabase Auth com validação local do access token pelo JWKS público). **É só proposta: a DEC-03 continua aberta e não existe ADR-003.**
 - **Notas afetadas:** [[seguranca/AUTENTICACAO]], [[seguranca/ISOLAMENTO-DE-DADOS]], [[tecnico/API]], [[tecnico/BACKEND]].
 
 ### DEC-04 — Estratégia de migrations e forma de acesso ao banco
 - **Bloqueia:** a fundação oficial de persistência e a [[#DATA-DEC-020 — Onde o schema vive e modelo de RLS|DATA-DEC-020]].
 - **Efeito atual:** migrations continuam sendo criadas em `supabase/migrations/` (único padrão existente) e aplicadas manualmente pelo responsável. O [[agents/desenvolvedor-backend|Desenvolvedor]] não pode presumir transação nem proteção por RLS enquanto a forma de acesso não for decidida.
 - **Notas afetadas:** [[tecnico/BANCO-DE-DADOS]], [[agents/analista-de-dados]], [[agents/desenvolvedor-backend]].
+
+---
+
+## AUTH-001: contrato aguardando aprovação do PO
+
+> **Nada desta seção foi aprovado.** O contrato e as decisões abaixo são propostas do [[agents/arquiteto|Arquiteto]]. Os números DEC-05, DEC-06 e DEC-07 estão reservados para elas; nenhuma foi decidida.
+
+### AUTH-001 — Fundação de Autenticação
+- **Situação:** análise e contrato emitidos pelo Arquiteto em 2026-10-06, em `docs/features/AUTH-001.md` (fora do vault e **fora do git**). O documento está **aguardando aprovação do PO** e registra que nada foi encaminhado aos executores.
+- **Status do contrato:** **BLOCKED** até três condições:
+  - o PO aceitar o ADR-003 proposto, que resolveria a [[#DEC-03 — Autenticação|DEC-03]];
+  - a [[#DEC-02 — Biblioteca oficial de testes e quem escreve os testes|DEC-02]] ser decidida;
+  - a [[features/FOUNDATION-001]] estar aprovada. **Cumprida em 2026-10-19.**
+- **Escopo proposto:** verificar o access token e devolver a identidade do provedor, sem banco, sem igreja e sem rota nova. O usuário do Mescala fica para features seguintes, também propostas (AUTH-002 e AUTH-003).
+- **Recomendação (proposta, não aceita):** Supabase Auth do projeto oficial como provedor, com o backend validando localmente o access token pelo JWKS público. O texto do ADR-003 existe só no documento da AUTH-001; **não há ADR-003 no vault**.
+- **Também aponta, sem número:** a revogação do usuário no domínio (bloqueio B8, para a AUTH-003). **A DEFINIR.**
+- **Divergências apontadas:** D4, sobre o projeto Supabase ([[#DEC-05 — Projeto Supabase oficial|DEC-05]]), e D5, sobre a Brain dizer que arquivos já versionados estavam fora do git (corrigida em 2026-10-20). Ver [[tecnico/DIVERGENCIAS-LEGADO]].
+- **Se o PO aprovar:** o documento pede ao vault-brain que grave o ADR-003 e atualize [[seguranca/AUTENTICACAO]], esta nota e [[features/FLUXO-DE-ENTREGA]].
+
+### DEC-05 — Projeto Supabase oficial
+- **Situação:** proposta pela AUTH-001 (divergência D4). **Não decidida.**
+- **Pergunta:** qual é o projeto Supabase oficial?
+- **Contexto:** o `.env` do app e o vínculo do Supabase CLI (`supabase/.temp/linked-project.json`, nome "Projeto Mescala") apontam para `ehbidizpzxhfusfyjgtl`; o `supabase/config.toml` aponta para `fiurvpkieiorngshjric`. As opções e a recomendação estão no documento da AUTH-001.
+- **Bloqueia, segundo a AUTH-001:** a operação da AUTH-001 (não a implementação) e a consulta de inventário do banco (seção 1.3 do relatório de dados).
+- **Notas afetadas:** [[seguranca/AUTENTICACAO]], [[tecnico/LEGADO-ATUAL]], [[tecnico/BANCO-DE-DADOS]].
+
+### DEC-06 — Provisionamento do usuário do Mescala
+- **Situação:** proposta pela AUTH-001 (bloqueio B7). **Não decidida.**
+- **Pergunta:** como nasce o registro do usuário do Mescala depois que a conta é criada no provedor de autenticação?
+- **Contexto:** a Brain diz "Usuário cria ou acessa sua conta" ([[fluxos/FLUXO-CADASTRO-IGREJA]]), sem dizer como o registro do Mescala nasce. Ligada à [[#DATA-DEC-019 — Identidade × provedor de autenticação|DATA-DEC-019]]. As opções e a recomendação estão no documento da AUTH-001.
+- **Bloqueia, segundo a AUTH-001:** a AUTH-002 (provisionamento do usuário, proposta).
+- **Notas afetadas:** [[fluxos/FLUXO-CADASTRO-IGREJA]], [[dados/ENTIDADES#Usuário|Usuário]], [[seguranca/AUTENTICACAO]].
+
+### DEC-07 — Padrão HTTP de erros e convenções de API
+- **Situação:** proposta pela AUTH-001 (bloqueio B9). **Não decidida.**
+- **Pergunta:** qual é o padrão HTTP de erros e quais são as convenções de API?
+- **Contexto:** [[tecnico/API]] diz "Contratos e endpoints definitivos: **A DEFINIR**", e a [[decisoes/DEC-01-ROTA-TECNICA-HEALTH|DEC-01]] não define envelope nem padrão de erros. As opções e a recomendação estão no documento da AUTH-001.
+- **Bloqueia, segundo a AUTH-001:** a primeira rota protegida, que precisa mapear os erros de autenticação para respostas HTTP (AUTH-003, proposta).
+- **Notas afetadas:** [[tecnico/API]], [[tecnico/BACKEND]].
 
 ---
 
@@ -201,22 +250,47 @@ O [[decisoes/ADR-002-BACKEND-OFICIAL|ADR-002]] deixa essas escolhas fora do seu 
 ## Outras pendências registradas
 - **Inventário do banco:** a consulta somente leitura da seção 1.3 do relatório ainda não teve resultado registrado. Sem ela, o volume de dados reais é desconhecido.
 - **Autorização da Fase 4:** nenhuma migration da fundação de persistência pode ser criada sem autorização explícita do PO.
-- **Contrato da fundação de persistência:** ainda não existe. O relatório pede um Feature Contract do Arquiteto (ID a definir) ou uma declaração do PO de que o Data Task vale como contrato.
-- **Ordem do ADR-002:** a fundação de persistência vem depois da [[features/FOUNDATION-001]], que está READY e ainda não foi implementada. O relatório pede implementá-la antes ou dispensar formalmente essa ordem.
+- **Contrato da fundação de persistência:** ainda não existe. O relatório pede um Feature Contract do Arquiteto (ID a definir) ou uma declaração do PO de que o Data Task vale como contrato. A análise da AUTH-001 usa o nome provisório FOUNDATION-002 (ID a confirmar).
+- **Ordem do ADR-002:** **cumprida quanto à [[features/FOUNDATION-001]].** A fundação técnica foi implementada e aprovada em 2026-10-19 (commit `7f26d30`), sem dispensa da ordem. A fundação oficial de persistência, que vem em seguida, continua dependendo da [[#DEC-04 — Estratégia de migrations e forma de acesso ao banco|DEC-04]] e das decisões de dados (matriz abaixo), além do contrato e da autorização da Fase 4 (itens acima).
 - **Regras de autorização em aberto** (relatório, seção 7; a fechar com o Arquiteto, não bloqueiam o schema):
   - ADMIN gerencia todos os ministérios?
   - O que o LEADER pode fazer fora da escala?
   - Quem cria programações? (o canvas diz que ADMIN e LEADER administram "agenda e cronograma de cultos")
 - **Plano de migração do frontend legado para `/backend`:** necessita decisão (D1 em [[tecnico/DIVERGENCIAS-LEGADO]]).
-- **Versionamento do legado:** o relatório recomenda commitar as 3 migrations de julho e a função `aceitar-convite-cadastro`. Em 2026-10-06 elas continuam fora do git ([[tecnico/LEGADO-ATUAL]]).
+- **Versionamento do legado:** **resolvida.** O relatório recomendava commitar as 3 migrations de julho e a função `aceitar-convite-cadastro`. O commit `0394893` (2026-10-06 20:13) versionou esses arquivos e também `src/lib/profiles.ts`, `brain-mescala/`, `docs/`, `.claude/` e `daily/`. Esta nota dizia que eles continuavam fora do git porque se baseava no `git status` anterior a esse commit (divergência D5, apontada na análise da AUTH-001). Em 2026-10-20, só `docs/features/AUTH-001.md` está fora do git, além do que o `.gitignore` ignora de propósito ([[tecnico/LEGADO-ATUAL]]).
+
+### RT-FOUND-01 — Dívida de tooling no backend
+- **Origem:** ARQ-FOUND-01, aceita pelo Arquiteto na revisão da [[features/FOUNDATION-001]] (APPROVED em 2026-10-19). Risco aceito com condições; a reavaliação continua pendente.
+- **O que é:** 5 vulnerabilidades altas, de um único advisory, GHSA-vfj7-8cjw-p6xm (`braces` ≤ 3.0.3). Ficam só na cadeia de lint (`eslint-config-next` → `@next/eslint-plugin-next` → `fast-glob` → `micromatch` → `braces`) e são todas `dev`.
+- **Condições:**
+  - proibidos `npm audit fix --force`, downgrade de `next` ou de `eslint-config-next` e `overrides` sem decisão registrada;
+  - `npm audit --omit=dev` = 0 é condição de encerramento de toda feature que altere dependências do `/backend`. Vulnerabilidade de produção nunca é aceita implicitamente.
+- **Reavaliar:** quando houver versão sem essa cadeia ou corrigida, e antes de qualquer decisão de CI/deploy.
+- **Notas afetadas:** [[tecnico/BACKEND]], [[agents/qa]], [[agents/desenvolvedor-backend]], [[features/FLUXO-DE-ENTREGA]].
+
+### L-06 — Arquivos .jsx fora das guardas de lint
+- **Origem:** limite novo, aceito e não bloqueante, registrado na revisão da [[features/FOUNDATION-001]] (APPROVED em 2026-10-19). **Aberto.**
+- **O que é:** `.jsx` fica fora das duas guardas de lint do ADR-002, e o Next 16.4.2 aceita `route.jsx` como rota.
+- **Condições:**
+  - **(a)** enquanto o L-06 estiver aberto, nenhum `.jsx` em `backend/src`; o QA confere em toda feature;
+  - **(b)** a correção (acrescentar `jsx` ao `files` das duas guardas, declarar "Arquivos cobertos" também no item 2 do cabeçalho e ajustar a redação ligada a `import()` de tipo) é especificada pelo Arquiteto no contrato do primeiro gatilho: qualquer feature que altere o `eslint.config.mjs`; qualquer proposta de aceitar `.jsx`, ligar `allowJs` ou alterar `pageExtensions`; ou antes de CI/deploy;
+  - **(c)** o PO pode antecipar a correção como mudança isolada.
+- **Notas afetadas:** [[tecnico/BACKEND]], [[agents/qa]], [[features/FLUXO-DE-ENTREGA]].
+
+### Cache do Supabase CLI no git
+- **Observação para o PO decidir.** Não bloqueia nada.
+- **Fato:** `supabase/.temp/` está versionado desde o commit `a6447fc` (2026-07-11). É cache do Supabase CLI: project ref, nome do projeto e da organização, versões dos serviços e a URL do pooler com o usuário, **sem senha**.
+- **Avaliação da análise da AUTH-001:** baixo risco; não é segredo, mas é cache do CLI e não deveria estar no git.
+- **Decisão:** **A DEFINIR** pelo PO.
+- **Notas afetadas:** [[tecnico/LEGADO-ATUAL]].
 
 ## Lacunas que já estavam marcadas como A DEFINIR na Brain
-- Contratos e endpoints: [[tecnico/API]].
-- Provider e mecanismo de autenticação: [[seguranca/AUTENTICACAO]] (agora ligado à DEC-03).
+- Contratos e endpoints: [[tecnico/API]] (padrão HTTP de erros: proposta [[#DEC-07 — Padrão HTTP de erros e convenções de API|DEC-07]]).
+- Provider e mecanismo de autenticação: [[seguranca/AUTENTICACAO]] (agora ligado à DEC-03; proposta da [[#AUTH-001 — Fundação de Autenticação|AUTH-001]] aguardando aprovação).
 - Canais e política de entrega: [[modulos/NOTIFICACOES]].
 - Indicadores e filtros: [[modulos/RELATORIOS]].
 - Transições de status: [[dados/STATUS]] (agora ligado à DATA-DEC-016).
-- ORM, query builder, validação, auditoria e eventos: [[decisoes/ADR-002-BACKEND-OFICIAL]].
+- ORM, query builder, validação, auditoria e eventos: [[decisoes/ADR-002-BACKEND-OFICIAL]]. `zod` aparece no lockfile do `/backend` só como transitivo, o que não é aprovação ([[decisoes/DEC-08-DEPENDENCIAS-TRANSITIVAS|DEC-08]]).
 
 ## Matriz do relatório: o que fica parado
 
@@ -235,4 +309,4 @@ O [[decisoes/ADR-002-BACKEND-OFICIAL|ADR-002]] deixa essas escolhas fora do seu 
 | Migração de dados | DATA-DEC-022 + inventário |
 | Hotfix do legado | DATA-DEC-023 |
 
-Relacionados: [[MOCs/MOC-GOVERNANCA]], [[00-MOC-MESCALA]], [[features/FLUXO-DE-ENTREGA]], [[tecnico/LEGADO-ATUAL]].
+Relacionados: [[MOCs/MOC-GOVERNANCA]], [[00-MOC-MESCALA]], [[features/FLUXO-DE-ENTREGA]], [[features/FOUNDATION-001]], [[decisoes/DEC-08-DEPENDENCIAS-TRANSITIVAS]], [[tecnico/LEGADO-ATUAL]].

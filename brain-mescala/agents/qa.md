@@ -42,5 +42,11 @@ O prompt completo do agente fica fora do vault, em `.claude/agents/qa-mescala.md
 ## Fluxo e estado
 - Etapa 5 do [[features/FLUXO-DE-ENTREGA]].
 - DEC-02 continua pendente: [[decisoes/PENDENCIAS#DEC-02 — Biblioteca oficial de testes e quem escreve os testes|DEC-02]].
-- QA Contract emitido: [[features/FOUNDATION-001]] (B1–B3 dependem da DEC-02).
+- QA da [[features/FOUNDATION-001]] realizado: APPROVED (com BUG-01, LOW) e, depois da correção, revalidação R1–R6 APPROVED. B1–B3 como regressão automatizada continuam NOT TESTED até a DEC-02.
+- Checagens que passam a valer em toda feature do `/backend`, aceitas na revisão da FOUNDATION-001:
+  - estrutura sem `backend/app/`, `pages/`, `src/pages/`, `middleware.*` ou `proxy.*` (L-02);
+  - nenhum `.jsx` em `backend/src` enquanto o [[decisoes/PENDENCIAS#L-06 — Arquivos .jsx fora das guardas de lint|L-06]] estiver aberto;
+  - dependência fantasma no S5 ([[decisoes/DEC-08-DEPENDENCIAS-TRANSITIVAS|DEC-08]], RT-FOUND-02);
+  - `npm audit --omit=dev` = 0 em feature que altere dependências do `/backend` ([[decisoes/PENDENCIAS#RT-FOUND-01 — Dívida de tooling no backend|RT-FOUND-01]]);
+  - [[features/FOUNDATION-001#Verificação mínima de regressão do lint|verificação mínima de regressão do lint]] em feature que altere o `backend/eslint.config.mjs`.
 - Riscos conhecidos do legado, fora do escopo do QA de features do `/backend`: [[seguranca/RISCOS-DO-LEGADO]].

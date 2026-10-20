@@ -26,11 +26,11 @@ Veja [[05-REGRAS-DE-NEGOCIO]] e [[seguranca/AUTORIZACAO]].
 - [[decisoes/ADR-002-BACKEND-OFICIAL]]
 
 ## Estado atual
-- O backend oficial ainda não existe. Ele nasce na [[features/FOUNDATION-001]] (READY, não implementada).
-- O app em uso é legado: frontend Vite + React gravando direto no Supabase, protegido só por RLS ([[tecnico/LEGADO-ATUAL]]). Isso contraria o princípio acima (divergência D1 em [[tecnico/DIVERGENCIAS-LEGADO]]).
+- O backend oficial existe em `/backend` desde a [[features/FOUNDATION-001]] (implementada e encerrada em 2026-10-19, commit `7f26d30`): Next.js, TypeScript e runtime Node.js, só com a rota técnica `GET /api/health` ([[decisoes/DEC-01-ROTA-TECNICA-HEALTH|DEC-01]]). Ainda não tem regra de negócio, banco nem autenticação ([[tecnico/BACKEND]]).
+- O app em uso é legado: frontend Vite + React gravando direto no Supabase, protegido só por RLS ([[tecnico/LEGADO-ATUAL]]). Ele não passa pelo backend oficial, o que contraria o princípio acima (divergência D1 em [[tecnico/DIVERGENCIAS-LEGADO]]).
 
 ## Pendências
 - [[decisoes/PENDENCIAS#DEC-02 — Biblioteca oficial de testes e quem escreve os testes|DEC-02]]: biblioteca de testes.
-- [[decisoes/PENDENCIAS#DEC-03 — Autenticação|DEC-03]]: autenticação.
+- [[decisoes/PENDENCIAS#DEC-03 — Autenticação|DEC-03]]: autenticação. Há um contrato aguardando aprovação do PO que propõe resolvê-la: [[decisoes/PENDENCIAS#AUTH-001 — Fundação de Autenticação|AUTH-001]] (com as propostas DEC-05 a DEC-07).
 - [[decisoes/PENDENCIAS#DEC-04 — Estratégia de migrations e forma de acesso ao banco|DEC-04]]: migrations e acesso ao banco.
 - Plano de migração do frontend legado para `/backend`: necessita decisão.

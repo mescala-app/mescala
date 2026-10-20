@@ -14,5 +14,6 @@ area: usuarios
 ## Pendências
 - [[decisoes/PENDENCIAS#DATA-DEC-005 — Papéis em cada camada|DATA-DEC-005]] a [[decisoes/PENDENCIAS#DATA-DEC-011 — Convites|DATA-DEC-011]]: papéis, vínculos, membro sem conta e convites.
 - [[decisoes/PENDENCIAS#DATA-DEC-019 — Identidade × provedor de autenticação|DATA-DEC-019]] e [[decisoes/PENDENCIAS#DEC-03 — Autenticação|DEC-03]]: identidade e autenticação.
+- [[decisoes/PENDENCIAS#DEC-06 — Provisionamento do usuário do Mescala|DEC-06]]: provisionamento do usuário do Mescala (proposta da AUTH-001, não decidida).
 - [[produto/CONCEITOS-DO-CANVAS]]: "ADMIN (ANCIÃO)" e "Líder de Ministério" sem definição.
 - [[tecnico/DIVERGENCIAS-LEGADO]]: papéis legados (organizador, lider, membro).

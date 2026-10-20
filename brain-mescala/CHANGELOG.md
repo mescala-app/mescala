@@ -1,5 +1,34 @@
 # Changelog
 
+## 2026-10-20
+Sincronização da Brain com o encerramento da FOUNDATION-001 (commit `7f26d30`) e com o contrato da AUTH-001, que aguarda aprovação do PO (agente [[agents/vault-brain]]). As duas ARCHITECT REVIEW da FOUNDATION-001 não foram gravadas em arquivo: esta entrada e a nota [[features/FOUNDATION-001]] são o registro permanente delas. **Nada da AUTH-001 foi aprovado:** não há ADR-003, e DEC-02, DEC-03, DEC-04 e as DATA-DEC continuam abertas.
+
+**Nota nova**
+- [[decisoes/DEC-08-DEPENDENCIAS-TRANSITIVAS]]: interpretação formal ARQ-FOUND-02, aceita em 2026-10-19. A lista de dependências proibidas vale para o que o `backend/package.json` declara ou força via `overrides` e para o uso explícito pelo Mescala; transitivo trazido só por pacote aprovado não é violação, mas também não é aprovação. Inclui o risco aceito RT-FOUND-02 (dependência fantasma). Recebeu o número 08 porque DEC-05 a DEC-07 estão reservadas pela AUTH-001.
+
+**FOUNDATION-001 encerrada**
+- [[features/FOUNDATION-001]]: de "READY, não implementada" para **implementada e encerrada** (ARCHITECT REVIEW APPROVED em 2026-10-19, na rodada de correção 1; commit `7f26d30`, com 8 arquivos). O QA passou de "previsto" para "realizado"; B1–B3 automatizados seguem NOT TESTED até a DEC-02.
+- A nota registra o histórico do fluxo (rodada 0 CHANGES_REQUIRED com C1 e C2; PO inclui o L-03; correção em 2 arquivos; revalidação R1–R6; rodada 1 APPROVED), o que foi entregue, D-01 a D-03, RT-FOUND-01 a 03, L-01 a L-06 (L-03 encerrado), O-01, ARQ-FOUND-01 e 02 e a verificação mínima de regressão do lint.
+
+**Pendências** ([[decisoes/PENDENCIAS]])
+- Ordem do ADR-002: cumprida quanto à FOUNDATION-001. A fundação de persistência continua dependendo da DEC-04 e das decisões de dados.
+- Nova seção da AUTH-001: contrato emitido em 2026-10-06, BLOCKED e aguardando aprovação do PO. Propostas com número reservado e nada decidido: DEC-05 (projeto Supabase oficial), DEC-06 (provisionamento do usuário do Mescala) e DEC-07 (padrão HTTP de erros e convenções de API).
+- Em "Outras pendências registradas": a dívida RT-FOUND-01 e o limite L-06, com as condições, e a observação sobre `supabase/.temp/` versionado, para o PO decidir.
+- DEC-02 e DEC-03 ganharam só referências cruzadas (AUTH-001; a verificação do lint como futuro B3). As três decisões técnicas continuam abertas.
+
+**Correção de versionamento (divergência D5, apontada na análise da AUTH-001)**
+- [[tecnico/LEGADO-ATUAL]], [[decisoes/PENDENCIAS]], [[tecnico/DIVERGENCIAS-LEGADO]] e [[tecnico/BANCO-DE-DADOS]] diziam que as 3 migrations de julho, `aceitar-convite-cadastro`, `src/lib/profiles.ts`, `brain-mescala/`, `docs/`, `.claude/` e `daily/` estavam fora do git. O commit `0394893` (2026-10-06 20:13) já os tinha versionado. Hoje só `docs/features/AUTH-001.md` está fora do git, além do que o `.gitignore` ignora.
+- [[tecnico/DIVERGENCIAS-LEGADO]]: nova seção com D4 (projeto Supabase: `.env` e CLI × `config.toml`) e D5.
+
+**Notas que diziam "não implementada", "`/backend` não existe" ou equivalente** (atualizadas para o estado real, com link para a FOUNDATION-001)
+- [[00-MOC-MESCALA]], [[MOCs/MOC-GOVERNANCA]], [[02-ARQUITETURA]], [[tecnico/BACKEND]], [[tecnico/API]] (a rota de saúde existe), [[produto/ROADMAP]], [[tecnico/LEGADO-ATUAL]], [[seguranca/RISCOS-DO-LEGADO]], [[agents/desenvolvedor-backend]], [[agents/organizador]], [[agents/arquiteto]] e [[agents/qa]].
+
+**Outras notas alteradas**
+- [[features/FLUXO-DE-ENTREGA]]: primeira execução completa do fluxo, com a rodada de correção (sem Organizador, porque nada foi criado nem movido); checagens herdadas da FOUNDATION-001 para toda feature; AUTH-001 na tabela de features.
+- MOCs de área: [[MOCs/MOC-ARQUITETURA]] (DEC-08, AUTH-001, DEC-07, RT-FOUND-01, L-06), [[MOCs/MOC-SEGURANCA]] (AUTH-001, DEC-05, cache do CLI), [[MOCs/MOC-USUARIOS]] (DEC-06) e [[MOCs/MOC-DADOS]] (DEC-05).
+- [[seguranca/AUTENTICACAO]]: a AUTH-001 como proposta aguardando aprovação; o provider continua **A DEFINIR**.
+- [[decisoes/ADR-002-BACKEND-OFICIAL]]: só uma linha de "Relacionados" no fim (DEC-08); conteúdo intacto.
+
 ## 2026-10-06
 Integração do estado atual do projeto ao grafo (agente [[agents/vault-brain]]). Nada foi decidido nesta atualização; o que está em aberto ficou como pendente ou **A DEFINIR**.
 

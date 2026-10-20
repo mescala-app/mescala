@@ -11,7 +11,7 @@ relacionado:
 ---
 # Riscos de segurança conhecidos do legado
 
-Achados S1–S11 do relatório do Analista de Dados (`docs/data/DATA-ARCHITECTURE-REPORT.md`, seção 8, fora do vault) sobre o **sistema legado** ([[tecnico/LEGADO-ATUAL]]): policies de RLS das migrations em `supabase/migrations/` e as Edge Functions de convite. Não se referem ao backend oficial, que ainda não existe.
+Achados S1–S11 do relatório do Analista de Dados (`docs/data/DATA-ARCHITECTURE-REPORT.md`, seção 8, fora do vault) sobre o **sistema legado** ([[tecnico/LEGADO-ATUAL]]): policies de RLS das migrations em `supabase/migrations/` e as Edge Functions de convite. Não se referem ao backend oficial (`/backend`), que hoje só tem a rota técnica `GET /api/health` ([[features/FOUNDATION-001]]).
 
 > **Como foram obtidos:** por leitura estática das migrations e do código. **Não foram testados contra o banco.** O relatório também diz que o estado real do banco remoto não foi verificado. Severidades são as do relatório.
 

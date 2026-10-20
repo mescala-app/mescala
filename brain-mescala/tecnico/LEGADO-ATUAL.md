@@ -4,6 +4,7 @@ camada: legado
 status: legado
 normativo: false
 verificado: 2026-10-06
+atualizado: 2026-10-20
 relacionado:
   - "[[decisoes/ADR-002-BACKEND-OFICIAL]]"
   - "[[tecnico/DIVERGENCIAS-LEGADO]]"
@@ -16,9 +17,9 @@ relacionado:
 > **Nota descritiva, não normativa.** Registra o que existe hoje no repositório. Não é fonte de regra: onde o legado diverge da Brain, a Brain prevalece e a divergência vai para [[tecnico/DIVERGENCIAS-LEGADO]].
 
 ## Resumo
-O app em uso hoje (produção/teste) é um **frontend Vite + React que grava direto nas tabelas do Supabase**, protegido **só por RLS**, com **Edge Functions para convites**. Não existe backend próprio.
+O app em uso hoje (produção/teste) é um **frontend Vite + React que grava direto nas tabelas do Supabase**, protegido **só por RLS**, com **Edge Functions para convites**. Ele não passa por backend próprio.
 
-Isso diverge da arquitetura oficial: o [[decisoes/ADR-002-BACKEND-OFICIAL|ADR-002]] define um backend Next.js em `/backend` como entrada da aplicação e diz que Edge Functions não são a arquitetura principal. Em 2026-10-06, `/backend` ainda não existe: ele nasce na [[features/FOUNDATION-001]], que não foi implementada.
+Isso diverge da arquitetura oficial: o [[decisoes/ADR-002-BACKEND-OFICIAL|ADR-002]] define um backend Next.js em `/backend` como entrada da aplicação e diz que Edge Functions não são a arquitetura principal. O `/backend` existe desde a [[features/FOUNDATION-001]] (APPROVED em 2026-10-19, commit `7f26d30`), mas só tem a rota técnica `GET /api/health`, e o app em uso não o utiliza ([[tecnico/BACKEND]]).
 
 ## Origem
 - O projeto começou como **Escala.iasd** (commit inicial "Escala.iasd baseline"). O `README.md` da raiz descreve essa versão. Ele é contexto histórico, **não é fonte normativa** da Brain.
@@ -55,7 +56,7 @@ A autenticação oficial está pendente ([[decisoes/PENDENCIAS#DEC-03 — Autent
 | Função | O que faz | Observação |
 |---|---|---|
 | `enviar-convites` | Usa a service role, busca os convites pendentes de uma igreja (`igreja_id` vindo no corpo) e envia os emails pelo Resend | Não verifica quem chama (risco S8 em [[seguranca/RISCOS-DO-LEGADO]]) |
-| `aceitar-convite-cadastro` | Usa a service role, valida o convite pelo token e cria a conta já com email confirmado | Fora do git; ligada ao risco S3 |
+| `aceitar-convite-cadastro` | Usa a service role, valida o convite pelo token e cria a conta já com email confirmado | Versionada no commit `0394893` (antes estava fora do git); ligada ao risco S3 |
 
 ## Banco (Supabase, schema `public`)
 - **11 tabelas:** `profiles`, `user_roles`, `igrejas`, `eventos`, `equipes`, `convites`, `member_contacts`, `ausencias`, `escalas`, `escala_membros`, `notificacoes`.
@@ -66,11 +67,11 @@ A autenticação oficial está pendente ([[decisoes/PENDENCIAS#DEC-03 — Autent
 - **Exclusão em cascata:** apagar uma igreja ou um usuário apaga escalas, escalações e papéis. O histórico desaparece, o que contraria [[05-REGRAS-DE-NEGOCIO#ESC-004 — Histórico de substituição|ESC-004]] e [[seguranca/AUDITORIA]].
 - **Migrations:** 9 em `supabase/migrations/`. O `types.ts` gerado bate com elas. O estado real do banco remoto não foi verificado; a consulta de inventário está pendente ([[decisoes/PENDENCIAS]]).
 
-## Fora do git (git status de 2026-10-06)
-- As 3 migrations de julho (`20260711053429_fix_convite_lider_rls`, `20260711060850_apelido_e_convites_por_perfil`, `20260712094502_profiles_confirmado_teste`).
-- A função `aceitar-convite-cadastro` e `src/lib/profiles.ts`.
-- Também não estão versionados: `brain-mescala/`, `docs/`, `.claude/` e `daily/`.
-- Consequência registrada pelo relatório de dados: a regra "schema = migrations" do [[decisoes/ADR-002-BACKEND-OFICIAL|ADR-002]] não está garantida no repositório.
+## Versionamento (conferido com `git ls-files` em 2026-10-20)
+- **Correção (divergência D5, apontada na análise da AUTH-001):** esta nota dizia que estavam fora do git as 3 migrations de julho (`20260711053429_fix_convite_lider_rls`, `20260711060850_apelido_e_convites_por_perfil`, `20260712094502_profiles_confirmado_teste`), a função `aceitar-convite-cadastro`, `src/lib/profiles.ts`, `brain-mescala/`, `docs/`, `.claude/` e `daily/`. Isso vinha do `git status` de 2026-10-06, anterior ao commit `0394893` (2026-10-06 20:13), que versionou todos esses arquivos.
+- **Hoje:** as 9 migrations e as 2 Edge Functions estão versionadas. Só `docs/features/AUTH-001.md` está fora do git, além do que o `.gitignore` ignora de propósito (por exemplo `.env`, `node_modules/` e os artefatos de build do `/backend`).
+- **Consequência que o relatório de dados registrava:** a regra "schema = migrations" do [[decisoes/ADR-002-BACKEND-OFICIAL|ADR-002]] não estava garantida, porque havia migrations fora do git. Essa causa deixou de existir. Se o banco remoto corresponde às migrations continua sem verificação: a consulta de inventário está pendente ([[decisoes/PENDENCIAS]]).
+- **Observação para o PO decidir:** `supabase/.temp/` (cache do Supabase CLI, com project ref e URL do pooler com usuário, sem senha) está versionado desde o commit `a6447fc` (2026-07-11). Ver [[decisoes/PENDENCIAS#Cache do Supabase CLI no git|Cache do Supabase CLI no git]].
 
 ## Histórico recente (resumo do `daily/2026-07-11.txt`)
 - Corrigida a policy de RLS que impedia o líder de equipe de assumir a equipe depois de aceitar o convite.
@@ -81,12 +82,13 @@ A autenticação oficial está pendente ([[decisoes/PENDENCIAS#DEC-03 — Autent
 - Travamentos de configuração do Supabase (confirmação de email e limite de envio de emails), não de código.
 
 ## Relação com a arquitetura oficial
-- Divergências formais: D1–D3 da [[features/FOUNDATION-001]] e a seção 9 do relatório de dados, ambas em [[tecnico/DIVERGENCIAS-LEGADO]].
+- Divergências formais: D1–D3 da [[features/FOUNDATION-001]], D4–D5 da análise da AUTH-001 e a seção 9 do relatório de dados, todas em [[tecnico/DIVERGENCIAS-LEGADO]].
 - Riscos de segurança conhecidos: [[seguranca/RISCOS-DO-LEGADO]].
 - Convivência e migração para o modelo oficial: [[decisoes/PENDENCIAS#DATA-DEC-022 — Convivência com o legado e migração de dados|DATA-DEC-022]].
 - Plano de migração do frontend para `/backend`: necessita decisão (D1).
+- Projeto Supabase: o `.env` do app e o vínculo do Supabase CLI apontam para um projeto (`ehbidizpzxhfusfyjgtl`), e o `supabase/config.toml` para outro (`fiurvpkieiorngshjric`). Divergência D4 da análise da AUTH-001; decisão proposta: [[decisoes/PENDENCIAS#DEC-05 — Projeto Supabase oficial|DEC-05]] (não decidida).
 
 ## Fontes (fora do vault)
-`src/`, `supabase/migrations/`, `supabase/functions/`, `README.md`, `daily/2026-07-11.txt` e as seções 1, 8 e 9 de `docs/data/DATA-ARCHITECTURE-REPORT.md`.
+`src/`, `supabase/migrations/`, `supabase/functions/`, `README.md`, `daily/2026-07-11.txt` e as seções 1, 8 e 9 de `docs/data/DATA-ARCHITECTURE-REPORT.md`. Versionamento e projeto Supabase: `git log`, `git ls-files` (2026-10-20), `supabase/config.toml`, `supabase/.temp/` e as seções 1.3 e 1.4 de `docs/features/AUTH-001.md`.
 
 Relacionados: [[MOCs/MOC-ARQUITETURA]], [[MOCs/MOC-GOVERNANCA]], [[tecnico/BACKEND]], [[tecnico/API]].

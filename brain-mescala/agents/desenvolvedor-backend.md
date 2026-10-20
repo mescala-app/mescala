@@ -39,6 +39,9 @@ O prompt completo do agente fica fora do vault, em `.claude/agents/desenvolvedor
 
 ## Fluxo e estado
 - Etapa 3 do [[features/FLUXO-DE-ENTREGA]].
-- Única feature liberada hoje: [[features/FOUNDATION-001]] (READY, não implementada).
+- [[features/FOUNDATION-001]]: implementada e encerrada (ARCHITECT REVIEW APPROVED em 2026-10-19, commit `7f26d30`), com uma rodada de correção (C1, L-03 e C2).
+- Nenhuma outra feature está liberada. A AUTH-001 tem contrato emitido, mas aguarda aprovação do PO ([[decisoes/PENDENCIAS#AUTH-001 — Fundação de Autenticação|AUTH-001]]).
+- Dependências: listas de proibidas conforme a [[decisoes/DEC-08-DEPENDENCIAS-TRANSITIVAS|DEC-08]]. Em feature que altere dependências do `/backend`, `npm audit --omit=dev` = 0 é condição de encerramento, e `npm audit fix --force`, downgrade de `next` ou de `eslint-config-next` e `overrides` sem decisão registrada são proibidos ([[decisoes/PENDENCIAS#RT-FOUND-01 — Dívida de tooling no backend|RT-FOUND-01]]).
+- Nenhum `.jsx` em `backend/src` enquanto o [[decisoes/PENDENCIAS#L-06 — Arquivos .jsx fora das guardas de lint|L-06]] estiver aberto.
 - Escolhas que dependem de decisão: [[decisoes/PENDENCIAS]] (DEC-02, DEC-03, DEC-04).
 - Código legado fora do escopo: [[tecnico/LEGADO-ATUAL]].

@@ -42,6 +42,10 @@ O prompt completo do agente fica fora do vault, em `.claude/agents/arquiteto-mes
 
 ## Fluxo e estado
 - Abre e fecha o [[features/FLUXO-DE-ENTREGA]].
-- Contrato emitido: [[features/FOUNDATION-001]] (READY, 2026-10-04), em `docs/features/FOUNDATION-001.md`.
+- Contratos emitidos:
+  - [[features/FOUNDATION-001]] (READY, 2026-10-04), em `docs/features/FOUNDATION-001.md`. ARCHITECT REVIEW: CHANGES_REQUIRED na rodada 0 e **APPROVED** na rodada 1 (2026-10-19). As revisões não foram gravadas em arquivo; o registro permanente está na nota da feature.
+  - AUTH-001 (2026-10-06), em `docs/features/AUTH-001.md` (fora do git): **aguardando aprovação do PO**, com as propostas DEC-05 a DEC-07 ([[decisoes/PENDENCIAS#AUTH-001 — Fundação de Autenticação|AUTH-001]]).
+- Interpretação aceita na revisão da FOUNDATION-001: [[decisoes/DEC-08-DEPENDENCIAS-TRANSITIVAS|DEC-08]] (ARQ-FOUND-02).
+- Enquanto o [[decisoes/PENDENCIAS#L-06 — Arquivos .jsx fora das guardas de lint|L-06]] estiver aberto, o contrato do primeiro gatilho especifica a correção dele. Gatilhos: feature que altere o `backend/eslint.config.mjs`; proposta de aceitar `.jsx`, ligar `allowJs` ou alterar `pageExtensions`; ou antes de CI/deploy.
 - Decisões em aberto que geram BLOQUEIO DE DOMÍNIO: [[decisoes/PENDENCIAS]].
-- Divergências já reportadas (D1–D3): [[tecnico/DIVERGENCIAS-LEGADO]].
+- Divergências já reportadas (D1–D3 da FOUNDATION-001; D4 e D5 da análise da AUTH-001): [[tecnico/DIVERGENCIAS-LEGADO]].

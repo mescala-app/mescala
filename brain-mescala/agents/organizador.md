@@ -37,5 +37,6 @@ O prompt completo do agente fica fora do vault, em `.claude/agents/organizador-m
 
 ## Fluxo e estado
 - Etapa 4 do [[features/FLUXO-DE-ENTREGA]].
-- Enquanto `/backend` não existir ([[features/FOUNDATION-001]] não implementada), não há nada a organizar.
+- `/backend` existe desde a [[features/FOUNDATION-001]] (APPROVED em 2026-10-19). Nela o Organizador entregou ORGANIZED, só completando um comentário. Na rodada de correção não houve etapa de organização, porque nada foi criado nem movido.
+- Estrutura a vigiar em toda feature (limite L-02 da FOUNDATION-001): criar `backend/app/`, `pages/`, `src/pages/`, `middleware.*` ou `proxy.*` viola a estrutura do contrato ([[features/FOUNDATION-001#Limites aceitos das guardas de lint|limites aceitos]]).
 - Código legado fora do escopo: [[tecnico/LEGADO-ATUAL]].
