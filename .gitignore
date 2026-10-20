@@ -24,3 +24,4 @@ auth.txt
 *.njsproj
 *.sln
 *.sw?
+supabase/.temp/
