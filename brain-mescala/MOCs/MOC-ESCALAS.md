@@ -30,6 +30,6 @@ atualizado: 2026-10-22
 - [[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-017 — Disponibilidade|DATA-DEC-017]]: só impedimentos, por pessoa na igreja, registrados só pelo próprio membro.
 
 ## Pendências
-- Quais status contam como alocação "ativa": [[decisoes/PENDENCIAS#Lacunas observadas no registro de 2026-10-21|PENDENCIAS]].
+- Quais status contam como alocação "ativa": **decidido em 2026-10-22**, AGUARDANDO_CONFIRMACAO e CONFIRMADA ([[05-REGRAS-DE-NEGOCIO#ESC-005 — Uma alocação ativa por pessoa na escala|ESC-005]]; [[decisoes/PENDENCIAS#Lacunas observadas no registro de 2026-10-21|PENDENCIAS]]). O índice entra com a FOUNDATION-004 (proposta).
 - O que é "excluir" o membro: [[decisoes/PENDENCIAS#Significado de excluir o membro — DATA-DEC-017|PENDENCIAS]] (contrato da feature de escalas).
 - [[tecnico/DIVERGENCIAS-LEGADO]]: o legado não tem função, status da escala nem substituição.

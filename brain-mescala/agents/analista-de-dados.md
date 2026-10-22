@@ -39,8 +39,9 @@ O prompt completo do agente fica fora do vault, em `.claude/agents/analista-dado
 
 ## Fluxo e estado
 - Etapa 2 do [[features/FLUXO-DE-ENTREGA]], só quando a feature tem impacto no banco.
-- Relatório de 2026-10-04 (papel executado diretamente, sem Feature Contract): `docs/data/DATA-ARCHITECTURE-REPORT.md`. **Decisões aceitas pelo PO em 2026-10-21** (todas as DATA-DEC na opção recomendada) e micro-decisões em 2026-10-22: [[decisoes/DEC-09-MODELO-DE-DADOS|DEC-09]]. Nenhuma migration criada.
-- Próximo trabalho previsto: o Data Task da **FOUNDATION-002 — Fundação de Persistência**, depois que o Arquiteto emitir o contrato e o PO autorizar a Fase 4 ([[features/FLUXO-DE-ENTREGA]]).
+- Relatório de 2026-10-04 (papel executado diretamente, sem Feature Contract): `docs/data/DATA-ARCHITECTURE-REPORT.md`. **Decisões aceitas pelo PO em 2026-10-21** (todas as DATA-DEC na opção recomendada) e micro-decisões em 2026-10-22: [[decisoes/DEC-09-MODELO-DE-DADOS|DEC-09]].
+- [[features/FOUNDATION-002]] (Fase 4 autorizada pelo PO em 2026-10-22): o Analista escreveu as **9 migrations** em `backend/supabase/migrations/`, **sem aplicar**, e o DATA TASK RESULT em `docs/features/FOUNDATION-002-DATA-TASK-RESULT.md`. Apontou a DIV-01, decidida pelo Arquiteto (ARQ-F002-16). A revisão pré-aplicação devolveu um delta (`RETURN_TO_DATA_ANALYST`; ARQ-F002-14 e 15), que o Analista está aplicando nos próprios arquivos (permitido porque nada foi aplicado).
+- Toda migration nova segue as [[tecnico/BANCO-DE-DADOS#Convenções do schema oficial (FOUNDATION-002, 2026-10-22)|convenções do schema oficial]]: privilégios explícitos, unicidade com `church_id`, timestamp maior que o da última migration da pasta e nenhuma edição de migration aplicada.
 - O banco oficial começa vazio, no projeto `vitqnyzuvrvkmnvshcpb` ([[decisoes/DEC-05-PROJETO-SUPABASE-OFICIAL|DEC-05]]); não há migração de dados do legado nem correção do legado (app sem uso real, 2026-10-22).
 - Observação: a definição canônica em `.claude/agents/analista-dados-mescala.md` ainda cita `supabase/migrations/` como "o único padrão existente" até a fundação de persistência ou um ADR definir outro. A DEC-04 é essa definição.
 - Achados do relatório: [[tecnico/DIVERGENCIAS-LEGADO]] e [[seguranca/RISCOS-DO-LEGADO]].

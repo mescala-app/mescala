@@ -9,12 +9,13 @@ relacionado:
 ---
 # Entidades
 
-Modelo conceitual. As decisões de 2026-10-21 e 2026-10-22 estão em [[decisoes/DEC-09-MODELO-DE-DADOS|DEC-09]]. Os identificadores do schema oficial são em inglês e os valores de status e papéis ficam como na Brain ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-018 — Nomenclatura e idioma|DATA-DEC-018]]). O detalhe físico (colunas, constraints, índices) virá do contrato FOUNDATION-002, ainda não emitido.
+Modelo conceitual. As decisões de 2026-10-21 e 2026-10-22 estão em [[decisoes/DEC-09-MODELO-DE-DADOS|DEC-09]]. Os identificadores do schema oficial são em inglês e os valores de status e papéis ficam como na Brain ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-018 — Nomenclatura e idioma|DATA-DEC-018]]). O detalhe físico (colunas, constraints, índices) de Usuário, Igreja, vínculos, Ministério, Função, habilitações e Registro de auditoria está no contrato [[features/FOUNDATION-002]] (VERSÃO 2, READY em 2026-10-22; migrations escritas e **não aplicadas**). Programação, Escala, Alocação e Disponibilidade ficam para a FOUNDATION-004 (proposta), e Convite, para a feature de convites. Schema oficial: `mescala`.
 
 ## Igreja
 Tenant organizacional. Veja [[modulos/IGREJAS]].
 - **Atributos:** nome, endereço ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-013 — Atributos e unicidade de nomes|DATA-DEC-013]]).
-- **Status e data de término:** previstos pela [[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-012 — Inativação, arquivamento e exclusão|DATA-DEC-012]]; valores do status da Igreja **A DEFINIR**.
+- **Status e data de término:** previstos pela [[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-012 — Inativação, arquivamento e exclusão|DATA-DEC-012]]. **Status: ATIVO, INATIVO** (decidido pelo PO em 2026-10-22, resposta ao B-02 da FOUNDATION-002; [[dados/STATUS]]). O efeito de uma igreja INATIVO (acesso, leitura e escrita): **A DEFINIR**, na feature que inativar a igreja.
+- **Endereço:** entra no schema com a CHURCH-001, com a obrigatoriedade decidida lá (ARQ-F002-02).
 
 ## Usuário
 Identidade autenticável. Papéis dependem de vínculos e escopo. Veja [[04-USUARIOS-E-PERMISSOES]].
@@ -69,7 +70,7 @@ Decisões sobre esses campos:
 - a alocação aponta para um único vínculo do membro com o ministério ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-009 — Papel único por usuário em cada ministério|DATA-DEC-009]]);
 - **confirmação** é o status da alocação ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-002 — Mapeamento dos termos do Data Task|DATA-DEC-002]]) e guarda também a data da resposta ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-016 — Status e transições|DATA-DEC-016]] d);
 - **substituição:** a original vira SUBSTITUIDA, e a nova alocação, na mesma escala, aponta para ela ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-015 — Modelo de substituição|DATA-DEC-015]]);
-- no máximo uma alocação ativa por pessoa em cada escala ([[05-REGRAS-DE-NEGOCIO#ESC-005 — Uma alocação ativa por pessoa na escala|ESC-005]]).
+- no máximo uma alocação ativa por pessoa em cada escala ([[05-REGRAS-DE-NEGOCIO#ESC-005 — Uma alocação ativa por pessoa na escala|ESC-005]]); contam como "ativa" AGUARDANDO_CONFIRMACAO e CONFIRMADA (decidido em 2026-10-22, resposta ao B-03 da FOUNDATION-002).
 
 ## Disponibilidade
 Registro temporal associado a membro. Veja [[modulos/DISPONIBILIDADE]].
@@ -86,7 +87,9 @@ Entidade decidida em 2026-10-21 ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-011 
 - só o hash do token, nunca o token;
 - no máximo um convite pendente por (igreja, ministério, email).
 
-O aceite cria os vínculos. A criação de conta é da autenticação ([[seguranca/AUTENTICACAO]]). Quem convida quem: [[05-REGRAS-DE-NEGOCIO#MEM-003 — Quem convida quem|MEM-003]]. Fluxo do convite: **A DEFINIR**.
+O aceite cria os vínculos. A criação de conta é da autenticação ([[seguranca/AUTENTICACAO]]). Quem convida quem: [[05-REGRAS-DE-NEGOCIO#MEM-003 — Quem convida quem|MEM-003]].
+- **Escopo** (decidido pelo PO em 2026-10-22, resposta ao B-04 da FOUNDATION-002, opção A): a tabela `invitations` não entra na fundação de persistência; nasce com a feature de convites (ID a definir).
+- **A DEFINIR**, no contrato da feature de convites: o fluxo do convite, as transições entre os status e o papel pretendido (valores e o que significa um convite sem ministério).
 
 ## Registro de auditoria
 Tabela só de inserção, gravada pelo backend na mesma transação da operação ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-021 — Auditoria|DATA-DEC-021]]). Pela proposta do relatório (seção 13.2): igreja, ator, ação, entidade, id, antes, depois e quando. Veja [[seguranca/AUDITORIA]].
@@ -99,8 +102,8 @@ Tabela só de inserção, gravada pelo backend na mesma transação da operaçã
 Relações: [[dados/RELACIONAMENTOS]].
 
 ## Pendências
-- Status da Igreja: **A DEFINIR**.
-- Quais status de alocação contam como "ativa": **A DEFINIR**.
-- Fluxo do convite: **A DEFINIR**.
+- Status da Igreja: **decidido em 2026-10-22** (ATIVO, INATIVO). Efeito de uma igreja INATIVO: **A DEFINIR**.
+- Quais status de alocação contam como "ativa": **decidido em 2026-10-22** (AGUARDANDO_CONFIRMACAO e CONFIRMADA).
+- Fluxo do convite, transições e papel pretendido: **A DEFINIR** (feature de convites).
 - Provisionamento do usuário: [[decisoes/PENDENCIAS#DEC-06 — Provisionamento do usuário do Mescala|DEC-06]].
 - Comparação com o banco legado: [[tecnico/DIVERGENCIAS-LEGADO]].

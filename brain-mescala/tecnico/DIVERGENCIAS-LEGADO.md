@@ -32,7 +32,7 @@ Registradas como ARCHITECTURAL DIVERGENCE no contrato da [[features/FOUNDATION-0
 Até 2026-10-21, a coluna "A Brain determina" de D2 dizia "Papéis OWNER, ADMIN, LEADER e MEMBER".
 
 ## Divergências apontadas na análise da AUTH-001 (D4–D5)
-Registradas como ARCHITECTURAL DIVERGENCE no documento da AUTH-001 (`docs/features/AUTH-001.md`, fora do git).
+Registradas como ARCHITECTURAL DIVERGENCE no documento da AUTH-001 (`docs/features/AUTH-001.md`, versionado desde o commit `50a1cd6` e atualizado para a v2 no `4039fe0`; até 2026-10-22, esta nota dizia "fora do git").
 
 | # | Divergência | Situação |
 |---|---|---|

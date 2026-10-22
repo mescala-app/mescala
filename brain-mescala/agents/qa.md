@@ -41,12 +41,17 @@ O prompt completo do agente fica fora do vault, em `.claude/agents/qa-mescala.md
 
 ## Fluxo e estado
 - Etapa 5 do [[features/FLUXO-DE-ENTREGA]].
-- **DEC-02 decidida em 2026-10-22:** biblioteca oficial **Vitest** ([[decisoes/DEC-02-BIBLIOTECA-DE-TESTES|DEC-02]]). O Desenvolvedor escreve os testes dos cenários do QA Contract; o QA revisa e acrescenta casos adversariais. A condição da regra 5 está cumprida; o Vitest entra no `/backend` com a primeira feature que precisar dele (a AUTH-001).
-- QA da [[features/FOUNDATION-001]] realizado: APPROVED (com BUG-01, LOW) e, depois da correção, revalidação R1–R6 APPROVED. B1–B3 ficaram NOT TESTED como regressão automatizada; daqui para frente, viram teste automatizado quando o lint for alterado.
-- Checagens que passam a valer em toda feature do `/backend`, aceitas na revisão da FOUNDATION-001:
-  - estrutura sem `backend/app/`, `pages/`, `src/pages/`, `middleware.*` ou `proxy.*` (L-02);
-  - nenhum `.jsx` em `backend/src` enquanto o [[decisoes/PENDENCIAS#L-06 — Arquivos .jsx fora das guardas de lint|L-06]] estiver aberto;
+- **DEC-02 decidida em 2026-10-22:** biblioteca oficial **Vitest** ([[decisoes/DEC-02-BIBLIOTECA-DE-TESTES|DEC-02]]), versão 5.0.5, instalada pela AUTH-001. O Desenvolvedor escreve os testes dos cenários do QA Contract; o QA revisa e acrescenta casos adversariais, nos arquivos existentes ou num `<arquivo>.qa.test.ts` próprio ([[tecnico/BACKEND#Convenções do código e dos testes (desde a AUTH-001)|convenções]]). A condição da regra 5 está cumprida.
+- QA da [[features/FOUNDATION-001]] realizado: APPROVED (com BUG-01, LOW) e, depois da correção, revalidação R1–R6 APPROVED. B1–B3 ficaram NOT TESTED como regressão automatizada; foram automatizados pela AUTH-001 (H1, H2 e suíte GL).
+- QA da [[features/AUTH-001]] realizado: **APPROVED** (`READY_FOR_ARCHITECT_REVIEW`), com os casos adversariais QA-1 a QA-4 (19 casos) em `supabase-access-token-verifier.qa.test.ts`. NOT TESTED aceitos (E.7 e O-14) passam para a AUTH-003.
+- QA da [[features/FOUNDATION-002]]: fase 1 (revisão estática) **APPROVED com condições**; fase 1b (delta da VERSÃO 2), S15 e S16 executável pendentes; fase 2 depois da aplicação pelo PO.
+- Checagens que valem em toda feature do `/backend`:
+  - estrutura sem `backend/app/`, `pages/`, `src/pages/`, `middleware.*` ou `proxy.*` (L-02, FOUNDATION-001);
+  - nenhum `.jsx` em `backend/src`, de forma permanente (o [[decisoes/PENDENCIAS#L-06 — Arquivos .jsx fora das guardas de lint|L-06]] foi encerrado em 2026-10-22 e a condição virou regra estrutural);
+  - imports na forma canônica e nenhuma reexportação de `infrastructure/supabase-auth` fora dela, no S12 ([[decisoes/PENDENCIAS#L-07 — Guarda 2b não normaliza o especificador|L-07]]);
+  - nenhum `fetchCache` em `src/app/**` até a guarda da AUTH-003 ([[decisoes/PENDENCIAS#RT-AUTH-01 — Cache de segmento do Next sobre a busca do JWKS|RT-AUTH-01]]);
   - dependência fantasma no S5 ([[decisoes/DEC-08-DEPENDENCIAS-TRANSITIVAS|DEC-08]], RT-FOUND-02);
   - `npm audit --omit=dev` = 0 em feature que altere dependências do `/backend` ([[decisoes/PENDENCIAS#RT-FOUND-01 — Dívida de tooling no backend|RT-FOUND-01]]);
-  - [[features/FOUNDATION-001#Verificação mínima de regressão do lint|verificação mínima de regressão do lint]] em feature que altere o `backend/eslint.config.mjs`.
+  - em feature que altere o `backend/eslint.config.mjs`: `npm run test` e extensão da suíte GL (a [[features/FOUNDATION-001#Verificação mínima de regressão do lint|verificação mínima de regressão do lint]] está automatizada nela).
+- Checagens que valem em toda feature com migration ([[tecnico/BANCO-DE-DADOS#Convenções do schema oficial (FOUNDATION-002, 2026-10-22)|convenções do schema oficial]]): privilégios explícitos, com regressão fixa de EXECUTE por papel (V1.12b) e de privilégios de tabela, de coluna e dos papéis da Data API (V1.14b a V1.14d); unicidade com `church_id`; timestamp maior que o da última migration da pasta (S1); migration aplicada não é editada.
 - Riscos conhecidos do legado, fora do escopo do QA de features do `/backend`: [[seguranca/RISCOS-DO-LEGADO]].

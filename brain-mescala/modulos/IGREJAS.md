@@ -15,9 +15,11 @@ Fluxo de origem: [[fluxos/FLUXO-CADASTRO-IGREJA]].
 - **Usuários:** um usuário pode estar vinculado a várias igrejas, com um vínculo por igreja; o backend precisa de "igreja atual" no contexto de cada requisição ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-006 — Usuário em mais de uma igreja|DATA-DEC-006]]).
 - **Atributos:** nome e endereço ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-013 — Atributos e unicidade de nomes|DATA-DEC-013]]).
 - **Inativação:** nada com histórico é apagado; a igreja ganha status e data de término ([[05-REGRAS-DE-NEGOCIO#HIS-001 — Nada com histórico é apagado|HIS-001]]).
+- **Status da Igreja:** **ATIVO, INATIVO** (decidido pelo PO em 2026-10-22, resposta ao B-02 do contrato FOUNDATION-002, opção A; [[dados/STATUS]]). É o mesmo conjunto de vínculos, ministérios e funções.
+- **Schema:** tabela `churches` no contrato [[features/FOUNDATION-002]] (escrita, não aplicada). O endereço entra com a CHURCH-001 (ARQ-F002-02), que também cria a igreja e o OWNER na mesma transação.
 
 ## Pendências
-- Valores do status da Igreja: **A DEFINIR**. A decisão de 2026-10-22 fixou ATIVO e INATIVO para vínculos, ministérios e funções, mas não cita a igreja ([[decisoes/PENDENCIAS#Lacunas observadas no registro de 2026-10-21|PENDENCIAS]]).
+- Efeito de uma igreja INATIVO (acesso, leitura e escrita): **A DEFINIR**, na feature que inativar a igreja. Até 2026-10-22, os próprios valores do status eram A DEFINIR ([[decisoes/PENDENCIAS#Lacunas observadas no registro de 2026-10-21|PENDENCIAS]]).
 - Feature de transferência de OWNER: exigida pela DATA-DEC-007, sem contrato.
 
 ## Legado

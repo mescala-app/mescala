@@ -1,5 +1,53 @@
 # Changelog
 
+## 2026-10-22 — AUTH-001 encerrada; FOUNDATION-002 na VERSÃO 2
+Dois pedidos de sincronização do Arquiteto (`arquiteto-mescala`), aceitos no fluxo do PO, aplicados pelo agente [[agents/vault-brain]]. Só foi registrado o que as fontes decidem; o que continua aberto ficou **A DEFINIR**. Nada da FOUNDATION-002 foi marcado como aplicado.
+
+### Pedido 1 — AUTH-001 encerrada (ARCHITECT REVIEW de 2026-10-22, seção 7)
+**Nota nova**
+- [[features/AUTH-001]]: registro permanente da ARCHITECT REVIEW **APPROVED_WITH_NOTES** (equivale a APPROVED; nenhuma mudança de código pedida; sem rodada de correção). Commit `50eaa1f` (16 arquivos, local). Contrato v2 READY em 2026-10-22. Registra: o que foi entregue (`requireAuthenticatedIdentity` em `domains/auth`, os 5 códigos de erro, as guardas de lint do ADR-003, `jose` 6.2.13, `vitest` 5.0.5 com `vite` 8.3.5 transitivo, 6 arquivos de teste com 251 casos); o histórico do fluxo; a validação (T1 a T7, reexecução do Arquiteto, NOT TESTED da E.7 e O-14); os desvios D-AUTH-01 e D-AUTH-02; as interpretações ARQ-AUTH-01 e ARQ-AUTH-02; a herança para a AUTH-003.
+
+**Limites e riscos** ([[decisoes/PENDENCIAS]])
+- **L-06 ENCERRADO** em 2026-10-22, com o título mantido. A condição (a) virou regra permanente: nenhum `.jsx` em `backend/src`.
+- Novos: **L-07** (guarda 2b não normaliza o especificador), **RT-AUTH-01** (cache de segmento do Next sobre a busca do JWKS), **RT-AUTH-02** (composição padrão no domínio, dívida estrutural, não é padrão geral) e **ARQ-AUTH-01** (leitura literal das validações de claims; `AUTH_TOKEN_EXPIRED` não atesta os demais claims).
+- **RT-FOUND-01:** a AUTH-001 cumpriu a condição (`npm audit --omit=dev` = 0; nenhum advisory além do GHSA-vfj7-8cjw-p6xm).
+- Seção da AUTH-001 em PENDENCIAS: IMPLEMENTADA e ENCERRADA, contrato v2 READY, herança para a AUTH-003. Saiu "Nada foi encaminhado".
+
+**Convenções**
+- [[tecnico/BACKEND]]: seção nova **"Convenções do código e dos testes (desde a AUTH-001)"** (pastas, arquivos, imports, composição, Vitest, local e nome dos testes, sem rede, proibidos, lint e tipos, regressão do lint). Estado: script `test`, pastas `domains/auth` e `infrastructure/supabase-auth`, verificação de autenticação sem rota protegida, guardas do ADR-002 e do ADR-003, suíte GL, L-06 encerrado. Tabela: Vitest 5.0.5.
+- [[tecnico/CONVENCOES]]: link para essa seção.
+- **Suíte GL** (`backend/eslint.config.test.ts`) como regressão do lint: [[features/FOUNDATION-001]] (verificação mínima automatizada; B1 e B2 automatizados no nível do módulo por H1 e H2; o 405 real fica para a AUTH-003; L-06 encerrado) e [[features/FLUXO-DE-ENTREGA]] (checagens herdadas, testes, artefatos, segunda execução completa do fluxo).
+
+**Status atualizado** ("passa a READY quando…", "sem autenticação")
+- [[seguranca/AUTENTICACAO]], [[tecnico/API]] (com a nota da ARQ-AUTH-01 (a) para a DEC-07), [[decisoes/DEC-02-BIBLIOTECA-DE-TESTES]] (Vitest 5.0.5 e convenções definidos), [[00-MOC-MESCALA]], [[02-ARQUITETURA]], [[MOCs/MOC-ARQUITETURA]], [[MOCs/MOC-GOVERNANCA]], [[MOCs/MOC-SEGURANCA]], [[agents/arquiteto]], [[agents/desenvolvedor-backend]], [[agents/qa]] (L-06 encerrado; checagens do L-07 e do RT-AUTH-01) e [[agents/organizador]].
+- [[decisoes/ADR-003-AUTENTICACAO]]: só uma nota de registro ("implementado pela AUTH-001, commit `50eaa1f`"); o texto aceito não mudou.
+
+**Correção de "AUTH-001 fora do git"**
+- Fato: `docs/features/AUTH-001.md` está versionado desde o commit `50a1cd6` (v1, 2026-10-22 00:37) e foi atualizado para a v2 no `4039fe0`. A Brain continuava dizendo "fora do git". Corrigido em [[decisoes/PENDENCIAS]] (fontes, seção da AUTH-001, versionamento do legado), [[features/FLUXO-DE-ENTREGA]], [[MOCs/MOC-GOVERNANCA]], [[agents/arquiteto]], [[tecnico/DIVERGENCIAS-LEGADO]] e [[tecnico/LEGADO-ATUAL]]. A entrada de 2026-10-20 deste CHANGELOG ("Hoje só `docs/features/AUTH-001.md` está fora do git") é histórico e não foi editada.
+
+### Pedido 2 — FOUNDATION-002, pedido 1 do Arquiteto (revisão pré-aplicação; decisões, nada aplicado)
+**Nota nova**
+- [[features/FOUNDATION-002]]: Fase 4 autorizada; contrato VERSÃO 2 READY; 9 migrations escritas e **não aplicadas** (delta da VERSÃO 2 em curso); QA fase 1 APPROVED com condições; revisão pré-aplicação RETURN_TO_DATA_ANALYST, com fase 1b do QA e confirmação do Arquiteto pendentes; trecho do Desenvolvedor feito; Organizador e QA (S15/S16) pendentes; nada commitado; aplicação pelo PO pendente. Inclui a decomposição, o fluxo da feature, ARQ-F002-01 a 16, F002-QA-01, R-01 a R-19 e o que as features seguintes herdam.
+
+**Respostas do PO aos bloqueios B-01 a B-04** (nova seção em [[decisoes/DEC-09-MODELO-DE-DADOS#Respostas do PO aos bloqueios da FOUNDATION-002|DEC-09]]; DATA-DEC-011, 012, 014 e 020, resumo, lacunas e matriz atualizados)
+1. **B-01:** schema `mescala`. [[seguranca/ISOLAMENTO-DE-DADOS]], [[tecnico/BANCO-DE-DADOS]], DEC-09 e [[decisoes/PENDENCIAS]].
+2. **B-02:** status da Igreja ATIVO, INATIVO. [[05-REGRAS-DE-NEGOCIO]] (HIS-001), [[dados/STATUS]], [[dados/ENTIDADES]], [[modulos/IGREJAS]], DEC-09 e PENDENCIAS. Continua **A DEFINIR** o efeito de uma igreja INATIVO.
+3. **B-03** (para a FOUNDATION-004): contam como "ativa" AGUARDANDO_CONFIRMACAO e CONFIRMADA. 05-REGRAS (ESC-005 e pendências), [[dados/STATUS]], [[dados/ENTIDADES]], [[modulos/ESCALAS]], [[fluxos/FLUXO-ESCALAS]], [[MOCs/MOC-ESCALAS]], DEC-09 e PENDENCIAS.
+4. **B-04** (escopo): `invitations` nasce com a feature de convites. PENDENCIAS, [[dados/ENTIDADES#Convite]], nota de escopo na MEM-003 e [[dados/STATUS#Convite]]. Continuam **A DEFINIR** o fluxo, as transições e o papel pretendido.
+- As lacunas observadas no registro de 2026-10-21 ficaram marcadas como decididas em PENDENCIAS e na DEC-09, com os títulos mantidos.
+
+**Estado, mecanismo e convenções**
+- [[tecnico/BANCO-DE-DADOS]]: "Estado atual" (contrato VERSÃO 2, `backend/supabase/` com `config.toml` e 9 migrations não aplicadas); seções novas **"Mecanismo do schema oficial (FOUNDATION-002)"** (schema fora da Data API; `mescala_app` NOLOGIN, sem BYPASSRLS; papel de login na FOUNDATION-003, fora do repositório; contexto só com `set_config(..., true)`; RLS só para isolamento por igreja; R-01), **"Ordem vinculante das migrations (FOUNDATION-002, D9)"** e **"Convenções do schema oficial (FOUNDATION-002, 2026-10-22)"** (texto do Arquiteto: ARQ-F002-16, ARQ-F002-14, ordem dos timestamps e R-19, migration aplicada não é editada). A "Ordem proposta" ficou como histórico, com o destino de cada item (8 a 11 → FOUNDATION-004; 12 → Convites; 14 → incorporada em `grant_app_role_and_rls_policies`).
+- [[tecnico/CONVENCOES]]: link para as convenções do schema; ARQ-F002-14 a 16 registradas como convenções técnicas, não regras `<ÁREA>-<NNN>`.
+- [[seguranca/ISOLAMENTO-DE-DADOS]]: seção "Mecanismo decidido na FOUNDATION-002"; F002-QA-01 resolvido pela estrutura (ARQ-F002-14), sem requisito de mapeamento de erros para as features.
+- [[seguranca/AUDITORIA]]: `audit_log` imutável para DML de qualquer papel; `id` e `occurred_at` do banco (ARQ-F002-15); risco residual R-16 junto da nota de LGPD (R-08).
+- [[features/FLUXO-DE-ENTREGA]]: linha da FOUNDATION-002 na tabela; artefatos (a pasta das migrations existe); revisão antes da aplicação; checagens herdadas da FOUNDATION-002.
+
+**Outras notas com o estado da FOUNDATION-002** (diziam "contrato não emitido")
+- [[00-MOC-MESCALA]], [[02-ARQUITETURA]], [[MOCs/MOC-ARQUITETURA]], [[MOCs/MOC-GOVERNANCA]], [[MOCs/MOC-SEGURANCA]], [[MOCs/MOC-DADOS]], [[produto/ROADMAP]], [[features/FOUNDATION-001]], [[decisoes/DEC-04-ESTRATEGIA-DE-MIGRATIONS]] (só nota de registro; a decisão não mudou), [[agents/arquiteto]], [[agents/analista-de-dados]], [[agents/desenvolvedor-backend]], [[agents/qa]] e [[agents/organizador]].
+
+**Não feito (fora deste pedido):** o registro da aplicação da FOUNDATION-002 (data, método, commit) e do estado do banco oficial, que é o pedido 2 do Arquiteto, para depois da ARCHITECT REVIEW final.
+
 ## 2026-10-22
 Complemento da atualização de 2026-10-21, feito na mesma sessão do agente [[agents/vault-brain]]: o PO tomou mais decisões, repassadas pela sessão principal. Nada além do que o PO decidiu foi tratado como decidido.
 

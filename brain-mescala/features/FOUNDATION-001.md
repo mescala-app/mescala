@@ -17,6 +17,7 @@ relacionado:
   - "[[decisoes/PENDENCIAS]]"
   - "[[tecnico/BACKEND]]"
   - "[[decisoes/DEC-02-BIBLIOTECA-DE-TESTES]]"
+  - "[[features/AUTH-001]]"
 atualizado: 2026-10-22
 ---
 # FOUNDATION-001 — Inicialização do Backend Next.js
@@ -82,7 +83,9 @@ Na rodada de correção não houve etapa do Organizador: nada foi criado nem mov
 - **Ferramentas:** typecheck, lint e build passam.
 - **B1 e B2:** teste HTTP manual local feito pelo QA, autorizado pelo contrato até a DEC-02. Vale como evidência, não como regressão.
 - **Dependências de produção:** `npm audit --omit=dev` = 0.
-- **B1–B3 como regressão automatizada:** ficaram **NOT TESTED** nesta feature, porque a biblioteca de testes não estava decidida. A [[decisoes/DEC-02-BIBLIOTECA-DE-TESTES|DEC-02]] foi decidida em 2026-10-22 (Vitest): daqui para frente, esses cenários viram teste automatizado quando o lint for alterado, a começar pela [[#Verificação mínima de regressão do lint|verificação mínima de regressão do lint]] (B3).
+- **B1–B3 como regressão automatizada:** ficaram **NOT TESTED** nesta feature, porque a biblioteca de testes não estava decidida. A [[decisoes/DEC-02-BIBLIOTECA-DE-TESTES|DEC-02]] foi decidida em 2026-10-22 (Vitest), e a [[features/AUTH-001]] os automatizou no mesmo dia:
+  - **B1 e B2:** automatizados no nível do módulo pelos casos H1 e H2 (`backend/src/app/api/health/route.test.ts`). O 405 HTTP real do B2, com servidor rodando, fica para a AUTH-003;
+  - **B3:** automatizado pela suíte GL ([[#Verificação mínima de regressão do lint|abaixo]]).
 - Sem cenários de banco.
 
 ## Decisões e desvios aceitos pelo Arquiteto
@@ -117,9 +120,11 @@ Importar um pacote sem declará-lo (ex.: `zod`) é violação dos itens (a) e (b
 | L-03 | `.mts` e `.cts` fora da guarda 1 | **ENCERRADO**: incluídos na rodada 1, por decisão do PO |
 | L-04 | O bloqueio de `require("next/…")` depende de `@typescript-eslint/no-require-imports` (regra herdada, mensagem genérica). Se ela for desligada, reavaliar a guarda 1 | aceito |
 | L-05 | `import()` com especificador calculado em tempo de execução não é verificável estaticamente | aceito |
-| L-06 | `.jsx` fica fora das duas guardas (o Next 16.4.2 aceita `route.jsx` como rota) | **aberto**; novo, aceito, não bloqueante |
+| L-06 | `.jsx` fica fora das duas guardas (o Next 16.4.2 aceita `route.jsx` como rota) | **ENCERRADO** em 2026-10-22 pela [[features/AUTH-001]]; aceito e não bloqueante de 2026-10-19 a 2026-10-22 |
 
 ### Condições do L-06
+**ENCERRADO em 2026-10-22** pela [[features/AUTH-001]] (ARCHITECT REVIEW APPROVED_WITH_NOTES): `jsx` no `files` das duas guardas, "Arquivos cobertos" nos itens 1 e 2 do cabeçalho e redação sobre `import()` de tipo corrigida; provas nos casos `.jsx` de GL3, GL7 e GL10 da suíte GL. O encerramento não autoriza `.jsx`, `allowJs` nem mudança de `pageExtensions`. A condição (a) virou regra estrutural permanente (nenhum `.jsx` em `backend/src`); a (c) ficou sem objeto. As condições abaixo ficam como histórico.
+
 - **(a)** Enquanto o L-06 estiver aberto, nenhum `.jsx` em `backend/src`; o QA confere em toda feature.
 - **(b)** A correção é especificada pelo Arquiteto no contrato do primeiro gatilho. Ela consiste em acrescentar `jsx` ao `files` das duas guardas, declarar "Arquivos cobertos" também no item 2 do cabeçalho do `eslint.config.mjs` e ajustar a redação ligada a `import()` de tipo. Gatilhos:
   - qualquer feature que altere o `eslint.config.mjs`;
@@ -133,6 +138,8 @@ A telemetria do Next fica ativa por padrão no ambiente local. É decisão de CI
 
 ## Verificação mínima de regressão do lint
 Vale para **toda feature que alterar `backend/eslint.config.mjs`**.
+
+**Automatizada desde a [[features/AUTH-001]] (2026-10-22)** pela suíte GL, em `backend/eslint.config.test.ts` (ESLint pela API, configuração real, caminhos virtuais). Os casos abaixo correspondem a GL1, GL3 (casos de `next`), GL4, os sete primeiros itens do GL5, GL6 e GL7; os casos `.jsx` do L-06 estão em GL3 e GL7. Toda mudança no `eslint.config.mjs` exige `npm run test` e casos novos para cada guarda nova ([[tecnico/BACKEND#Convenções do código e dos testes (desde a AUTH-001)|convenções]]). A lista fica como origem dos casos:
 - **Sondagens R4 e R5 da rodada 1:**
   - bloqueia `next` e `next/*` em `src/domains/**` por import estático, `import type`, `import()` dinâmico, template sem interpolação e posição de tipo, inclusive em `.js`, `.mts` e `.cts`;
   - não bloqueia `next-auth`, `nextSomething`, `@next/env`, `./next`, `../next`, `node:*` nem template com interpolação;
@@ -140,14 +147,14 @@ Vale para **toda feature que alterar `backend/eslint.config.mjs`**.
 - **Mais dois casos:**
   - `require("next/server")` em `.js` ou `.cjs` → erro de qualquer regra;
   - `import s = require("next/server")` em `.ts` → erro com a mensagem do ADR-002.
-- **Depois de corrigido o L-06:** os casos `.jsx` das duas guardas.
-- **DEC-02 decidida em 2026-10-22 (Vitest):** esse conjunto vira o teste automatizado B3 na primeira feature que alterar o lint ([[decisoes/DEC-02-BIBLIOTECA-DE-TESTES|DEC-02]]).
+- **Depois de corrigido o L-06:** os casos `.jsx` das duas guardas (feito na AUTH-001).
+- **DEC-02 decidida em 2026-10-22 (Vitest):** esse conjunto vira o teste automatizado B3 na primeira feature que alterar o lint ([[decisoes/DEC-02-BIBLIOTECA-DE-TESTES|DEC-02]]). Feito pela AUTH-001 (suíte GL).
 
 ## Dependências entre features
 - **DEPENDS_ON:** [[decisoes/ADR-002-BACKEND-OFICIAL|ADR-002]] (aceito); [[decisoes/DEC-01-ROTA-TECNICA-HEALTH|DEC-01]] (aceita).
-- **BLOCKS (segundo o contrato):** a fundação oficial de persistência e todas as features de negócio. Com a FOUNDATION-001 aprovada, essa dependência está cumprida. A fundação de persistência é a **FOUNDATION-002** (contrato ainda não emitido; [[features/FLUXO-DE-ENTREGA]]).
+- **BLOCKS (segundo o contrato):** a fundação oficial de persistência e todas as features de negócio. Com a FOUNDATION-001 aprovada, essa dependência está cumprida. A fundação de persistência é a **[[features/FOUNDATION-002]]** (contrato emitido em 2026-10-22, VERSÃO 2 READY; migrations escritas e não aplicadas).
 - **RELATED_TO:** DEC-02 (decidida em 2026-10-22), DEC-03 (decidida em 2026-10-21 pelo [[decisoes/ADR-003-AUTENTICACAO|ADR-003]]) e DEC-04 (parte 1 decidida em 2026-10-21; parte 2 aberta).
-- **AUTH-001:** tem a FOUNDATION-001 aprovada como uma de suas condições, cumprida. Desde 2026-10-22, o contrato está sem bloqueios de decisão ([[decisoes/PENDENCIAS#AUTH-001 — Fundação de Autenticação|AUTH-001]]).
+- **AUTH-001:** tinha a FOUNDATION-001 aprovada como uma de suas condições, cumprida. Implementada e encerrada em 2026-10-22 ([[features/AUTH-001]]): corrigiu o L-06 e automatizou B1 a B3.
 
 ## Decisões pendentes citadas pelo contrato
 Não bloquearam a FOUNDATION-001. Situação em 2026-10-22:

@@ -29,14 +29,14 @@ relacionado:
 4. **Local dos testes, script `test` e convenções:** o Arquiteto define no contrato dessa feature.
 
 ## Consequências
-- **AUTH-001:** fica sem bloqueios de decisão. Passa a READY quando o Arquiteto atualizar o contrato com o Vitest ([[decisoes/PENDENCIAS#AUTH-001 — Fundação de Autenticação|AUTH-001]]).
+- **AUTH-001:** fica sem bloqueios de decisão. Passa a READY quando o Arquiteto atualizar o contrato com o Vitest ([[decisoes/PENDENCIAS#AUTH-001 — Fundação de Autenticação|AUTH-001]]). **Registro de 2026-10-22:** o contrato v2 ficou READY, e a [[features/AUTH-001]] foi implementada e encerrada no mesmo dia (APPROVED_WITH_NOTES; commit `50eaa1f`), instalando o Vitest 5.0.5.
 - **FOUNDATION-001:** daqui para frente, os cenários B1–B3 deixam de ficar NOT TESTED por falta de biblioteca: viram teste automatizado quando o lint for alterado ([[features/FOUNDATION-001#Verificação mínima de regressão do lint|verificação mínima de regressão do lint]]).
 - **QA:** a condição da definição do agente ("só escreve arquivos de teste depois que a biblioteca oficial de testes for decidida") está cumprida. O QA continua sem corrigir código.
 - **Dependências:** até a feature que o instalar, o Vitest não está no `backend/package.json`. A decisão aprova a biblioteca; a versão exata e a instalação vêm pelo contrato, como exige a regra do Desenvolvedor (só dependências aprovadas por ADR ou Feature Contract). Listas de dependências proibidas seguem a [[decisoes/DEC-08-DEPENDENCIAS-TRANSITIVAS|DEC-08]].
-- **Regressão de dependências:** a feature que instalar o Vitest altera dependências do `/backend`; vale a condição `npm audit --omit=dev` = 0 ([[decisoes/PENDENCIAS#RT-FOUND-01 — Dívida de tooling no backend|RT-FOUND-01]]).
+- **Regressão de dependências:** a feature que instalar o Vitest altera dependências do `/backend`; vale a condição `npm audit --omit=dev` = 0 ([[decisoes/PENDENCIAS#RT-FOUND-01 — Dívida de tooling no backend|RT-FOUND-01]]). Cumprida pela AUTH-001.
 
 ## Fora desta decisão
-- Versão exata do Vitest, local dos arquivos de teste, script `test`, convenções de nome e de organização (contrato da AUTH-001).
+- Versão exata do Vitest, local dos arquivos de teste, script `test`, convenções de nome e de organização (contrato da AUTH-001). **Definidos pela AUTH-001 em 2026-10-22:** Vitest 5.0.5 (`devDependencies`, sem `^` nem `~`); script `"test": "vitest run"`; convenções em [[tecnico/BACKEND#Convenções do código e dos testes (desde a AUTH-001)|tecnico/BACKEND]].
 - Cobertura mínima, CI e execução automática em pipeline.
 - Testes com banco (dependem da fundação de persistência, FOUNDATION-002).
 

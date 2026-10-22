@@ -29,7 +29,8 @@ Ela não deve armazenar posições fixas por coluna. Sua composição ocorre por
 - **Validação:** o banco guarda os valores e o backend valida as transições ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-016 — Status e transições|DATA-DEC-016]]).
 - **Rascunho:** as alocações ficam AGUARDANDO_CONFIRMACAO; o pedido de resposta é enviado só na publicação (DATA-DEC-016 a). Uma escala em rascunho pode ser apagada se nunca foi publicada (DATA-DEC-016 e).
 - **Conclusão:** manual (DATA-DEC-016 b).
-- **Mesma pessoa na escala:** no máximo uma alocação ativa ([[05-REGRAS-DE-NEGOCIO#ESC-005 — Uma alocação ativa por pessoa na escala|ESC-005]]).
+- **Mesma pessoa na escala:** no máximo uma alocação ativa ([[05-REGRAS-DE-NEGOCIO#ESC-005 — Uma alocação ativa por pessoa na escala|ESC-005]]). Contam como "ativa" AGUARDANDO_CONFIRMACAO e CONFIRMADA (PO, 2026-10-22, resposta ao B-03 do contrato FOUNDATION-002).
+- **Schema:** escalas, alocações, programações e impedimentos entram com a FOUNDATION-004 (proposta; ID a confirmar), depois da [[features/FOUNDATION-002]].
 - **Substituição:** a alocação original vira SUBSTITUIDA, e a nova aponta para ela ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-015 — Modelo de substituição|DATA-DEC-015]]).
 - **Impedimentos:** só o próprio membro registra; o líder que não quiser o membro participando o exclui ([[05-REGRAS-DE-NEGOCIO#DIS-001 — Impedimento é registrado só pelo próprio membro|DIS-001]]).
 
@@ -39,7 +40,7 @@ Ela não deve armazenar posições fixas por coluna. Sua composição ocorre por
 - [[dados/EVENTOS-DO-SISTEMA]]
 
 ## Pendências
-- Quais status contam como alocação "ativa": **A DEFINIR**.
+- Quais status contam como alocação "ativa": **decidido em 2026-10-22** (acima). Até então, A DEFINIR.
 - O que é "excluir" o membro (da escala ou do ministério) e o efeito no histórico: **A DEFINIR** no contrato da feature de escalas, respeitando a [[05-REGRAS-DE-NEGOCIO#HIS-001 — Nada com histórico é apagado|HIS-001]] ([[decisoes/PENDENCIAS#Significado de excluir o membro — DATA-DEC-017|PENDENCIAS]]).
 - Lista completa de transições: a validar ([[dados/STATUS]]).
 

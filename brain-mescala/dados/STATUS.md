@@ -31,7 +31,7 @@ Decidido ([[decisoes/DEC-09-MODELO-DE-DADOS|DEC-09]], 2026-10-21):
 - Enquanto a escala é RASCUNHO, a alocação fica AGUARDANDO_CONFIRMACAO; o pedido de resposta é enviado só na publicação (DATA-DEC-016 a).
 - A confirmação guarda também a data da resposta (DATA-DEC-016 d).
 - Na substituição, a alocação original vira SUBSTITUIDA e a nova aponta para ela ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-015 — Modelo de substituição|DATA-DEC-015]]).
-- No máximo uma alocação ativa por pessoa em cada escala ([[05-REGRAS-DE-NEGOCIO#ESC-005 — Uma alocação ativa por pessoa na escala|ESC-005]]). Quais destes status contam como "ativa": **A DEFINIR**.
+- No máximo uma alocação ativa por pessoa em cada escala ([[05-REGRAS-DE-NEGOCIO#ESC-005 — Uma alocação ativa por pessoa na escala|ESC-005]]). **Contam como "ativa": AGUARDANDO_CONFIRMACAO e CONFIRMADA** (decidido pelo PO em 2026-10-22, resposta ao B-03 do contrato FOUNDATION-002, opção A; [[decisoes/DEC-09-MODELO-DE-DADOS#Respostas do PO aos bloqueios da FOUNDATION-002|DEC-09]]). RECUSADA, SUBSTITUICAO_PENDENTE e SUBSTITUIDA não contam. Até 2026-10-22, era **A DEFINIR**.
 
 ## Convite
 Decidido em 2026-10-22 ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-011 — Convites|DATA-DEC-011]]):
@@ -40,7 +40,7 @@ Decidido em 2026-10-22 ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-011 — Convi
 - EXPIRADO
 - CANCELADO
 
-Transições entre eles: **A DEFINIR** (o fluxo de convite ainda não está documentado).
+Transições entre eles: **A DEFINIR** (o fluxo de convite ainda não está documentado). Ficam para o contrato da feature de convites, que é onde a tabela `invitations` nasce (resposta do PO ao B-04 da FOUNDATION-002, 2026-10-22).
 
 ## Vínculos, ministérios e funções
 Decidido em 2026-10-22 ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-012 — Inativação, arquivamento e exclusão|DATA-DEC-012]]), para vínculos com a igreja, vínculos com o ministério, ministérios e funções:
@@ -49,7 +49,7 @@ Decidido em 2026-10-22 ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-012 — Inati
 
 Cada um tem também data de término. Nada com histórico é apagado ([[05-REGRAS-DE-NEGOCIO#HIS-001 — Nada com histórico é apagado|HIS-001]]).
 
-**Igreja:** a DATA-DEC-012 prevê status também para a Igreja, mas a decisão de 2026-10-22 não cita a igreja. Valores: **A DEFINIR**.
+**Igreja:** **ATIVO, INATIVO**, com data de término (decidido pelo PO em 2026-10-22, resposta ao B-02 do contrato FOUNDATION-002, opção A; [[decisoes/DEC-09-MODELO-DE-DADOS#Respostas do PO aos bloqueios da FOUNDATION-002|DEC-09]]). A DATA-DEC-012 previa status também para a Igreja, mas a decisão de 2026-10-22 sobre vínculos, ministérios e funções não a citava; até a resposta ao B-02, os valores eram **A DEFINIR**. O efeito de uma igreja INATIVO (acesso, leitura e escrita) continua **A DEFINIR**, na feature que inativar a igreja.
 
 ## Representação e validação
 - O banco guarda os valores (texto com CHECK, em MAIÚSCULAS, exatamente como nesta nota); o backend valida as transições ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-016 — Status e transições|DATA-DEC-016]], [[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-018 — Nomenclatura e idioma|DATA-DEC-018]]).
@@ -59,6 +59,6 @@ Relacionados: [[modulos/ESCALAS]], [[fluxos/FLUXO-CONFIRMACAO]], [[fluxos/FLUXO-
 
 ## Pendências
 - Lista completa de transições de Escala e Alocação: a validar.
-- Status "ativa" da alocação, status da Igreja e transições do convite: **A DEFINIR** ([[decisoes/PENDENCIAS]]).
+- Transições do convite e efeito de uma igreja INATIVO: **A DEFINIR** ([[decisoes/PENDENCIAS]]). Status "ativa" da alocação e status da Igreja: decididos em 2026-10-22 (acima).
 - Cancelamento de **Programação**: nada foi decidido; a decisão de 2026-10-22 trata só da Escala. **A DEFINIR**, se o tema aparecer ([[decisoes/PENDENCIAS#Cancelamento de Programação|PENDENCIAS]]).
 - O legado não tem status de escala e usa um booleano ambíguo na escalação ([[tecnico/DIVERGENCIAS-LEGADO]]).

@@ -35,7 +35,7 @@ Relacionados: [[fluxos/FLUXO-SUBSTITUICAO]], [[seguranca/AUDITORIA]].
 Uma pessoa tem no máximo uma alocação ativa em cada escala. Quem toca e canta fica com uma função por escala.
 
 - **Origem:** [[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-014 — A mesma pessoa mais de uma vez na mesma escala|DATA-DEC-014]] (aceita em 2026-10-21).
-- **A DEFINIR:** quais status de alocação contam como "ativa" ([[decisoes/PENDENCIAS#Lacunas observadas no registro de 2026-10-21|PENDENCIAS]]).
+- **Status que contam como "ativa"** (decididos pelo PO em 2026-10-22, resposta ao B-03 do contrato FOUNDATION-002, opção A; [[decisoes/DEC-09-MODELO-DE-DADOS#Respostas do PO aos bloqueios da FOUNDATION-002|DEC-09]]): **AGUARDANDO_CONFIRMACAO e CONFIRMADA**. Quem recusou, quem está em substituição pendente e quem foi substituído pode ser alocado de novo, em outra função da mesma escala. Até 2026-10-22, era **A DEFINIR**. O índice único parcial entra com a FOUNDATION-004.
 
 Relacionados: [[modulos/ESCALAS]], [[dados/STATUS]].
 
@@ -70,7 +70,8 @@ OWNER/ADMIN convida líder; líder convida membro.
 
 - **Origem:** [[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-011 — Convites|DATA-DEC-011]] (aceita em 2026-10-21), que manda registrar na Brain esta regra legada, confirmada pelo canvas. A regra está transcrita como no relatório.
 - **Status do convite:** PENDENTE, ACEITO, EXPIRADO, CANCELADO (decididos em 2026-10-22; [[dados/STATUS#Convite]]).
-- **A DEFINIR:** o fluxo de convite, inclusive as transições entre os status.
+- **Escopo** (decidido pelo PO em 2026-10-22, resposta ao B-04 do contrato FOUNDATION-002, opção A): a tabela `invitations` não entra na fundação de persistência; nasce com a feature de convites, quando o fluxo for documentado na Brain.
+- **A DEFINIR:** o fluxo de convite, inclusive as transições entre os status, e o papel pretendido (valores e o que significa um convite sem ministério), no contrato da feature de convites.
 
 Relacionados: [[modulos/MEMBROS]], [[fluxos/FLUXO-MEMBROS]], [[fluxos/FLUXO-EQUIPES]].
 
@@ -86,7 +87,7 @@ Relacionados: [[modulos/DISPONIBILIDADE]], [[modulos/ESCALAS]].
 Nada com histórico é apagado. Igreja, ministério, vínculos e funções ganham status e data de término, em vez de serem excluídos.
 
 - **Origem:** [[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-012 — Inativação, arquivamento e exclusão|DATA-DEC-012]] (aceita em 2026-10-21).
-- **Status:** ATIVO, INATIVO para vínculos (com a igreja e com o ministério), ministérios e funções (decididos em 2026-10-22). Status da Igreja: **A DEFINIR**.
+- **Status:** ATIVO, INATIVO para vínculos (com a igreja e com o ministério), ministérios e funções (decididos em 2026-10-22). Status da Igreja: **ATIVO, INATIVO** (decidido pelo PO em 2026-10-22, resposta ao B-02 do contrato FOUNDATION-002; até então, A DEFINIR). O efeito de uma igreja INATIVO (acesso, leitura e escrita): **A DEFINIR**, na feature que inativar a igreja.
 - **Decisão relacionada:** uma escala em rascunho pode ser apagada se nunca foi publicada ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-016 — Status e transições|DATA-DEC-016]] e).
 - **Consequência registrada na decisão:** um pedido de exclusão pela LGPD vai exigir uma feature de anonimização.
 
@@ -100,7 +101,9 @@ As regras IGR-001, MEM-001 a MEM-003, DIS-001, HIS-001 e ESC-005 foram acrescent
 ## Pendências que tocam estas regras
 - **ESC-001:** o que são alocações "incompatíveis" entre escalas diferentes não está definido. Na mesma escala, vale a [[#ESC-005 — Uma alocação ativa por pessoa na escala|ESC-005]]. A disponibilidade foi decidida ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-017 — Disponibilidade|DATA-DEC-017]]).
 - **ESC-003:** a lista completa de transições continua a validar ([[dados/STATUS]]).
-- **ESC-005:** quais status contam como "ativa".
+- **ESC-005:** quais status contam como "ativa": **decidido em 2026-10-22** (AGUARDANDO_CONFIRMACAO e CONFIRMADA); o índice único parcial entra com a FOUNDATION-004.
+- **MEM-003:** fluxo, transições e papel pretendido do convite: **A DEFINIR**, na feature de convites.
+- **HIS-001:** efeito de uma igreja INATIVO: **A DEFINIR**.
 - **DIS-001:** o que é "excluir" o membro.
 - **SEC-001:** violada no sistema legado ([[seguranca/RISCOS-DO-LEGADO]]). A correção do legado não se aplica, porque o app legado não tem uso real (2026-10-22); os riscos continuam nos projetos antigos enquanto estiverem ativos.
 - O banco legado não consegue cumprir ESC-001, ESC-002 e ESC-004: não tem intervalo de horário, função nem substituição ([[tecnico/DIVERGENCIAS-LEGADO]]).

@@ -35,6 +35,7 @@ relacionado:
 - Formato do nome, pelo padrão aceito na [[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-018 — Nomenclatura e idioma|DATA-DEC-018]] (seção 13.4 do relatório): `<YYYYMMDDHHMMSS>_<objetivo>.sql`, uma migration por objetivo. A seção 13.4 escreve o caminho como `supabase/migrations/`, porque é anterior a esta decisão; o local vale como decidido aqui.
 - O schema oficial é reproduzível pelas migrations versionadas, como exige o [[decisoes/ADR-002-BACKEND-OFICIAL|ADR-002]].
 - Em 2026-10-21, `backend/supabase/` ainda não existe no repositório. Nenhuma migration oficial foi criada; a Fase 4 depende do contrato FOUNDATION-002 e de autorização explícita do PO ([[features/FLUXO-DE-ENTREGA]]).
+- **Registro de 2026-10-22:** o contrato [[features/FOUNDATION-002]] foi emitido (VERSÃO 2, READY) e o PO autorizou a Fase 4. `backend/supabase/` existe, com `config.toml` (só `project_id` como conteúdo funcional) e as 9 migrations da FOUNDATION-002 em `migrations/`, **escritas e não aplicadas**. Para a aplicação, depois das revisões, o contrato recomenda a CLI, sempre rodada a partir de `/backend` (nunca da raiz, que tem o vínculo legado); as convenções das migrations estão em [[tecnico/BANCO-DE-DADOS#Convenções do schema oficial (FOUNDATION-002, 2026-10-22)|tecnico/BANCO-DE-DADOS]]. A decisão não mudou.
 
 ---
 

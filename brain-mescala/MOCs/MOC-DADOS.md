@@ -20,4 +20,5 @@ atualizado: 2026-10-22
 ## Estado atual e pendências
 - [[tecnico/LEGADO-ATUAL]] (banco legado, sem uso real; sem migração de dados)
 - [[tecnico/DIVERGENCIAS-LEGADO]] (Brain × banco atual)
-- [[decisoes/PENDENCIAS]]: [[decisoes/PENDENCIAS#Lacunas observadas no registro de 2026-10-21|lacunas observadas]] (status "ativa" da alocação, status da Igreja, nome do schema, fluxo do convite) e contrato FOUNDATION-002.
+- [[decisoes/PENDENCIAS]]: [[decisoes/PENDENCIAS#Lacunas observadas no registro de 2026-10-21|lacunas observadas]], decididas em 2026-10-22 (status "ativa" da alocação, status da Igreja, nome do schema `mescala`, escopo do convite; [[decisoes/DEC-09-MODELO-DE-DADOS#Respostas do PO aos bloqueios da FOUNDATION-002|DEC-09]]). Continuam **A DEFINIR**: o fluxo, as transições e o papel pretendido do convite, e o efeito de uma igreja INATIVO.
+- [[features/FOUNDATION-002]]: contrato VERSÃO 2 READY; 9 migrations escritas e não aplicadas. Mecanismo, ordem vinculante e convenções do schema oficial em [[tecnico/BANCO-DE-DADOS]].

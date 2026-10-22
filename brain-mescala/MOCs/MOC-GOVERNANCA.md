@@ -22,15 +22,15 @@ Decisões, pendências, entrega de features, agentes e estado atual do sistema.
 - [[decisoes/PENDENCIAS]]: índice. Itens decididos ficam com o título original e apontam para a nota da decisão.
 - Abertas: [[decisoes/PENDENCIAS#DEC-04 — Estratégia de migrations e forma de acesso ao banco|DEC-04, parte 2]] (acesso ao banco), [[decisoes/PENDENCIAS#DEC-06 — Provisionamento do usuário do Mescala|DEC-06]] (provisionamento do usuário) e [[decisoes/PENDENCIAS#DEC-07 — Padrão HTTP de erros e convenções de API|DEC-07]] (padrão HTTP de erros e convenções de API), estas duas propostas pela AUTH-001.
 - [[decisoes/PENDENCIAS#Condições operacionais do ADR-003|Condições operacionais do ADR-003]], com o PO.
-- [[decisoes/PENDENCIAS#Pontos em aberto criados pelas decisões de 2026-10-22|Pontos criados pelas decisões de 2026-10-22]] e [[decisoes/PENDENCIAS#Lacunas observadas no registro de 2026-10-21|lacunas observadas no registro]].
-- Aceitos com condições e ainda abertos: [[decisoes/PENDENCIAS#RT-FOUND-01 — Dívida de tooling no backend|RT-FOUND-01]] (dívida de tooling) e [[decisoes/PENDENCIAS#L-06 — Arquivos .jsx fora das guardas de lint|L-06]] (`.jsx` fora das guardas de lint).
+- [[decisoes/PENDENCIAS#Pontos em aberto criados pelas decisões de 2026-10-22|Pontos criados pelas decisões de 2026-10-22]] e [[decisoes/PENDENCIAS#Lacunas observadas no registro de 2026-10-21|lacunas observadas no registro]] (decididas em 2026-10-22 pelas respostas aos bloqueios B-01 a B-04 da FOUNDATION-002, exceto o fluxo do convite e o efeito de uma igreja INATIVO).
+- Aceitos com condições e ainda abertos: [[decisoes/PENDENCIAS#RT-FOUND-01 — Dívida de tooling no backend|RT-FOUND-01]] (dívida de tooling), [[decisoes/PENDENCIAS#L-07 — Guarda 2b não normaliza o especificador|L-07]] (guarda 2b não normaliza o especificador), [[decisoes/PENDENCIAS#RT-AUTH-01 — Cache de segmento do Next sobre a busca do JWKS|RT-AUTH-01]] (cache de segmento sobre o JWKS) e [[decisoes/PENDENCIAS#RT-AUTH-02 — Composição padrão no domínio|RT-AUTH-02]] (composição no domínio). Encerrado em 2026-10-22: [[decisoes/PENDENCIAS#L-06 — Arquivos .jsx fora das guardas de lint|L-06]].
 - Resolvida no repositório: [[decisoes/PENDENCIAS#Cache do Supabase CLI no git|cache do Supabase CLI no git]] (commit `a034046`).
 
 ## Entrega de features
 - [[features/FLUXO-DE-ENTREGA]]
 - [[features/FOUNDATION-001]]: implementada e encerrada (ARCHITECT REVIEW APPROVED em 2026-10-19, commit `7f26d30`).
-- AUTH-001: sem bloqueios de decisão; passa a READY quando o Arquiteto atualizar o contrato com o Vitest ([[decisoes/PENDENCIAS#AUTH-001 — Fundação de Autenticação|registro em PENDENCIAS]]).
-- FOUNDATION-002 — Fundação de Persistência: próxima feature prevista; contrato ainda não emitido.
+- [[features/AUTH-001]]: implementada e encerrada (ARCHITECT REVIEW APPROVED_WITH_NOTES em 2026-10-22, commit `50eaa1f`).
+- [[features/FOUNDATION-002]] — Fundação de Persistência: contrato VERSÃO 2 READY e Fase 4 autorizada (2026-10-22); 9 migrations escritas e **não aplicadas**; delta da VERSÃO 2 em curso; aplicação pelo PO pendente.
 
 ## Agentes
 - [[agents/arquiteto]]
@@ -41,9 +41,9 @@ Decisões, pendências, entrega de features, agentes e estado atual do sistema.
 - [[agents/vault-brain]]
 
 ## Estado atual (backend oficial)
-- [[tecnico/BACKEND]]: `/backend` só com a rota técnica `GET /api/health` ([[features/FOUNDATION-001]]).
+- [[tecnico/BACKEND]]: `/backend` só com a rota técnica `GET /api/health` ([[features/FOUNDATION-001]]) e, desde a [[features/AUTH-001]], a verificação do access token em `domains/auth`, ainda sem rota protegida.
 - [[tecnico/API]]: contratos de negócio continuam **A DEFINIR**; autenticação das rotas decidida pelo ADR-003.
-- [[tecnico/BANCO-DE-DADOS]]: banco oficial no projeto `vitqnyzuvrvkmnvshcpb`, começando vazio; nenhuma migration oficial criada.
+- [[tecnico/BANCO-DE-DADOS]]: banco oficial no projeto `vitqnyzuvrvkmnvshcpb`, começando vazio; schema `mescala`; 9 migrations da FOUNDATION-002 escritas e não aplicadas.
 
 ## Estado atual (legado)
 - [[tecnico/LEGADO-ATUAL]] (sem uso real, segundo o PO em 2026-10-22)
@@ -52,9 +52,9 @@ Decisões, pendências, entrega de features, agentes e estado atual do sistema.
 - [[produto/CONCEITOS-DO-CANVAS]] e [[Fluxograma.canvas]]
 
 ## Fontes fora do vault
-- `docs/features/<ID>.md`: Feature Contracts e QA Contracts. Hoje: `FOUNDATION-001.md` (versionado) e `AUTH-001.md` (fora do git).
-- ARCHITECT REVIEW da FOUNDATION-001: não foram gravadas em arquivo; o registro permanente está em [[features/FOUNDATION-001]].
-- `backend/`: código do backend oficial (commit `7f26d30`).
+- `docs/features/<ID>.md`: Feature Contracts e QA Contracts. Hoje: `FOUNDATION-001.md`, `AUTH-001.md` (versionado desde o commit `50a1cd6`; v2 no `4039fe0`) e `FOUNDATION-002.md` (versionado desde o commit `4039fe0`, com a VERSÃO 1; a VERSÃO 2 ainda não foi commitada). Também `FOUNDATION-002-DATA-TASK-RESULT.md` (relatório do Analista; ainda não commitado).
+- ARCHITECT REVIEW da FOUNDATION-001 e da AUTH-001: não foram gravadas no repositório; o registro permanente está em [[features/FOUNDATION-001]] e [[features/AUTH-001]].
+- `backend/`: código do backend oficial (commits `7f26d30` e `50eaa1f`). `backend/supabase/`: configuração da CLI e migrations da FOUNDATION-002, ainda não commitadas.
 - `docs/data/DATA-ARCHITECTURE-REPORT.md`: relatório do Analista de Dados; decisões aceitas pelo PO em 2026-10-21 ([[decisoes/DEC-09-MODELO-DE-DADOS|DEC-09]]).
 - `.claude/agents/*.md`: definições executáveis dos agentes.
 

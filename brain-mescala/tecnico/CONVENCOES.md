@@ -1,6 +1,6 @@
 ---
 tipo: tecnico
-atualizado: 2026-10-21
+atualizado: 2026-10-22
 ---
 # Convenções
 - regras de negócio documentadas antes de mudanças estruturais;
@@ -17,3 +17,7 @@ atualizado: 2026-10-21
 - Identificadores do schema oficial em inglês; status e papéis com os valores da Brain, em MAIÚSCULAS ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-018 — Nomenclatura e idioma|DATA-DEC-018]]).
 - Migrations oficiais em `backend/supabase/migrations/`, no formato `<YYYYMMDDHHMMSS>_<objetivo>.sql` ([[decisoes/DEC-04-ESTRATEGIA-DE-MIGRATIONS|DEC-04]]).
 - Regras de negócio novas seguem o padrão `<ÁREA>-<NNN> — título` e citam a decisão de origem ([[05-REGRAS-DE-NEGOCIO]]).
+
+## Convenções técnicas registradas em outras notas
+- **Código e testes do `/backend`** (pastas, nomes de arquivo, imports, composição, Vitest, local e nome dos testes; desde a AUTH-001, 2026-10-22): [[tecnico/BACKEND#Convenções do código e dos testes (desde a AUTH-001)|tecnico/BACKEND]].
+- **Schema oficial e migrations** (privilégios explícitos, unicidade com `church_id`, ordem dos timestamps, migration aplicada não é editada; FOUNDATION-002, 2026-10-22): [[tecnico/BANCO-DE-DADOS#Convenções do schema oficial (FOUNDATION-002, 2026-10-22)|tecnico/BANCO-DE-DADOS]]. São convenções técnicas, não regras de negócio `<ÁREA>-<NNN>`.
