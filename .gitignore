@@ -13,6 +13,7 @@ dist-ssr
 *.local
 .env
 auth.txt
+acessos.txt
 
 # Editor directories and files
 .vscode/*
@@ -25,3 +26,4 @@ auth.txt
 *.sln
 *.sw?
 supabase/.temp/
+
