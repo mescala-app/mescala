@@ -40,3 +40,4 @@ O prompt completo do agente fica fora do vault, em `.claude/agents/organizador-m
 - `/backend` existe desde a [[features/FOUNDATION-001]] (APPROVED em 2026-10-19). Nela o Organizador entregou ORGANIZED, só completando um comentário. Na rodada de correção não houve etapa de organização, porque nada foi criado nem movido.
 - Estrutura a vigiar em toda feature (limite L-02 da FOUNDATION-001): criar `backend/app/`, `pages/`, `src/pages/`, `middleware.*` ou `proxy.*` viola a estrutura do contrato ([[features/FOUNDATION-001#Limites aceitos das guardas de lint|limites aceitos]]).
 - Código legado fora do escopo: [[tecnico/LEGADO-ATUAL]].
+- Desde 2026-10-21, as migrations oficiais ficam dentro do `/backend`, em `backend/supabase/migrations/` ([[decisoes/DEC-04-ESTRATEGIA-DE-MIGRATIONS|DEC-04]]). Pela regra 5, não são movidas nem renomeadas. A definição canônica do agente ainda cita só `supabase/migrations/`.

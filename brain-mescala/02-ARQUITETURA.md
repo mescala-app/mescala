@@ -1,6 +1,7 @@
 ---
 tipo: arquitetura
 status: ativo
+atualizado: 2026-10-22
 relacionado:
   - "[[tecnico/FRONTEND]]"
   - "[[tecnico/BACKEND]]"
@@ -24,13 +25,19 @@ Veja [[05-REGRAS-DE-NEGOCIO]] e [[seguranca/AUTORIZACAO]].
 ## Decisões
 - [[decisoes/ADR-001-ESTRUTURA-INICIAL]]
 - [[decisoes/ADR-002-BACKEND-OFICIAL]]
+- [[decisoes/ADR-003-AUTENTICACAO]]: Supabase Auth do projeto oficial; backend como resource server sem estado (2026-10-21).
+- [[decisoes/DEC-02-BIBLIOTECA-DE-TESTES]]: Vitest (2026-10-22).
+- [[decisoes/DEC-04-ESTRATEGIA-DE-MIGRATIONS]]: migrations oficiais em `backend/supabase/migrations/` (parte 1, 2026-10-21); forma de acesso ao banco aberta (parte 2).
+- [[decisoes/DEC-05-PROJETO-SUPABASE-OFICIAL]]: projeto Supabase oficial novo, `vitqnyzuvrvkmnvshcpb` (2026-10-21).
+- [[decisoes/DEC-09-MODELO-DE-DADOS]]: modelo de dados (DATA-DEC-001 a 023, 2026-10-21; micro-decisões em 2026-10-22).
 
 ## Estado atual
 - O backend oficial existe em `/backend` desde a [[features/FOUNDATION-001]] (implementada e encerrada em 2026-10-19, commit `7f26d30`): Next.js, TypeScript e runtime Node.js, só com a rota técnica `GET /api/health` ([[decisoes/DEC-01-ROTA-TECNICA-HEALTH|DEC-01]]). Ainda não tem regra de negócio, banco nem autenticação ([[tecnico/BACKEND]]).
-- O app em uso é legado: frontend Vite + React gravando direto no Supabase, protegido só por RLS ([[tecnico/LEGADO-ATUAL]]). Ele não passa pelo backend oficial, o que contraria o princípio acima (divergência D1 em [[tecnico/DIVERGENCIAS-LEGADO]]).
+- Próximas features: AUTH-001 (sem bloqueios de decisão; READY quando o contrato for atualizado com o Vitest) e FOUNDATION-002 — Fundação de Persistência (contrato não emitido). Ver [[features/FLUXO-DE-ENTREGA]].
+- O app legado é um frontend Vite + React gravando direto no Supabase, protegido só por RLS, nos projetos antigos ([[tecnico/LEGADO-ATUAL]]). Ele não passa pelo backend oficial, o que contraria o princípio acima (divergência D1 em [[tecnico/DIVERGENCIAS-LEGADO]]). Em 2026-10-22, o PO registrou que ele não tem uso real.
 
 ## Pendências
-- [[decisoes/PENDENCIAS#DEC-02 — Biblioteca oficial de testes e quem escreve os testes|DEC-02]]: biblioteca de testes.
-- [[decisoes/PENDENCIAS#DEC-03 — Autenticação|DEC-03]]: autenticação. Há um contrato aguardando aprovação do PO que propõe resolvê-la: [[decisoes/PENDENCIAS#AUTH-001 — Fundação de Autenticação|AUTH-001]] (com as propostas DEC-05 a DEC-07).
-- [[decisoes/PENDENCIAS#DEC-04 — Estratégia de migrations e forma de acesso ao banco|DEC-04]]: migrations e acesso ao banco.
-- Plano de migração do frontend legado para `/backend`: necessita decisão.
+- [[decisoes/PENDENCIAS#DEC-04 — Estratégia de migrations e forma de acesso ao banco|DEC-04, parte 2]]: forma de acesso do backend ao banco.
+- [[decisoes/PENDENCIAS#DEC-06 — Provisionamento do usuário do Mescala|DEC-06]] e [[decisoes/PENDENCIAS#DEC-07 — Padrão HTTP de erros e convenções de API|DEC-07]], propostas pela AUTH-001.
+- [[decisoes/PENDENCIAS#Condições operacionais do ADR-003|Condições operacionais do ADR-003]], com o PO.
+- Plano para o frontend legado: necessita decisão.

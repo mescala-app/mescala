@@ -74,3 +74,5 @@ Pacote que aparece no lockfile só como transitivo, trazido exclusivamente por p
 ---
 
 Relacionados: [[decisoes/ADR-002-BACKEND-OFICIAL]], [[features/FOUNDATION-001]], [[tecnico/BACKEND]], [[decisoes/PENDENCIAS]], [[agents/qa]], [[agents/desenvolvedor-backend]], [[MOCs/MOC-GOVERNANCA]].
+
+Relacionados (acrescentados em 2026-10-21 e 2026-10-22): [[decisoes/DEC-02-BIBLIOTECA-DE-TESTES]], [[decisoes/DEC-04-ESTRATEGIA-DE-MIGRATIONS]], [[decisoes/ADR-003-AUTENTICACAO]], [[decisoes/DEC-05-PROJETO-SUPABASE-OFICIAL]].

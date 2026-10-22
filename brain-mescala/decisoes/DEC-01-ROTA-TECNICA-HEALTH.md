@@ -63,3 +63,5 @@ DEC-01 não define:
 Relacionados: [[decisoes/ADR-002-BACKEND-OFICIAL]], [[tecnico/API]], [[tecnico/BACKEND]], [[seguranca/AUTENTICACAO]], [[seguranca/ISOLAMENTO-DE-DADOS]].
 
 Relacionados (acrescentados em 2026-10-06): [[features/FOUNDATION-001]], [[decisoes/PENDENCIAS]].
+
+Relacionados (acrescentados em 2026-10-21): [[decisoes/ADR-003-AUTENTICACAO]].

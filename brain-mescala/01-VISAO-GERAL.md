@@ -8,7 +8,7 @@ relacionado:
 ---
 # Visão Geral
 
-O **Mescala** é um SaaS para gestão de equipes, programações e escalas de igrejas.
+O **Mescala** é um SaaS para gestão de ministérios, programações e escalas de igrejas.
 
 Seu objetivo é transformar o processo de organização de pessoas em um fluxo centralizado, rastreável e previsível:
 
@@ -22,12 +22,13 @@ Seu objetivo é transformar o processo de organização de pessoas em um fluxo c
 - falta de histórico e rastreabilidade.
 
 ## Estrutura conceitual
-[[modulos/IGREJAS|Igreja]] → [[modulos/EQUIPES|Equipes]] → [[modulos/PROGRAMACOES|Programações]] → [[modulos/ESCALAS|Escalas]] → [[dados/ENTIDADES#Alocação|Alocações]].
+[[modulos/IGREJAS|Igreja]] → [[modulos/EQUIPES|Ministérios]] → [[modulos/PROGRAMACOES|Programações]] → [[modulos/ESCALAS|Escalas]] → [[dados/ENTIDADES#Alocação|Alocações]].
 
 ## Próximas leituras
 - [[03-DOMINIO]]
 - [[04-USUARIOS-E-PERMISSOES]]
 - [[05-REGRAS-DE-NEGOCIO]]
 - [[MOCs/MOC-DOMINIO]]
-- [[decisoes/PENDENCIAS]]: o que ainda não foi decidido (inclusive Equipe × Ministério).
+- [[decisoes/PENDENCIAS]]: o que ainda não foi decidido.
+- [[decisoes/DEC-09-MODELO-DE-DADOS]]: decisões do modelo de dados. "Ministério" é o termo canônico desde 2026-10-21; até então, a Brain dizia "Equipe".
 - [[tecnico/LEGADO-ATUAL]]: o sistema em uso hoje, que ainda não segue esta estrutura.

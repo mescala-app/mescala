@@ -16,6 +16,8 @@ relacionado:
   - "[[features/FLUXO-DE-ENTREGA]]"
   - "[[decisoes/PENDENCIAS]]"
   - "[[tecnico/BACKEND]]"
+  - "[[decisoes/DEC-02-BIBLIOTECA-DE-TESTES]]"
+atualizado: 2026-10-22
 ---
 # FOUNDATION-001 — Inicialização do Backend Next.js
 
@@ -80,7 +82,7 @@ Na rodada de correção não houve etapa do Organizador: nada foi criado nem mov
 - **Ferramentas:** typecheck, lint e build passam.
 - **B1 e B2:** teste HTTP manual local feito pelo QA, autorizado pelo contrato até a DEC-02. Vale como evidência, não como regressão.
 - **Dependências de produção:** `npm audit --omit=dev` = 0.
-- **B1–B3 como regressão automatizada:** continuam **NOT TESTED** até a [[decisoes/PENDENCIAS#DEC-02 — Biblioteca oficial de testes e quem escreve os testes|DEC-02]]. Quando ela for decidida, a [[#Verificação mínima de regressão do lint|verificação mínima de regressão do lint]] vira o teste automatizado B3.
+- **B1–B3 como regressão automatizada:** ficaram **NOT TESTED** nesta feature, porque a biblioteca de testes não estava decidida. A [[decisoes/DEC-02-BIBLIOTECA-DE-TESTES|DEC-02]] foi decidida em 2026-10-22 (Vitest): daqui para frente, esses cenários viram teste automatizado quando o lint for alterado, a começar pela [[#Verificação mínima de regressão do lint|verificação mínima de regressão do lint]] (B3).
 - Sem cenários de banco.
 
 ## Decisões e desvios aceitos pelo Arquiteto
@@ -139,19 +141,19 @@ Vale para **toda feature que alterar `backend/eslint.config.mjs`**.
   - `require("next/server")` em `.js` ou `.cjs` → erro de qualquer regra;
   - `import s = require("next/server")` em `.ts` → erro com a mensagem do ADR-002.
 - **Depois de corrigido o L-06:** os casos `.jsx` das duas guardas.
-- **Quando a DEC-02 for decidida,** esse conjunto vira o teste automatizado B3.
+- **DEC-02 decidida em 2026-10-22 (Vitest):** esse conjunto vira o teste automatizado B3 na primeira feature que alterar o lint ([[decisoes/DEC-02-BIBLIOTECA-DE-TESTES|DEC-02]]).
 
 ## Dependências entre features
 - **DEPENDS_ON:** [[decisoes/ADR-002-BACKEND-OFICIAL|ADR-002]] (aceito); [[decisoes/DEC-01-ROTA-TECNICA-HEALTH|DEC-01]] (aceita).
-- **BLOCKS (segundo o contrato):** a fundação oficial de persistência (sem contrato, ID a definir) e todas as features de negócio. Com a FOUNDATION-001 aprovada, essa dependência está cumprida; elas continuam esperando as próprias decisões ([[decisoes/PENDENCIAS]]).
-- **RELATED_TO:** DEC-02, DEC-03 e DEC-04, todas pendentes ([[decisoes/PENDENCIAS]]).
-- **AUTH-001:** o contrato emitido em 2026-10-06, que aguarda aprovação do PO, tem a FOUNDATION-001 aprovada como uma de suas condições. Essa condição está cumprida ([[decisoes/PENDENCIAS#AUTH-001 — Fundação de Autenticação|AUTH-001]]).
+- **BLOCKS (segundo o contrato):** a fundação oficial de persistência e todas as features de negócio. Com a FOUNDATION-001 aprovada, essa dependência está cumprida. A fundação de persistência é a **FOUNDATION-002** (contrato ainda não emitido; [[features/FLUXO-DE-ENTREGA]]).
+- **RELATED_TO:** DEC-02 (decidida em 2026-10-22), DEC-03 (decidida em 2026-10-21 pelo [[decisoes/ADR-003-AUTENTICACAO|ADR-003]]) e DEC-04 (parte 1 decidida em 2026-10-21; parte 2 aberta).
+- **AUTH-001:** tem a FOUNDATION-001 aprovada como uma de suas condições, cumprida. Desde 2026-10-22, o contrato está sem bloqueios de decisão ([[decisoes/PENDENCIAS#AUTH-001 — Fundação de Autenticação|AUTH-001]]).
 
 ## Decisões pendentes citadas pelo contrato
-Não bloquearam a FOUNDATION-001 e continuam abertas:
-- [[decisoes/PENDENCIAS#DEC-02 — Biblioteca oficial de testes e quem escreve os testes|DEC-02]]: biblioteca de testes e quem escreve testes. Dela dependem B1–B3 como regressão automatizada.
-- [[decisoes/PENDENCIAS#DEC-03 — Autenticação|DEC-03]]: autenticação.
-- [[decisoes/PENDENCIAS#DEC-04 — Estratégia de migrations e forma de acesso ao banco|DEC-04]]: estratégia de migrations e forma de acesso ao banco.
+Não bloquearam a FOUNDATION-001. Situação em 2026-10-22:
+- [[decisoes/PENDENCIAS#DEC-02 — Biblioteca oficial de testes e quem escreve os testes|DEC-02]]: biblioteca de testes e quem escreve testes. **Decidida em 2026-10-22:** Vitest ([[decisoes/DEC-02-BIBLIOTECA-DE-TESTES|DEC-02]]).
+- [[decisoes/PENDENCIAS#DEC-03 — Autenticação|DEC-03]]: autenticação. **Decidida em 2026-10-21** pelo [[decisoes/ADR-003-AUTENTICACAO|ADR-003]].
+- [[decisoes/PENDENCIAS#DEC-04 — Estratégia de migrations e forma de acesso ao banco|DEC-04]]: estratégia de migrations e forma de acesso ao banco. **Parte 1 decidida em 2026-10-21** ([[decisoes/DEC-04-ESTRATEGIA-DE-MIGRATIONS|DEC-04]]); parte 2 aberta.
 
 ## Divergências registradas pelo contrato
 O contrato registra três ARCHITECTURAL DIVERGENCE entre o código existente e a Brain. Nenhuma bloqueou esta feature. Detalhes em [[tecnico/DIVERGENCIAS-LEGADO]]:

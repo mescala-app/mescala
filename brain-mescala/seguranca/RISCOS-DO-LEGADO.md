@@ -3,7 +3,10 @@ tipo: seguranca
 status: risco-conhecido
 verificacao: leitura-estatica
 origem: docs/data/DATA-ARCHITECTURE-REPORT.md (seção 8)
+atualizado: 2026-10-22
+correcao: nao-se-aplica (app legado sem uso real, 2026-10-22)
 relacionado:
+  - "[[decisoes/DEC-09-MODELO-DE-DADOS]]"
   - "[[seguranca/ISOLAMENTO-DE-DADOS]]"
   - "[[seguranca/AUTORIZACAO]]"
   - "[[tecnico/LEGADO-ATUAL]]"
@@ -11,7 +14,9 @@ relacionado:
 ---
 # Riscos de segurança conhecidos do legado
 
-Achados S1–S11 do relatório do Analista de Dados (`docs/data/DATA-ARCHITECTURE-REPORT.md`, seção 8, fora do vault) sobre o **sistema legado** ([[tecnico/LEGADO-ATUAL]]): policies de RLS das migrations em `supabase/migrations/` e as Edge Functions de convite. Não se referem ao backend oficial (`/backend`), que hoje só tem a rota técnica `GET /api/health` ([[features/FOUNDATION-001]]).
+Achados S1–S11 do relatório do Analista de Dados (`docs/data/DATA-ARCHITECTURE-REPORT.md`, seção 8, fora do vault) sobre o **sistema legado** ([[tecnico/LEGADO-ATUAL]]): policies de RLS das migrations em `supabase/migrations/` e as Edge Functions de convite, nos projetos Supabase antigos. Não se referem ao backend oficial (`/backend`), que hoje só tem a rota técnica `GET /api/health` ([[features/FOUNDATION-001]]), nem ao projeto oficial novo ([[decisoes/DEC-05-PROJETO-SUPABASE-OFICIAL|DEC-05]]).
+
+> **Situação em 2026-10-22:** o app legado não tem uso real e a correção não se aplica. **Os riscos continuam existindo nos projetos antigos enquanto estiverem ativos** (ver [[#Tratamento]]).
 
 > **Como foram obtidos:** por leitura estática das migrations e do código. **Não foram testados contra o banco.** O relatório também diz que o estado real do banco remoto não foi verificado. Severidades são as do relatório.
 
@@ -46,12 +51,13 @@ Resultado descrito: controle da equipe, das escalas e dos contatos dos membros (
 ## Outros riscos do relatório (seção 16) ligados a segurança
 - Falhas de RLS exploráveis hoje, com a chave pública no frontend.
 - Status dos convites legados provavelmente não confiável (S7).
-- Se as tabelas novas forem criadas em `public` com policy permissiva, ficam expostas à API pública ([[decisoes/PENDENCIAS#DATA-DEC-020 — Onde o schema vive e modelo de RLS|DATA-DEC-020]]).
+- Se as tabelas novas forem criadas em `public` com policy permissiva, ficam expostas à API pública ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-020 — Onde o schema vive e modelo de RLS|DATA-DEC-020]], decidida em 2026-10-21: schema dedicado fora da Data API).
 
-## Tratamento: pendente
-- **Decisão:** [[decisoes/PENDENCIAS#DATA-DEC-023 — Correção urgente de segurança no legado|DATA-DEC-023]] (corrigir agora numa migration pequena e separada, ou esperar o redesenho). **Não decidida.**
-- Pelo relatório, a correção proposta na opção A cobriria S1, S2, S5 e S6; S3 e S4 exigem uma função dedicada e mudança no frontend, numa tarefa própria.
-- O relatório trata essa correção como trilha separada da fundação de persistência, com autorização própria.
-- Nenhuma migration foi criada para isso até 2026-10-06.
+## Tratamento
+- **2026-10-21:** o PO aceitou a [[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-023 — Correção urgente de segurança no legado|DATA-DEC-023]] na opção A (migration pequena e separada do redesenho), **condicionada ao uso real do app legado**. Pelo relatório, essa correção cobriria S1, S2, S5 e S6; S3 e S4 exigiriam uma função dedicada e mudança no frontend, numa tarefa própria.
+- **2026-10-22:** o PO registrou que o app legado **não tem uso real** ("o app antigo não tinha movimento"). A condição não se cumpre: **a correção não se aplica**, e nenhuma migration foi criada para ela.
+- **Os riscos S1–S11 continuam existindo** nos projetos Supabase antigos (`ehbidizpzxhfusfyjgtl` e `fiurvpkieiorngshjric`) **enquanto eles estiverem ativos**. Pausar ou excluir esses projetos é decisão operacional do PO, com data **A DEFINIR** ([[decisoes/PENDENCIAS#Pausar ou excluir os projetos antigos — DATA-DEC-022|PENDENCIAS]]).
+- O backend oficial usa outro projeto (`vitqnyzuvrvkmnvshcpb`, [[decisoes/DEC-05-PROJETO-SUPABASE-OFICIAL|DEC-05]]), com o banco começando vazio, sem cópia de dados do legado ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-022 — Convivência com o legado e migração de dados|DATA-DEC-022]]).
+- Para o modelo oficial, o relatório alerta que tabelas criadas em `public` com policy permissiva ficariam expostas à API pública. A [[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-020 — Onde o schema vive e modelo de RLS|DATA-DEC-020]] decidiu um schema dedicado fora da Data API.
 
 Relacionados: [[MOCs/MOC-SEGURANCA]], [[tecnico/DIVERGENCIAS-LEGADO]], [[agents/analista-de-dados]], [[agents/qa]].

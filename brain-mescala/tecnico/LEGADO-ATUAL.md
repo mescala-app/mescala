@@ -4,7 +4,8 @@ camada: legado
 status: legado
 normativo: false
 verificado: 2026-10-06
-atualizado: 2026-10-20
+atualizado: 2026-10-22
+uso-real: nao (PO, 2026-10-22)
 relacionado:
   - "[[decisoes/ADR-002-BACKEND-OFICIAL]]"
   - "[[tecnico/DIVERGENCIAS-LEGADO]]"
@@ -17,9 +18,11 @@ relacionado:
 > **Nota descritiva, não normativa.** Registra o que existe hoje no repositório. Não é fonte de regra: onde o legado diverge da Brain, a Brain prevalece e a divergência vai para [[tecnico/DIVERGENCIAS-LEGADO]].
 
 ## Resumo
-O app em uso hoje (produção/teste) é um **frontend Vite + React que grava direto nas tabelas do Supabase**, protegido **só por RLS**, com **Edge Functions para convites**. Ele não passa por backend próprio.
+O app legado é um **frontend Vite + React que grava direto nas tabelas do Supabase**, protegido **só por RLS**, com **Edge Functions para convites**. Ele não passa por backend próprio.
 
-Isso diverge da arquitetura oficial: o [[decisoes/ADR-002-BACKEND-OFICIAL|ADR-002]] define um backend Next.js em `/backend` como entrada da aplicação e diz que Edge Functions não são a arquitetura principal. O `/backend` existe desde a [[features/FOUNDATION-001]] (APPROVED em 2026-10-19, commit `7f26d30`), mas só tem a rota técnica `GET /api/health`, e o app em uso não o utiliza ([[tecnico/BACKEND]]).
+> **Sem uso real** (decisão do PO, 2026-10-22: "o app antigo não tinha movimento"). Consequências: não há migração de dados para o modelo oficial, a consulta de inventário foi dispensada e a correção de segurança do legado não se aplica ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-022 — Convivência com o legado e migração de dados|DATA-DEC-022]], [[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-023 — Correção urgente de segurança no legado|DATA-DEC-023]]). Os riscos S1–S11 continuam existindo nos projetos antigos enquanto estiverem ativos ([[seguranca/RISCOS-DO-LEGADO]]). Pausar ou excluir esses projetos é decisão operacional do PO, com data **A DEFINIR**.
+
+Isso diverge da arquitetura oficial: o [[decisoes/ADR-002-BACKEND-OFICIAL|ADR-002]] define um backend Next.js em `/backend` como entrada da aplicação e diz que Edge Functions não são a arquitetura principal. O `/backend` existe desde a [[features/FOUNDATION-001]] (APPROVED em 2026-10-19, commit `7f26d30`), mas só tem a rota técnica `GET /api/health`, e o app legado não o utiliza ([[tecnico/BACKEND]]).
 
 ## Origem
 - O projeto começou como **Escala.iasd** (commit inicial "Escala.iasd baseline"). O `README.md` da raiz descreve essa versão. Ele é contexto histórico, **não é fonte normativa** da Brain.
@@ -44,13 +47,13 @@ Isso diverge da arquitetura oficial: o [[decisoes/ADR-002-BACKEND-OFICIAL|ADR-00
 | `lider` | Líder de Equipe | `/lider` |
 | `membro` | Membro de Equipe | `/membro` |
 
-A autenticação oficial está pendente ([[decisoes/PENDENCIAS#DEC-03 — Autenticação|DEC-03]]; [[seguranca/AUTENTICACAO]]). O uso de Supabase Auth no legado não decide nada para o backend oficial.
+A autenticação oficial foi decidida pelo [[decisoes/ADR-003-AUTENTICACAO|ADR-003]] em 2026-10-21: Supabase Auth do projeto **novo** `vitqnyzuvrvkmnvshcpb` ([[decisoes/DEC-05-PROJETO-SUPABASE-OFICIAL|DEC-05]]), não dos projetos do legado ([[seguranca/AUTENTICACAO]]). O uso de Supabase Auth no legado não decidiu nada para o backend oficial.
 
 ## Convites (comportamento legado)
 - Convite por email com token, guardado em texto puro na tabela `convites`.
 - Regra legada de quem convida quem (migration de 2026-07-11): **Líder de Igreja** só convida **Líder de Equipe**; **Líder de Equipe** só convida **Membro de Equipe**.
 - O líder também cadastra pessoas sem conta em `member_contacts` e depois as convida.
-- A Brain não tem convite nem membro sem conta. Ambos estão em decisão: [[decisoes/PENDENCIAS#DATA-DEC-011 — Convites|DATA-DEC-011]] e [[decisoes/PENDENCIAS#DATA-DEC-010 — Membro sem conta|DATA-DEC-010]].
+- Desde 2026-10-21, o modelo oficial tem convite, com só o hash do token, e não tem membro sem conta ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-011 — Convites|DATA-DEC-011]], [[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-010 — Membro sem conta|DATA-DEC-010]]). A regra legada de quem convida quem foi registrada na Brain como [[05-REGRAS-DE-NEGOCIO#MEM-003 — Quem convida quem|MEM-003]].
 
 ## Edge Functions (`supabase/functions/`)
 | Função | O que faz | Observação |
@@ -65,13 +68,13 @@ A autenticação oficial está pendente ([[decisoes/PENDENCIAS#DEC-03 — Autent
 - **Funções do RLS:** `user_belongs_to_igreja`, `user_belongs_to_equipe`, `user_is_lider_of_equipe` (SECURITY DEFINER). `has_role()` existe, mas nenhuma policy a usa.
 - **Papéis com três fontes de verdade:** `user_roles`, `igrejas.organizador_id` e `equipes.lider_id`.
 - **Exclusão em cascata:** apagar uma igreja ou um usuário apaga escalas, escalações e papéis. O histórico desaparece, o que contraria [[05-REGRAS-DE-NEGOCIO#ESC-004 — Histórico de substituição|ESC-004]] e [[seguranca/AUDITORIA]].
-- **Migrations:** 9 em `supabase/migrations/`. O `types.ts` gerado bate com elas. O estado real do banco remoto não foi verificado; a consulta de inventário está pendente ([[decisoes/PENDENCIAS]]).
+- **Migrations:** 9 em `supabase/migrations/`, ligadas ao app legado. O `types.ts` gerado bate com elas. Elas **nunca** são aplicadas no banco oficial, cujas migrations ficam em `backend/supabase/migrations/` ([[decisoes/DEC-04-ESTRATEGIA-DE-MIGRATIONS|DEC-04]]). O estado real do banco remoto não foi verificado; a consulta de inventário foi dispensada em 2026-10-22.
 
 ## Versionamento (conferido com `git ls-files` em 2026-10-20)
 - **Correção (divergência D5, apontada na análise da AUTH-001):** esta nota dizia que estavam fora do git as 3 migrations de julho (`20260711053429_fix_convite_lider_rls`, `20260711060850_apelido_e_convites_por_perfil`, `20260712094502_profiles_confirmado_teste`), a função `aceitar-convite-cadastro`, `src/lib/profiles.ts`, `brain-mescala/`, `docs/`, `.claude/` e `daily/`. Isso vinha do `git status` de 2026-10-06, anterior ao commit `0394893` (2026-10-06 20:13), que versionou todos esses arquivos.
 - **Hoje:** as 9 migrations e as 2 Edge Functions estão versionadas. Só `docs/features/AUTH-001.md` está fora do git, além do que o `.gitignore` ignora de propósito (por exemplo `.env`, `node_modules/` e os artefatos de build do `/backend`).
-- **Consequência que o relatório de dados registrava:** a regra "schema = migrations" do [[decisoes/ADR-002-BACKEND-OFICIAL|ADR-002]] não estava garantida, porque havia migrations fora do git. Essa causa deixou de existir. Se o banco remoto corresponde às migrations continua sem verificação: a consulta de inventário está pendente ([[decisoes/PENDENCIAS]]).
-- **Observação para o PO decidir:** `supabase/.temp/` (cache do Supabase CLI, com project ref e URL do pooler com usuário, sem senha) está versionado desde o commit `a6447fc` (2026-07-11). Ver [[decisoes/PENDENCIAS#Cache do Supabase CLI no git|Cache do Supabase CLI no git]].
+- **Consequência que o relatório de dados registrava:** a regra "schema = migrations" do [[decisoes/ADR-002-BACKEND-OFICIAL|ADR-002]] não estava garantida, porque havia migrations fora do git. Essa causa deixou de existir. Se o banco remoto corresponde às migrations não foi verificado; a consulta de inventário foi dispensada em 2026-10-22, porque o app legado não tem uso real ([[decisoes/PENDENCIAS#Uso real do app legado — DATA-DEC-022 e 023|PENDENCIAS]]).
+- **Cache do Supabase CLI:** `supabase/.temp/` (project ref e URL do pooler com usuário, sem senha) estava versionado desde o commit `a6447fc` (2026-07-11). O commit `a034046` o tirou do git e o acrescentou ao `.gitignore`; o histórico anterior ainda contém os arquivos. Ver [[decisoes/PENDENCIAS#Cache do Supabase CLI no git|Cache do Supabase CLI no git]].
 
 ## Histórico recente (resumo do `daily/2026-07-11.txt`)
 - Corrigida a policy de RLS que impedia o líder de equipe de assumir a equipe depois de aceitar o convite.
@@ -84,11 +87,11 @@ A autenticação oficial está pendente ([[decisoes/PENDENCIAS#DEC-03 — Autent
 ## Relação com a arquitetura oficial
 - Divergências formais: D1–D3 da [[features/FOUNDATION-001]], D4–D5 da análise da AUTH-001 e a seção 9 do relatório de dados, todas em [[tecnico/DIVERGENCIAS-LEGADO]].
 - Riscos de segurança conhecidos: [[seguranca/RISCOS-DO-LEGADO]].
-- Convivência e migração para o modelo oficial: [[decisoes/PENDENCIAS#DATA-DEC-022 — Convivência com o legado e migração de dados|DATA-DEC-022]].
-- Plano de migração do frontend para `/backend`: necessita decisão (D1).
-- Projeto Supabase: o `.env` do app e o vínculo do Supabase CLI apontam para um projeto (`ehbidizpzxhfusfyjgtl`), e o `supabase/config.toml` para outro (`fiurvpkieiorngshjric`). Divergência D4 da análise da AUTH-001; decisão proposta: [[decisoes/PENDENCIAS#DEC-05 — Projeto Supabase oficial|DEC-05]] (não decidida).
+- Convivência com o modelo oficial: schema oficial em paralelo, no projeto novo, sem tocar no legado; sem migração de dados, porque o app não tem uso real ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-022 — Convivência com o legado e migração de dados|DATA-DEC-022]]).
+- Plano para o frontend legado (D1): necessita decisão.
+- Projeto Supabase: o `.env` do app e o vínculo do Supabase CLI apontam para um projeto (`ehbidizpzxhfusfyjgtl`), e o `supabase/config.toml` para outro (`fiurvpkieiorngshjric`). Divergência D4 da análise da AUTH-001, **resolvida quanto ao backend oficial** em 2026-10-21: o projeto oficial é o novo `vitqnyzuvrvkmnvshcpb`, e os dois antigos ficam só para o legado ([[decisoes/DEC-05-PROJETO-SUPABASE-OFICIAL|DEC-05]]).
 
 ## Fontes (fora do vault)
-`src/`, `supabase/migrations/`, `supabase/functions/`, `README.md`, `daily/2026-07-11.txt` e as seções 1, 8 e 9 de `docs/data/DATA-ARCHITECTURE-REPORT.md`. Versionamento e projeto Supabase: `git log`, `git ls-files` (2026-10-20), `supabase/config.toml`, `supabase/.temp/` e as seções 1.3 e 1.4 de `docs/features/AUTH-001.md`.
+`src/`, `supabase/migrations/`, `supabase/functions/`, `README.md`, `daily/2026-07-11.txt` e as seções 1, 8 e 9 de `docs/data/DATA-ARCHITECTURE-REPORT.md`. Versionamento e projeto Supabase: `git log`, `git ls-files` (2026-10-20 e 2026-10-21), `supabase/config.toml`, `supabase/.temp/` e as seções 1.3 e 1.4 de `docs/features/AUTH-001.md`. Uso real: decisão do PO de 2026-10-22.
 
 Relacionados: [[MOCs/MOC-ARQUITETURA]], [[MOCs/MOC-GOVERNANCA]], [[tecnico/BACKEND]], [[tecnico/API]].

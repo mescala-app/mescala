@@ -392,3 +392,5 @@ Relacionados: [[decisoes/ADR-001-ESTRUTURA-INICIAL]], [[02-ARQUITETURA]], [[tecn
 Relacionados (acrescentados em 2026-10-06): [[features/FOUNDATION-001]], [[decisoes/PENDENCIAS]], [[tecnico/LEGADO-ATUAL]], [[tecnico/DIVERGENCIAS-LEGADO]].
 
 Relacionados (acrescentados em 2026-10-20): [[decisoes/DEC-08-DEPENDENCIAS-TRANSITIVAS]].
+
+Relacionados (acrescentados em 2026-10-21 e 2026-10-22): [[decisoes/ADR-003-AUTENTICACAO]], [[decisoes/DEC-02-BIBLIOTECA-DE-TESTES]], [[decisoes/DEC-04-ESTRATEGIA-DE-MIGRATIONS]], [[decisoes/DEC-05-PROJETO-SUPABASE-OFICIAL]], [[decisoes/DEC-09-MODELO-DE-DADOS]].

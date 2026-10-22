@@ -1,8 +1,15 @@
 # DATA ARCHITECTURE REPORT — Fundação de Persistência do Mescala (Fases 1 a 3)
 
 > Emitido pelo Analista de Dados (`analista-dados-mescala`) em 2026-10-04. Aprovado pelo PO como relatório.
-> **Status: AGUARDANDO DECISÕES DO PO** (seção 14) e o resultado da consulta de inventário (seção 1.3).
-> Nenhuma migration foi criada. A Fase 4 depende de autorização explícita.
+> **Status: DECISÕES ACEITAS PELO PO EM 2026-10-21.** Todos os DATA-DEC-001 a 023 foram aceitos na opção recomendada (seção 14). Registro oficial: `brain-mescala/decisoes/DEC-09-MODELO-DE-DADOS.md`.
+> **Micro-decisões respondidas pelo PO em 2026-10-22:**
+> - status do convite: PENDENTE, ACEITO, EXPIRADO, CANCELADO (DATA-DEC-011);
+> - status de vínculos, ministérios e funções: ATIVO, INATIVO (DATA-DEC-012);
+> - **escala nunca é cancelada**: o status CANCELADA sai da máquina de estados da Escala (RASCUNHO, PUBLICADA, CONCLUIDA); a questão DATA-DEC-016 (c) deixa de existir. Onde este relatório cita CANCELADA para Escala, vale esta decisão;
+> - só o próprio membro registra impedimento; o líder, se não quiser o membro participando, o exclui (detalhes no contrato da feature de escalas) (DATA-DEC-017);
+> - o app legado não tinha uso real: a correção do DATA-DEC-023 não se aplica e não há migração de dados (DATA-DEC-022). O banco oficial começa vazio e a consulta de inventário (seção 1.3) fica dispensada.
+> O banco oficial nasce do zero no projeto Supabase novo `vitqnyzuvrvkmnvshcpb` (DEC-05), com migrations em `backend/supabase/migrations/` (DEC-04, parte 1). As 9 migrations legadas de `supabase/migrations/` não rodam nele.
+> Nenhuma migration oficial foi criada ainda. A Fase 4 depende do contrato FOUNDATION-002 e de autorização explícita.
 
 ## Contexto
 

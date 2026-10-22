@@ -15,9 +15,9 @@ Antes de alterar código:
 3. leia [[05-REGRAS-DE-NEGOCIO]];
 4. leia o módulo/fluxo envolvido;
 5. não invente regras ausentes;
-6. confira [[decisoes/PENDENCIAS]]: o que está ali ainda não foi decidido.
+6. confira [[decisoes/PENDENCIAS]]: o que está marcado como aberto ali ainda não foi decidido; os itens decididos apontam para a nota da decisão em `/decisoes`.
 
-O sistema em uso hoje é legado e não é fonte de regra: veja [[tecnico/LEGADO-ATUAL]].
+O app legado não é fonte de regra (e, segundo o PO em 2026-10-22, não tem uso real): veja [[tecnico/LEGADO-ATUAL]].
 
 Entrega de features: [[features/FLUXO-DE-ENTREGA]].
 
