@@ -14,3 +14,7 @@ next-env.d.ts
 
 # Logs
 npm-debug.log*
+
+# Supabase CLI (cache local e vínculo com o projeto; nunca versionar)
+supabase/.temp/
+supabase/.branches/

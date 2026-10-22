@@ -1,0 +1,47 @@
+# ============================================================
+# ARQUIVO: backend/supabase/config.toml
+# DOMÍNIO: foundation
+# FEATURE: FOUNDATION-002
+# DECISÃO: DEC-04 (parte 1); DEC-05
+# ============================================================
+#
+# OBJETIVO
+#
+# Configuração própria da Supabase CLI para as migrations
+# oficiais (DEC-04 parte 1). As migrations ficam em
+# backend/supabase/migrations/ e são escritas pelo Analista de
+# Dados; quem as aplica é o PO.
+#
+# Arquivo mínimo, escrito à mão (ARQ-F002-10): o único conteúdo
+# funcional é `project_id`, igual ao project-ref do projeto
+# oficial (DEC-05), para que configuração e vínculo não
+# divirjam. Nenhuma outra chave ou seção.
+#
+# ------------------------------------------------------------
+# AVISOS
+# ------------------------------------------------------------
+#
+# 1. VÍNCULO COM O PROJETO REMOTO
+#    `project_id` NÃO vincula a CLI ao projeto remoto. O vínculo
+#    efetivo é feito pelo PO, dentro de /backend, com:
+#
+#      supabase link --project-ref vitqnyzuvrvkmnvshcpb
+#
+#    e fica gravado em supabase/.temp/, que é ignorado pelo git
+#    (backend/.gitignore).
+#
+# 2. CONFIGURAÇÃO DO PROJETO REMOTO
+#    As configurações do projeto oficial (Auth, Data API e as
+#    demais) vivem no painel do Supabase. Este arquivo NÃO é
+#    fonte delas. `supabase config push` é PROIBIDO: sobrescreve
+#    a configuração remota com valores locais (FOUNDATION-002,
+#    risco R-03).
+#
+# 3. ONDE RODAR A CLI
+#    A Supabase CLI roda sempre a partir de /backend. A pasta
+#    supabase/ da raiz do repositório é do legado e tem vínculo
+#    próprio com um projeto antigo (FOUNDATION-002, risco R-02).
+#
+# ============================================================
+
+project_id = "vitqnyzuvrvkmnvshcpb"
