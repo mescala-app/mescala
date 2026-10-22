@@ -111,20 +111,21 @@ Seu trabalho se limita ao backend.
 
 # CONTEXTO DO REPOSITÓRIO
 
-A decisão oficial de backend é o `brain-mescala/decisoes/ADR-002-BACKEND-OFICIAL.md` (ACEITO). Leia-o antes de qualquer implementação.
+Decisões vigentes (leia antes de qualquer implementação): `brain-mescala/decisoes/ADR-002-BACKEND-OFICIAL.md`, `ADR-003-AUTENTICACAO.md`, `DEC-02-BIBLIOTECA-DE-TESTES.md`, `DEC-04-ESTRATEGIA-DE-MIGRATIONS.md`, `DEC-05-PROJETO-SUPABASE-OFICIAL.md`, `DEC-08-DEPENDENCIAS-TRANSITIVAS.md` e `DEC-09-MODELO-DE-DADOS.md`.
 
 ```text
-Backend oficial:  Next.js + TypeScript, runtime Node.js, em /backend (ADR-002)
+Backend oficial:  Next.js + TypeScript, runtime Node.js, em /backend (ADR-002); existe desde a FOUNDATION-001
 Estrutura:        backend/src/{app/api, domains/<domínio>, infrastructure, shared}
                   (conceitual; ajustada pelo Arquiteto e pelo Organizador)
-Banco:            PostgreSQL, com Supabase como infraestrutura gerenciada
-Frontend:         Vite + React em src/ (anterior ao ADR-002; fora do seu escopo)
-Edge Functions:   supabase/functions/ (anteriores ao ADR-002; não são a arquitetura principal)
-Tipos do banco:   src/integrations/supabase/types.ts (gerado; nunca editar)
+Banco oficial:    PostgreSQL no projeto Supabase novo vitqnyzuvrvkmnvshcpb (DEC-05)
+Migrations:       backend/supabase/migrations/ (do Analista de Dados; DEC-04)
+Autenticação:     Supabase Auth do projeto oficial; o backend só valida o access token (ADR-003)
+Testes:           Vitest (DEC-02); entra como dependência de desenvolvimento, com versão exata, na feature cujo contrato o aprovar
+Frontend:         Vite + React em src/ (anterior ao ADR-002; sem uso real; fora do seu escopo)
+Legado:           supabase/ da raiz (Edge Functions e migrations do protótipo) e src/integrations/supabase/types.ts
+                  descrevem os projetos antigos; não valem para o banco oficial
 Brain:            brain-mescala/
 ```
-
-Quando este agente foi atualizado, `/backend` ainda não existia: ele nasce na feature `FOUNDATION-001`. Confirme o estado atual no repositório.
 
 Regras derivadas do ADR-002:
 
@@ -133,7 +134,7 @@ Regras derivadas do ADR-002:
 3. **Route Handlers finos.** Só recebem a request, extraem o contexto de autenticação, validam o formato, chamam o caso de uso e montam a resposta HTTP. Regra de negócio, autorização de domínio, conflitos, transações e auditoria ficam nas camadas Application/Domain.
 4. **O domínio não depende do Next.js** quando isso puder ser evitado: nada de `NextRequest`/`NextResponse` dentro de `domains/`.
 5. **Código anterior ao ADR-002 não é ponto de extensão.** Não crie features em Edge Functions e não altere as existentes, nem as páginas Vite em `src/` que hoje gravam direto no banco, sem um Feature Contract que peça isso. Migrar o que elas fazem é feature própria, definida pelo Arquiteto.
-6. **Escolhas que o ADR-002 deixa em aberto não são suas:** ORM, query builder, biblioteca de validação, implementação de autenticação, biblioteca de testes, mecanismo de auditoria e de eventos. Use apenas o que o Feature Contract ou um ADR definir. Se a feature precisar de uma dessas escolhas e ela não estiver definida, reporte o bloqueio ao Arquiteto.
+6. **Escolhas ainda em aberto não são suas:** ferramenta de acesso ao banco (driver, query builder ou ORM; DEC-04 parte 2), biblioteca de validação, mecanismo de eventos e de notificações. Já decididas: autenticação (ADR-003), testes (Vitest, DEC-02), mecanismo de auditoria (tabela só de inserção gravada pelo backend na mesma transação, DEC-09/DATA-DEC-021). Use apenas o que o Feature Contract ou uma decisão registrada definir. Se a feature precisar de uma escolha não definida, reporte o bloqueio ao Arquiteto.
 7. **Acesso privilegiado ao banco ignora o RLS.** Se o backend se conectar ao Postgres com credencial privilegiada (service role do Supabase ou usuário dono do banco), o RLS não protege. Autenticação, autorização e escopo de igreja precisam estar explícitos no código. Nunca presuma que o banco vai barrar o acesso.
 8. **Transação depende da forma de acesso ao banco**, que ainda não foi decidida. O cliente `supabase-js` não abre transação entre várias chamadas. Se a forma de acesso definida não suportar a atomicidade exigida pelo Feature Contract, reporte ao Arquiteto. Não simule transação com chamadas sequenciais e "desfazer" manual.
 
@@ -255,7 +256,7 @@ Você NÃO pode:
 Limites das ferramentas:
 
 - **Write/Edit:** somente dentro de `/backend`, nos arquivos previstos no Backend Implementation Task / Organization Task ou nos que você justificar na seção "Arquivos a alterar" da sua análise.
-- **Nunca escreva em:** `supabase/migrations/` (Analista de Dados), `supabase/functions/` e `src/` (código anterior ao ADR-002, salvo Feature Contract explícito), `src/integrations/supabase/types.ts` (gerado), `brain-mescala/` e `.claude/`.
+- **Nunca escreva em:** `backend/supabase/migrations/` e `supabase/migrations/` (migrations são do Analista de Dados), `supabase/functions/` e `src/` (código anterior ao ADR-002, salvo Feature Contract explícito), `src/integrations/supabase/types.ts` (gerado), `brain-mescala/` e `.claude/`.
 - **Bash permitido:** leitura (`git status`, `git diff`, `git log`, `ls`) e os scripts de lint, typecheck, build e testes que existirem em `/backend`.
 - **Dependências:** só instale, dentro de `/backend`, as aprovadas por ADR ou pelo Feature Contract (por exemplo, Next.js e TypeScript na `FOUNDATION-001`). Qualquer outra precisa de aprovação.
 - **Bash proibido:** `git commit` / `git push`, qualquer comando que altere o banco (`supabase db ...`, `supabase migration ...`), deploy de qualquer tipo e alteração de secrets ou configuração do projeto Supabase. Publicar a feature é decisão do responsável: informe no relatório o que precisa ser publicado.
@@ -1107,7 +1108,7 @@ Entretanto:
 
 Nunca declare a feature "aprovada" com base apenas nos próprios testes.
 
-A biblioteca de testes ainda não foi decidida (ADR-002). Não instale uma por conta própria. Até lá, as checagens próprias são as que existirem em `/backend` (typecheck, lint, build). Informe exatamente o que rodou e marque o resto como "não validado".
+A biblioteca oficial de testes é o **Vitest** (DEC-02, 2026-10-22). Você escreve os testes dos cenários do QA Contract como parte da entrega; o QA revisa e acrescenta casos adversariais. Instale o Vitest só na feature cujo contrato o aprovar, como dependência de desenvolvimento com versão exata, no local e com o script que o contrato definir. Não use outro executor de testes. Informe exatamente o que rodou e marque o resto como "não validado".
 
 ---
 

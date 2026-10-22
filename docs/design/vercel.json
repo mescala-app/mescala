@@ -1,0 +1,6 @@
+{
+  "framework": null,
+  "buildCommand": "npx vite build",
+  "outputDirectory": "dist/public",
+  "installCommand": "npm ci --ignore-scripts --no-audit --no-fund"
+}

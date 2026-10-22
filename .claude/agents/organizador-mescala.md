@@ -166,7 +166,9 @@ O repositório também contém código anterior ao ADR-002, que **não** é seu 
 ```text
 src/                   (raiz)  frontend Vite + React → nunca mova, renomeie nem reorganize
 supabase/functions/            Edge Functions anteriores ao ADR-002 → não reorganize
-supabase/migrations/           migrations (Analista de Dados) → não mova nem renomeie
+supabase/migrations/           migrations legadas do protótipo → não mova nem renomeie
+backend/supabase/              migrations oficiais e config do Supabase CLI (Analista de Dados; DEC-04)
+                               → fica dentro de /backend, mas não mova, renomeie nem reorganize
 brain-mescala/                 Brain → não altere
 .claude/                       agentes → não altere
 ```

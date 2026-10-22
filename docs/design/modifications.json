@@ -1,0 +1,63 @@
+{
+  "upstream": {
+    "repository": "https://github.com/creativetimofficial/material-dashboard-shadcn",
+    "commit": "e51aefd09b59452c4dacdaf3de88bed91e9b911e",
+    "license": "MIT",
+    "copyright": "Copyright (c) 2025 Creative Tim (https://www.creative-tim.com)"
+  },
+  "added": [
+    "21ST-IMPORT.md",
+    "ATTRIBUTION.md",
+    "THIRD_PARTY_NOTICES.md",
+    "client/public/images/avatars/alex-johnson.svg",
+    "client/public/images/avatars/alexa-liras.svg",
+    "client/public/images/avatars/alexander.svg",
+    "client/public/images/avatars/anna-white.svg",
+    "client/public/images/avatars/bruce-mars.svg",
+    "client/public/images/avatars/david-wilson.svg",
+    "client/public/images/avatars/emma-davis.svg",
+    "client/public/images/avatars/ivanna.svg",
+    "client/public/images/avatars/james-rodriguez.svg",
+    "client/public/images/avatars/jessica-martinez.svg",
+    "client/public/images/avatars/john-michael.svg",
+    "client/public/images/avatars/kevin-lee.svg",
+    "client/public/images/avatars/laurent-perrier.svg",
+    "client/public/images/avatars/lisa-garcia.svg",
+    "client/public/images/avatars/maria-lopez.svg",
+    "client/public/images/avatars/michael-brown.svg",
+    "client/public/images/avatars/michael-levi.svg",
+    "client/public/images/avatars/miriam-eric.svg",
+    "client/public/images/avatars/peterson.svg",
+    "client/public/images/avatars/richard-davis.svg",
+    "client/public/images/avatars/richard-gran.svg",
+    "client/public/images/avatars/ryan-thompson.svg",
+    "client/public/images/avatars/sarah-chen.svg",
+    "client/public/images/avatars/sophie-b.svg",
+    "modifications.json",
+    "vercel.json",
+    "client/public/favicon.ico",
+    "client/public/favicon.svg"
+  ],
+  "removed": [],
+  "modified": [
+    "README.md",
+    "client/index.html",
+    "client/src/components/layout/footer.tsx",
+    "client/src/lib/data.ts",
+    "client/src/pages/auth/sign-in.tsx",
+    "client/src/pages/auth/sign-up.tsx",
+    "client/src/pages/profile.tsx",
+    "client/src/pages/subscriptions.tsx",
+    "package.json",
+    "package-lock.json",
+    "vite.config.ts"
+  ],
+  "notes": [
+    "Local SVG avatars replace Unsplash URLs.",
+    "Auth and subscription actions are demo-only.",
+    "Vite production base set to /.",
+    "vercel.json added for static hosting.",
+    "Distributor docs added: ATTRIBUTION.md, THIRD_PARTY_NOTICES.md, 21ST-IMPORT.md, modifications.json.",
+    "Removed two Replit-only Vite plugins with missing license/source metadata; all remaining dependency versions are unchanged."
+  ]
+}

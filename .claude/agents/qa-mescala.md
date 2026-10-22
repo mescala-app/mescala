@@ -131,17 +131,18 @@ Estado quando este agente foi criado. Confirme no repositório antes de usar, po
 Brain:                 brain-mescala/  (ADRs e decisões em brain-mescala/decisoes/)
 Contratos de feature:  docs/features/<ID>.md
 Relatório de dados:    docs/data/
-Backend oficial:       /backend  (pode ainda não existir: nasce na FOUNDATION-001)
-Código legado:         src/ (frontend Vite), supabase/functions/ (Edge Functions)  → fora do escopo; não alterar
-Migrations:            supabase/migrations/  → do Analista de Dados; não alterar
+Backend oficial:       /backend  (existe desde a FOUNDATION-001)
+Banco oficial:         projeto Supabase novo vitqnyzuvrvkmnvshcpb (DEC-05)
+Migrations oficiais:   backend/supabase/migrations/  → do Analista de Dados; não alterar (DEC-04)
+Código legado:         src/ (frontend Vite), supabase/ da raiz (Edge Functions e migrations do protótipo)  → fora do escopo; não alterar
 ```
 
 Condições que afetam o QA:
 
-1. **Biblioteca oficial de testes: A DEFINIR** (DEC-02). Enquanto não houver decisão formal:
-   - você não cria arquivos de teste nem instala ferramenta de teste;
-   - testes automatizados ficam como NOT TESTED, com o motivo;
-   - as evidências possíveis são: análise estática, scripts já existentes em `/backend` (typecheck, lint, build) e teste manual local (subir o backend e fazer requisições a `localhost`) quando o QA Contract autorizar.
+1. **Biblioteca oficial de testes: Vitest** (DEC-02, 2026-10-22).
+   - O Desenvolvedor escreve os testes dos cenários do QA Contract como parte da entrega; você revisa esses testes e acrescenta casos adversariais quando houver risco real.
+   - Você pode escrever arquivos de teste com Vitest dentro de `/backend` (veja os limites das ferramentas), no local e com o script que o contrato definir. Não instale nem atualize dependência: o Vitest entra pela entrega do Desenvolvedor.
+   - Se a feature for anterior ao Vitest no `/backend` (ou o contrato não o aprovar), os testes automatizados ficam NOT TESTED, com o motivo; as evidências possíveis são análise estática, scripts existentes e teste manual local quando o QA Contract autorizar.
 2. **Banco:** as migrations são aplicadas manualmente pelo responsável do projeto. Você não acessa o banco remoto (projeto Supabase). Checagens de banco só rodam em banco local ou de teste explicitamente configurado. Caso contrário, registre NOT TESTED e entregue, no relatório, as consultas SQL **somente leitura** que o responsável deve rodar para confirmar o schema.
 3. **Integrações reais:** o Mescala usa Supabase e Resend (envio de email). Nunca dispare emails reais, crie usuários reais nem altere dados em serviços externos durante o QA.
 
@@ -724,7 +725,7 @@ Pode incluir:
 
 Não introduza framework novo sem aprovação.
 
-Enquanto a biblioteca oficial de testes estiver A DEFINIR (DEC-02), não crie arquivos de teste e não use nenhum executor de testes que não esteja definido no projeto, nem mesmo o executor nativo do Node.js. Registre como NOT TESTED os cenários que exigiriam teste automatizado.
+A ferramenta oficial é o Vitest (DEC-02). Não use outro executor de testes, nem mesmo o executor nativo do Node.js. Se o Vitest ainda não estiver instalado no `/backend` pela entrega da feature, registre como NOT TESTED os cenários que exigiriam teste automatizado.
 
 ---
 

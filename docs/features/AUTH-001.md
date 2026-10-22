@@ -1,9 +1,18 @@
-> **Status: sem bloqueios de decisão desde 2026-10-22 (DEC-02 = Vitest).** Passa a READY quando o Arquiteto atualizar o contrato com o Vitest (local dos testes, script `test`, versão). Emitido pelo `arquiteto-mescala` em 2026-10-06. Nada foi encaminhado aos executores.
-> - DEC-02 decidida em 2026-10-22: Vitest; o Desenvolvedor escreve os testes dos cenários do QA Contract, e o QA revisa e acrescenta casos adversariais (`brain-mescala/decisoes/DEC-02-BIBLIOTECA-DE-TESTES.md`).
-> - ADR-003 **aceito pelo PO em 2026-10-21** (DEC-03 decidida): `brain-mescala/decisoes/ADR-003-AUTENTICACAO.md`.
-> - FOUNDATION-001 implementada e aprovada (commit `7f26d30`).
-> - DEC-05 decidida: projeto Supabase oficial = projeto novo `vitqnyzuvrvkmnvshcpb` (as divergências D4 sobre `ehbidizpzxhfusfyjgtl` e `fiurvpkieiorngshjric` ficam só para o app legado).
-> - Pendentes: DEC-06 e DEC-07 (para AUTH-002/003) e a verificação das chaves de assinatura assimétricas no projeto novo (condição do ADR-003 para operar, não para implementar).
+> **Status: READY (contrato v2, 2026-10-22).** O "ADENDO v2 (2026-10-22)", no fim deste arquivo, substitui as seções que ele lista. O resto continua valendo como na v1, emitida pelo `arquiteto-mescala` em 2026-10-06. Nada foi encaminhado aos executores.
+> - Decisões incorporadas:
+>   - ADR-003 aceito em 2026-10-21;
+>   - DEC-02 (Vitest) decidida em 2026-10-22 e especificada no adendo;
+>   - DEC-05 (projeto `vitqnyzuvrvkmnvshcpb`) decidida em 2026-10-21;
+>   - DEC-04 parte 1 e DEC-09: nenhuma contradição; o registro da AUTH-002 foi atualizado;
+>   - FOUNDATION-001 APPROVED (commit `7f26d30`).
+> - O adendo também:
+>   - corrige o L-06;
+>   - transforma em teste automatizado a verificação mínima de regressão do lint (B3 da FOUNDATION-001);
+>   - automatiza o B1 e o B2 da FOUNDATION-001 no nível do módulo.
+> - Pendentes, sem bloquear a AUTH-001:
+>   - DEC-06 e DEC-07 (AUTH-002 e AUTH-003);
+>   - revogação do usuário no domínio (B8, AUTH-003);
+>   - condições de operação do ADR-003: chaves assimétricas, TTL do token e confirmação de email no projeto novo.
 
 # AUTH-001: ARCHITECT ANALYSIS (Arquiteto, 2026-10-06)
 
@@ -1129,3 +1138,920 @@ Parei aqui. Não encaminhei nada aos executores.
 - C:\projetos\mescala\supabase\migrations\20260712094502_profiles_confirmado_teste.sql
 - C:\projetos\mescala\daily\2026-07-11.txt
 - C:\projetos\mescala\.env (só nomes de variáveis e prefixos lidos)
+---
+
+## ADENDO v2 (2026-10-22)
+
+> Emitido pelo `arquiteto-mescala` em 2026-10-22, só com leitura.
+> - **Cada seção listada em A.5 é substituída integralmente pelo texto deste adendo.** O que não está listado continua valendo como na v1.
+> - Nada foi encaminhado aos executores.
+>
+> Notação usada no adendo:
+> - **FC-n:** item n do Feature Contract (seção 3);
+> - **BIT:** Backend Implementation Task (seção 5);
+> - **OT:** Organization Task (seção 6);
+> - **QA:** QA Contract (seção 7).
+
+### A. Análise do adendo
+
+#### A.1 Entendimento
+
+O adendo faz quatro coisas:
+- incorpora o ADR-003, a DEC-02, a DEC-05, a FOUNDATION-001 encerrada, a DEC-04 e a DEC-09;
+- especifica o Vitest;
+- trata o L-06 e a regressão do lint;
+- define o novo status.
+
+**O escopo funcional não muda:** verificar o access token e devolver a identidade do provedor, sem banco, sem igreja e sem rota nova.
+
+#### A.2 O que foi consultado
+
+**Brain:**
+- `decisoes/ADR-003-AUTENTICACAO`;
+- `DEC-02-BIBLIOTECA-DE-TESTES`;
+- `DEC-05-PROJETO-SUPABASE-OFICIAL`, com o complemento de 2026-10-22;
+- `DEC-04-ESTRATEGIA-DE-MIGRATIONS`;
+- `DEC-09-MODELO-DE-DADOS` (DATA-DEC-019, 020, 022, 023 e micro-decisões);
+- `DEC-08`;
+- `PENDENCIAS`;
+- `features/FOUNDATION-001`: L-01 a L-06, RT-FOUND-01 a 03, D-01 e a seção "Verificação mínima de regressão do lint";
+- `features/FLUXO-DE-ENTREGA`, `tecnico/BACKEND`, `tecnico/CONVENCOES`, `seguranca/AUTENTICACAO`, `05-REGRAS-DE-NEGOCIO` (SEC-001 e HIS-001);
+- definições dos agentes em `.claude/agents/`, alinhadas em 2026-10-22.
+
+**Repositório (fatos conferidos em 2026-10-22):**
+- **Estado do `/backend`:** sem alterações locais desde o `7f26d30`. A única fonte é `src/app/api/health/route.ts`.
+- **`package.json`:** não tem `jose` nem `vitest`, não tem script `test` e não declara `"type": "module"`.
+- **`tsconfig.json`:**
+  - `include` = `next-env.d.ts`, `next.config.ts`, `src/**/*.ts`, `.next/types/**/*.ts` e `.next/dev/types/**/*.ts`;
+  - `"types": ["node"]`;
+  - `paths`: `@/*` → `./src/*`.
+- **`eslint.config.mjs`:**
+  - a guarda 1 tem `files` `{ts,tsx,mts,cts,js,mjs,cjs}`, sem `jsx`;
+  - a guarda 2 tem `{ts,tsx,js,mjs,cjs}`, sem `jsx`, e o item 2 do cabeçalho não declara "Arquivos cobertos";
+  - o item 1 do cabeçalho diz que o `import()` "de tipo" cobre template sem interpolação. O seletor `TSImportType` não cobre esse caso, e o próprio TypeScript recusa template nessa posição.
+- **`eslint-config-next` 16.4.2:**
+  - não configura `no-restricted-imports` nem `no-restricted-syntax`;
+  - usa o parser do TypeScript só em `.ts` e `.tsx`. Os demais arquivos vão para o parser Babel do Next.
+- **ESLint 9.39.5:** traz tipos próprios e aceita `regex` em `patterns` de `no-restricted-imports`.
+- **Node local:** 22.15.1.
+
+#### A.3 Contradições e imprecisões da v1
+
+**Contradições com as decisões novas**
+
+| # | Na v1 | Decisão que muda | Tratamento |
+|---|---|---|---|
+| C1 | STATUS BLOCKED (DEC-03 e DEC-02) | ADR-003; DEC-02 | READY (A.6) |
+| C2 | §1.6 e §2: "usuários reais preservados". R2: pool de identidades compartilhado com o legado | DEC-05 (projeto novo) e complemento de 2026-10-22 (legado sem uso real, banco vazio, sem migração) | Ver abaixo |
+| C3 | §4: "migração profiles + auth.users → users" e "FK para auth.users depende de DEC-04 e DATA-DEC-020" | DATA-DEC-019, DATA-DEC-020 e o complemento da DATA-DEC-022 | Registro reescrito (F) |
+| C4 | §8 e §9: FOUNDATION-001 "READY, não implementada"; B1 a B4 abertos | FOUNDATION-001 APPROVED; DEC-05 | Reescritos (H e I) |
+
+Tratamento do C2:
+- O benefício "preservar usuários" deixou de existir. A decisão continua sustentada pelos demais motivos:
+  - backend sem segredo e sem estado;
+  - nenhuma dependência de banco;
+  - atende vários clientes;
+  - autenticação separada da autorização.
+- O pool de identidades do projeto novo não é compartilhado com o legado.
+- A regra "email não prova identidade" continua (ADR-003, item 6).
+- O texto aceito do ADR-003 não muda.
+
+**Sem contradição:**
+- com a DEC-04: a AUTH-001 não cria `backend/supabase/`;
+- com a DATA-DEC-020: a AUTH-001 não acessa banco, e o veto a `@supabase/*` e a um `infrastructure/supabase/` genérico é coerente com o acesso direto ao Postgres;
+- com a DEC-08.
+
+**Precisões técnicas acrescentadas (nenhuma regra de negócio nova)**
+- **P1.** Falha do resolvedor de chave. Na v1, o B18 podia cair tanto em "rede → UNAVAILABLE" quanto em "demais erros → INVALID". Agora a classificação é pela origem do erro (FC-5).
+- **P2.** A guarda de `src/app/**` contra a infraestrutura de autenticação só pegava o alias `@/`; um import relativo passava. Agora cobre os dois.
+- **P3.** As restrições novas cobrem as mesmas formas de import da guarda 1 e ficam no mesmo objeto de configuração da área. No flat config, a última configuração de uma regra substitui a anterior.
+- **P4.** "Identidade imutável" passa a significar objeto congelado (`Object.freeze`).
+- **P5.** Configuração ausente ou inválida: `loadSupabaseAuthConfig()` lança `AuthenticationError` com `AUTH_VERIFICATION_UNAVAILABLE`.
+- **P6.** `sub` UUID: formato canônico, sem exigir versão.
+- **P7.** Imports entre áreas usam `@/`; imports na mesma pasta usam `./`.
+
+#### A.4 Decisões sobre o L-06 e a regressão automatizada
+
+**Decisão 1: a correção do L-06 e a regressão do lint (B3 da FOUNDATION-001) entram nesta feature, como suíte GL. Não há feature própria.**
+
+Justificativa:
+1. **A Brain liga as duas coisas a esta feature.**
+   - O L-06 tem como gatilho "qualquer feature que altere o `eslint.config.mjs`".
+   - O registro da FOUNDATION-001 diz que a verificação vale para toda feature que altere esse arquivo e que ela "vira o teste automatizado B3 na primeira feature que alterar o lint".
+   - A AUTH-001 é essa feature.
+2. **O risco nasce aqui.** A AUTH-001 altera os mesmos objetos de configuração das guardas do ADR-002. No flat config, uma regra mal mesclada apaga a anterior sem aviso. A suíte GL prova que as guardas da FOUNDATION-001 continuam funcionando.
+3. **Uma suíte só cobre três coisas.** O B24 da v1 (as guardas novas disparam) usa o mesmo mecanismo: ESLint pela API, com arquivo virtual. A mesma suíte cobre o B3 da FOUNDATION-001, o B24 da AUTH-001 e os casos `.jsx` do L-06.
+4. **Uma feature separada não ajuda.**
+   - Se viesse antes, atrasaria a AUTH-001 e tiraria dela a instalação do Vitest, que a DEC-02 atribui à AUTH-001.
+   - Se viesse depois, a AUTH-001 alteraria o lint sem a regressão exigida.
+5. **Custo baixo:** um arquivo de teste e duas entradas no `include` do `tsconfig.json`. Nenhum código de produção.
+
+Consequências:
+- A condição (c) do L-06 (o PO antecipar a correção como mudança isolada) fica sem objeto.
+- O L-06 é encerrado quando a AUTH-001 for APPROVED.
+- O encerramento **não** autoriza `.jsx` no `/backend`, que é BACKEND ONLY e não tem React. A proibição passa a ser estrutural (OT).
+
+**Decisão 2: o B1 e o B2 da FOUNDATION-001 também entram, como H1 e H2.**
+- **Base na Brain:** a DEC-02 (Consequências) e o registro da FOUNDATION-001 dizem que B1 a B3 "viram teste automatizado quando o lint for alterado".
+- **Custo:** um arquivo pequeno ao lado da rota. O `route.ts` não muda.
+- **Limite:** o B2 é automatizado no nível do módulo. O teste confirma que a rota só exporta `GET`, condição em que o Next responde 405 aos outros métodos.
+- **O 405 HTTP com servidor rodando** exige uma convenção de teste HTTP, que nasce na primeira rota protegida (AUTH-003). Até lá, vale a evidência manual da FOUNDATION-001.
+
+#### A.5 Seções substituídas
+
+| Parte | Seção da v1 | Novo texto |
+|---|---|---|
+| Cabeçalho do arquivo | linhas iniciais (Status) | entregue à parte |
+| Análise | §1.3; §1.4 (D4); §1.6 (benefício "usuários preservados"); §1.7; §1.8 (R2, R3, R7 e os novos R9 e R10) | G |
+| Decisão | §2 e o texto proposto do ADR-003 | G (marcado como histórico) |
+| Feature Contract | IDENTIFICAÇÃO; FC-3; FC-4 (só a linha `SUPABASE_URL`); FC-5; FC-6; FC-13; FC-14; FC-18 (primeira frase); FC-19; FC-20 | B |
+| BIT | cabeçalho; Arquivos esperados; Contratos (nota); Regras de implementação (itens 4, 5 e 7; novos 12 a 16); ESLint; Dependências; Documentação no código (acréscimo); Testes; Ao entregar | C |
+| OT | §6 inteira | D |
+| QA | §7 inteira | E |
+| Data Task | §4 (registro futuro) | F |
+| Dependências | §8 inteira | H |
+| Bloqueios | §9 inteira, inclusive "Após o aceite do PO" | I |
+
+**Sem mudança:**
+- FC-1, FC-2, FC-7 a FC-12 e FC-15 a FC-17;
+- os demais itens de "Regras de implementação";
+- "Validações" e "Autorização, transação, auditoria".
+
+#### A.6 Novo status
+
+**READY (versão 2, 2026-10-22).**
+- Nenhuma pré-condição de implementação está aberta.
+- A feature não toca nenhum ponto A DEFINIR. `tecnico/API`, biblioteca de validação e eventos continuam A DEFINIR, mas a AUTH-001 não usa nenhum deles.
+- O que resta (I) pertence a outras features (DEC-06, DEC-07, B8) ou à operação (chaves assimétricas, TTL, confirmação de email).
+
+---
+
+### B. Feature Contract: novo texto
+
+**IDENTIFICAÇÃO**
+```text
+ID: AUTH-001
+DOMÍNIO: auth
+NOME: Fundação de Autenticação (verificação da identidade do provedor)
+VERSÃO: 2
+STATUS: READY (2026-10-22)
+```
+
+**FC-3. Pré-condições**
+- FOUNDATION-001 implementada, com ARCHITECT REVIEW APPROVED (2026-10-19, `7f26d30`). **Cumprida.**
+- ADR-003 aceito (2026-10-21). **Cumprida.**
+- DEC-02 decidida (2026-10-22) e especificada neste adendo (C, "Testes"). **Cumprida.**
+- No início da implementação, `/backend` está sem alterações locais em relação ao último commit. As verificações do QA comparam diffs e dependem disso.
+- A versão do Vitest escolhida suporta o Node local 22.15.1 (RT-FOUND-03).
+- **Para operar** (não para implementar, testar nem aprovar):
+  - `SUPABASE_URL` = `https://vitqnyzuvrvkmnvshcpb.supabase.co` (DEC-05), configurada pelo PO no ambiente de execução;
+  - chaves de assinatura assimétricas ativas no projeto `vitqnyzuvrvkmnvshcpb` (condição do ADR-003, com o PO);
+  - TTL do access token definido pelo PO.
+
+**FC-4. Entradas** (substitui só a linha `SUPABASE_URL`)
+
+| Nome | Tipo | Obrigatório | Regra |
+|---|---|---|---|
+| `SUPABASE_URL` | variável de ambiente (configuração, não entrada da requisição) | sim, para operar | Ver abaixo |
+
+Regra da `SUPABASE_URL`:
+- URL absoluta `https:`, com caminho vazio ou `/`;
+- sem query, fragmento nem credenciais;
+- a barra final é removida;
+- valor de operação: `https://vitqnyzuvrvkmnvshcpb.supabase.co` (DEC-05), definido pelo PO no ambiente;
+- **nunca** fica fixa no código, em configuração versionada ou nos testes.
+
+**FC-5. Processamento**
+1. O handler chama `requireAuthenticatedIdentity(request)`.
+2. Ler o header `Authorization`.
+   - Ausente, ou vazio depois da normalização feita pelo `Headers`: `AUTH_MISSING_CREDENTIAL`.
+   - Nesse caso, o verificador não é chamado.
+3. Validar o formato `Bearer <token>`:
+   - esquema `Bearer`, sem diferenciar maiúsculas de minúsculas;
+   - um único espaço depois do esquema;
+   - token não vazio, sem espaço, tab ou vírgula.
+   - Fora disso: `AUTH_MALFORMED_CREDENTIAL`, e o verificador não é chamado.
+4. Delegar ao verificador da infraestrutura, que:
+   - a. carrega a configuração na primeira chamada (`SUPABASE_URL` → issuer e URL do JWKS). Se ela faltar ou for inválida: `AUTH_VERIFICATION_UNAVAILABLE`;
+   - b. aceita só `alg` ES256 ou RS256;
+   - c. obtém a chave pública pelo `kid`, **somente** do JWKS configurado, usando o cache do `jose`, que é renovado quando aparece um `kid` desconhecido;
+   - d. verifica a assinatura;
+   - e. exige `iss` igual ao issuer configurado;
+   - f. exige que `aud` contenha `authenticated`;
+   - g. exige `exp` presente e no futuro, e valida `nbf` quando existir. Os dois têm tolerância de 5 s;
+   - h. exige `role` igual a `authenticated`;
+   - i. exige `is_anonymous` diferente de `true`;
+   - j. exige `sub` presente e no formato UUID canônico 8-4-4-4-12 hexadecimal, sem diferenciar maiúsculas e sem verificar a versão;
+   - k. exige `session_id` presente, como string não vazia.
+5. Classificar a falha **pela origem**:
+   - configuração ausente ou inválida: `AUTH_VERIFICATION_UNAVAILABLE`;
+   - erro lançado pelo resolvedor de chave (rede, timeout, resposta diferente de 200, JWKS inválido ou qualquer outro): `AUTH_VERIFICATION_UNAVAILABLE`. **Exceções:** "nenhuma chave correspondente" e "várias chaves correspondentes" seguem o fluxo normal da verificação;
+   - `exp` vencido com assinatura válida: `AUTH_TOKEN_EXPIRED`;
+   - qualquer outra falha, inclusive erro desconhecido: `AUTH_INVALID_TOKEN`;
+   - nenhum caminho de falha devolve identidade.
+6. Montar a `AuthenticatedIdentity` só com `sub`, `session_id` e `exp`. Nenhum outro claim é copiado.
+7. Devolver a identidade congelada (`Object.freeze`).
+   - Um erro lançado pelo verificador chega ao chamador sem alteração.
+   - O handler passa a identidade por parâmetro ao caso de uso.
+
+**FC-6. Regras normativas**
+
+Decisões:
+- **ADR-003** (aceito em 2026-10-21): itens 1 a 11 e Condições.
+- **DEC-05:** o `<SUPABASE_URL>` de operação é `https://vitqnyzuvrvkmnvshcpb.supabase.co`. Então:
+  - `iss` = `https://vitqnyzuvrvkmnvshcpb.supabase.co/auth/v1`;
+  - JWKS em `https://vitqnyzuvrvkmnvshcpb.supabase.co/auth/v1/.well-known/jwks.json`;
+  - o valor chega ao backend só por configuração.
+- **DEC-02:** testes com Vitest. O Desenvolvedor escreve os testes dos cenários do QA Contract; o QA revisa e acrescenta casos adversariais.
+- **DEC-08:** pacote transitivo não é aprovação. Os testes importam só `vitest`, mais `jose` nos testes da infraestrutura e `eslint` no teste de lint.
+- **Registro da FOUNDATION-001:**
+  - limites L-01 a L-06 (o L-06 é corrigido aqui);
+  - RT-FOUND-01 (condições do audit);
+  - D-01 (o `next.config.ts` não muda);
+  - verificação mínima de regressão do lint (automatizada aqui).
+- **ADR-002:** #Route Handlers, #Regras de negócio, #Runtime, #Supabase e #Multi-tenancy, como na v1.
+
+Segurança e domínio:
+- **`seguranca/AUTENTICACAO`:** autenticação não substitui autorização.
+- **`04-USUARIOS-E-PERMISSOES#Princípio`** e **ADR-001:** papel + escopo, por relacionamento. Nenhum papel vem do token.
+- **`dados/ENTIDADES#Usuário`** e **DATA-DEC-019:** a ligação `users` ↔ `auth.users` é da AUTH-002. A AUTH-001 não persiste nada.
+- **`fluxos/FLUXO-CADASTRO-IGREJA` passo 1:** a conta é criada no provedor.
+- **`seguranca/RISCOS-DO-LEGADO#S2` e `#S3`:** os riscos ficam nos projetos antigos, mas a regra "email não prova identidade" vale no projeto novo, pelo ADR-003 (item 6).
+- **`05-REGRAS-DE-NEGOCIO#SEC-001`:** preservada por construção.
+- **`DEC-01`:** `/api/health` continua pública e não usa este mecanismo.
+
+**FC-13. Domínios impactados**
+- **Principal:** `auth`.
+- **Infraestrutura:** `supabase-auth`.
+- **Tooling (`foundation`):**
+  - `eslint.config.mjs`: guardas do ADR-003 e correção do L-06;
+  - `tsconfig.json`: só o `include`;
+  - `package.json` e `package-lock.json`;
+  - `vitest.config.mts`;
+  - suíte GL;
+  - teste da rota de saúde.
+- **Secundários de negócio:** nenhum.
+
+**FC-14. Dependências**
+- **Estrutura:** a da FOUNDATION-001.
+- **Runtime (`dependencies`):** `jose`, com versão exata.
+- **Desenvolvimento (`devDependencies`):** `vitest`, com versão exata. Nada mais.
+- **Política de versão (vale para as duas):**
+  - usar a maior versão estável (sem pre-release) publicada no momento da implementação;
+  - ela precisa ser compatível com o Node 22.15.1 e com as dependências já instaladas, sem `--force` nem `--legacy-peer-deps`;
+  - gravar a versão sem `^` nem `~` (`--save-exact`);
+  - registrar no relatório, inclusive a versão do `vite` resolvida pelo Vitest;
+  - se a mais recente não servir, usar a mais recente que sirva e registrar o motivo;
+  - se nenhuma servir: IMPLEMENTATION DIVERGENCE.
+- **Configuração (só para operar):** `SUPABASE_URL` e o JWKS público do projeto oficial.
+- **Proibidas:**
+  - da v1: `@supabase/*`, `jsonwebtoken`, `next-auth`/`@auth/*`, `better-auth`, ORM ou driver de Postgres, `zod` ou outra biblioteca de validação, bibliotecas de logging;
+  - outros executores de teste: `jest`, `ts-jest`, `@jest/*`, `mocha`, `ava`, `tsx`, `ts-node` e `node:test`;
+  - extras do Vitest: `@vitest/*` (coverage, ui, browser) e `vite-tsconfig-paths`;
+  - ambientes de DOM: `jsdom` e `happy-dom`;
+  - dublês de rede e HTTP: `msw`, `nock`, `supertest` e `undici` como dependência direta;
+  - `@testing-library/*`, `@faker-js/*` e qualquer `@types/*` novo;
+  - importar diretamente pacote que só existe como transitivo (por exemplo `vite`, `chai` ou `@vitest/expect`), conforme a DEC-08.
+
+**FC-18. Resultado esperado** (substitui só a primeira frase)
+
+`AuthenticatedIdentity`, somente leitura: tipo `Readonly` e objeto congelado (`Object.freeze`). O restante da seção não muda.
+
+**FC-19. Critérios de aceite**
+1. Existem só os arquivos de C, "Arquivos esperados". Nada muda fora de `/backend`.
+2. Nenhuma rota nova: `/api/health` é a única, o `route.ts` não tem diff, e H1 e H2 passam.
+3. Token válido → identidade com **exatamente** `externalUserId`, `sessionId` e `expiresAt`, com os valores certos e o objeto congelado.
+4. Só o header `Authorization` é lido. Query, body, cookies e outros headers são ignorados. Com credencial ausente ou malformada, o verificador não é chamado.
+5. Toda falha lança `AuthenticationError` com o código da FC-17. Nenhum caminho de falha devolve identidade. O erro do verificador chega ao chamador sem alteração.
+6. A chave vem só do JWKS configurado. Só ES256 e RS256 são aceitos. `none` e `HS*` são rejeitados. `jku`, `x5u` e `jwk` são ignorados.
+7. `iss`, `aud`, `role`, `exp` e `nbf` (com tolerância de 5 s), `sub` (UUID canônico), `session_id` e `is_anonymous` são validados conforme a FC-5.
+8. `AUTH_TOKEN_EXPIRED` só aparece com assinatura válida.
+9. Configuração ausente ou inválida, ou falha do resolvedor de chave (exceto as duas exceções da FC-5), gera `AUTH_VERIFICATION_UNAVAILABLE`.
+10. Nenhum segredo é usado:
+    - a única variável de ambiente lida é `SUPABASE_URL`;
+    - o build passa sem ela;
+    - nenhuma URL ou ref de projeto aparece no código, na configuração ou nos testes.
+11. Token, header e payload nunca aparecem em log, mensagem, propriedade ou `cause` de erro.
+12. Guardas de ESLint conforme C, "ESLint":
+    - o domínio não importa `next`, `jose` nem `@supabase/*`;
+    - `src/app` não importa `jose`, `@supabase/*` nem `infrastructure/supabase-auth`, nem pelo alias, nem por caminho relativo;
+    - as guardas da FOUNDATION-001 continuam valendo;
+    - há um objeto de configuração por área.
+13. As únicas dependências novas são `jose` (runtime) e `vitest` (desenvolvimento), ambas com versão exata.
+14. Sem middleware/proxy, AsyncLocalStorage, estado global ou cache de identidade.
+15. Verificações que passam:
+    - `typecheck`, `lint`, `build` (sem `SUPABASE_URL`) e `test` passam em `/backend`;
+    - `npm audit --omit=dev` = 0;
+    - `npm audit` não traz advisory além do GHSA-vfj7-8cjw-p6xm.
+16. Testes automatizados em Vitest:
+    - cobrem B1 a B23, B25, B26, H1, H2 e GL1 a GL12, todos passando;
+    - cada caso leva o ID do cenário no nome;
+    - nenhum usa rede, projeto real ou usuário real;
+    - todos seguem as convenções de C, "Testes".
+17. Cabeçalhos didáticos (inclusive nos testes e no `vitest.config.mts`) e comentários RELAÇÃO EXTERNA presentes.
+18. Em `/backend`, só os arquivos listados mudam:
+    - o `tsconfig.json` muda só no `include`;
+    - `next.config.ts`, `.gitignore` e `route.ts` não têm diff.
+19. Nenhum acesso a banco, `auth.users` ou `profiles`, nenhum cliente Supabase, e `backend/supabase/` não é criado.
+20. L-06 corrigido:
+    - `jsx` entra no `files` das duas guardas;
+    - os itens 1 e 2 do cabeçalho declaram "Arquivos cobertos";
+    - a redação sobre `import()` de tipo está corrigida;
+    - os casos `.jsx` da suíte GL passam.
+21. Nenhum `eslint-disable` (de linha, de bloco ou de arquivo) nos arquivos da feature. Os testes seguem as mesmas regras e guardas do resto do código.
+
+**FC-20. Fora do escopo**
+
+Autenticação e domínio:
+- Endpoints de login, cadastro, logout, refresh, redefinição de senha, confirmação de email, OAuth e MFA.
+- Cookies, BFF e CORS.
+- Qualquer rota nova.
+- Mapeamento HTTP e envelope de erro (DEC-07).
+- Usuário do Mescala, tabela `users`, provisionamento (DEC-06), perfil e "quem sou eu".
+- Igreja, vínculos, papéis, permissões, ministérios e convites.
+- Validação remota (`getUser`), service role e Admin API.
+- Logging, auditoria, eventos e rate limit.
+- Migração de usuários legados. Ela não existe: pela DATA-DEC-022 (complemento de 2026-10-22), o banco oficial começa vazio.
+
+Configuração e arquivos:
+- Painel do Supabase e ambiente: `SUPABASE_URL`, chaves, TTL e confirmação de email ficam com o PO.
+- Arquivos `.env*`.
+- `backend/supabase/` (config.toml e migrations): é do Analista de Dados (DEC-04).
+- Mudanças em `src/`, `supabase/`, `brain-mescala/`, `docs/`, `.claude/` e no `eslint.config.js` da raiz.
+- `next.config.ts` (D-01), atualização de Next, ESLint ou TypeScript (D-02) e tratamento do RT-FOUND-01.
+- Aceitar `.jsx`, ligar `allowJs` ou alterar `pageExtensions`. O encerramento do L-06 não autoriza nada disso.
+
+Testes:
+- Cobertura mínima e relatório de cobertura.
+- CI, hooks, modo watch e qualquer script de teste além de `test`.
+- Teste HTTP com servidor rodando, inclusive o 405 real do B2 da FOUNDATION-001 (fica para a AUTH-003).
+- Testes com banco (FOUNDATION-002).
+- Testes de outros arquivos da FOUNDATION-001 além de H1, H2 e da suíte GL.
+
+---
+
+### C. Backend Implementation Task: substituições
+
+**Cabeçalho**
+```text
+Feature:          AUTH-001 — Fundação de Autenticação (contrato v2)
+Domínio:          auth (+ infrastructure/supabase-auth; tooling: foundation)
+Responsabilidade: verificar o access token do Supabase Auth e devolver a identidade
+                  autenticada; instalar o Vitest; automatizar os cenários B, H e GL;
+                  corrigir o L-06.
+Pré-requisitos:   cumpridos (FC-3).
+```
+
+**Arquivos esperados**
+```text
+backend/
+├── package.json             (alterado: + jose em dependencies; + vitest em devDependencies; + script "test")
+├── package-lock.json        (alterado pelo npm)
+├── tsconfig.json            (alterado: só o "include" ganha "vitest.config.mts" e "eslint.config.test.ts")
+├── eslint.config.mjs        (alterado: ver "ESLint")
+├── eslint.config.test.ts    (novo: suíte GL)
+├── vitest.config.mts        (novo)
+└── src/
+    ├── app/api/health/
+    │   └── route.test.ts                              (novo: H1, H2; route.ts não muda)
+    ├── domains/auth/
+    │   ├── authenticated-identity.ts
+    │   ├── authentication-error.ts
+    │   ├── require-authenticated-identity.ts
+    │   └── require-authenticated-identity.test.ts     (B2–B5, B19 sem verificador injetado, B20, B22, B26)
+    └── infrastructure/supabase-auth/
+        ├── supabase-auth-config.ts
+        ├── supabase-auth-config.test.ts               (B19)
+        ├── supabase-access-token-verifier.ts
+        └── supabase-access-token-verifier.test.ts     (B1, B6–B18, B19 verificador padrão, B21–B23, B25)
+```
+- Nenhum outro arquivo é criado ou alterado, dentro ou fora de `/backend`.
+- Em particular, `next.config.ts`, `.gitignore` e `route.ts` não mudam.
+
+**Contratos**
+
+Sem mudança, exceto que `loadSupabaseAuthConfig()` lança `AuthenticationError` com `AUTH_VERIFICATION_UNAVAILABLE` quando a configuração falta ou é inválida (regra 5).
+
+**Regras de implementação**
+
+Os itens 4, 5 e 7 foram substituídos e os itens 12 a 16 foram acrescentados. Os demais não mudam.
+
+4. **Mapeamento das falhas, pela origem:**
+   - configuração ausente ou inválida → `AUTH_VERIFICATION_UNAVAILABLE`;
+   - erro lançado pelo resolvedor de chave (`keySet`) → `AUTH_VERIFICATION_UNAVAILABLE`, **exceto** `JWKSNoMatchingKey` e `JWKSMultipleMatchingKeys`, que seguem inalterados para o `jose`;
+   - forma sugerida: envolver o `keySet` numa função que marca as falhas de obtenção, sem mexer nessas duas exceções;
+   - `JWTExpired` → `AUTH_TOKEN_EXPIRED`;
+   - qualquer outro erro, inclusive desconhecido → `AUTH_INVALID_TOKEN`;
+   - confira os nomes na versão instalada. Nenhum erro pode resultar em identidade.
+5. **Configuração:**
+   - ler `SUPABASE_URL` na primeira chamada do verificador padrão;
+   - validar: URL absoluta `https:`, caminho vazio ou `/`, sem query, fragmento nem credenciais;
+   - derivar `issuer = <origem>/auth/v1` e `jwksUrl = <origem>/auth/v1/.well-known/jwks.json`, sem barra dupla;
+   - se a configuração faltar ou for inválida, lançar `AuthenticationError` com `AUTH_VERIFICATION_UNAVAILABLE`. O erro não é guardado em cache: a próxima chamada lê a variável de novo;
+   - com configuração válida, criar o JWKS remoto uma vez por processo.
+7. **Pare e reporte IMPLEMENTATION DIVERGENCE quando:**
+   - a documentação do Supabase Auth em uso indicar que `session_id` pode faltar num token de usuário;
+   - o projeto usar um algoritmo assimétrico diferente de ES256 e RS256;
+   - o Next interceptar e cachear a requisição do JWKS (regra 6);
+   - nenhuma versão do `jose` ou do Vitest atender à política da FC-14;
+   - o Vitest ou os tipos dele quebrarem typecheck, lint ou build. Nesse caso, não mude `lib`, `types` nem `skipLibCheck`, e não tire os testes do `tsconfig`;
+   - algum caso da suíte GL não se comportar como especificado. Não ajuste o caso para passar;
+   - o `npm install` informar vulnerabilidades. Registre o resumo no relatório;
+   - a versão instalada do `jose` não tiver equivalente para alguma classe de erro usada na classificação.
+12. Nenhuma URL nem ref de projeto no código, na configuração versionada ou nos testes. O valor de `SUPABASE_URL` vem só do ambiente.
+13. A identidade devolvida é congelada (`Object.freeze`).
+14. `sub`: UUID no formato canônico 8-4-4-4-12 hexadecimal, sem diferenciar maiúsculas e sem verificar a versão.
+15. Imports entre áreas (`app`, `domains`, `infrastructure`) usam o alias `@/`. Imports na mesma pasta usam `./`. Vale também para os testes.
+16. Código de produção nunca importa `vitest` nem arquivo `*.test.ts`.
+
+**ESLint: `backend/eslint.config.mjs`**
+
+Regras gerais:
+- `...nextVitals`, `...nextTs` e `globalIgnores` ficam como estão.
+- As guardas ficam em **dois** objetos de configuração, um por área.
+- Cada objeto reúne `no-restricted-imports` e `no-restricted-syntax` da sua área. No flat config, um segundo objeto que configure a mesma regra para os mesmos arquivos substitui o primeiro. O caso GL11 prova que isso não aconteceu.
+
+*Guarda 1: `src/domains/**`*
+- **`files`:** `src/domains/**/*.{ts,tsx,mts,cts,js,jsx,mjs,cjs}`. O `jsx` é a correção do L-06.
+- **Módulos proibidos e mensagens:**
+  - `next` e `next/*`: a mensagem atual não muda (`ADR-002: src/domains não pode depender do Next.js.`);
+  - `jose`, `jose/*` e `@supabase/*`: mensagem começando por `ADR-003:`, por exemplo `ADR-003: src/domains não depende do provedor de autenticação nem da biblioteca de JWT.`
+- **Formas cobertas, para todos esses módulos:**
+  - por `no-restricted-imports`: import e export estáticos, inclusive `import type`, `export … from`, `export * from` e `import x = require()`;
+  - por `no-restricted-syntax`: `import()` dinâmico com string ou com template sem interpolação, e `import("…")` em posição de tipo. Use os três seletores atuais, com a expressão regular estendida ou com seletores separados por família de módulo, cada um com a sua mensagem.
+
+*Guarda 2: `src/app/**`*
+- **`files`:** `src/app/**/*.{ts,tsx,mts,cts,js,jsx,mjs,cjs}`.
+  - O `jsx` é a correção do L-06.
+  - `mts` e `cts` entram porque a parte 2b precisa cobrir qualquer arquivo que uma rota possa importar, e as duas partes precisam ficar no mesmo objeto.
+  - Na parte 2a, isso só pode gerar falso positivo do lado seguro.
+- **2a (ADR-002#Runtime, sem mudança):** os dois seletores atuais de `runtime`, com as mensagens atuais.
+- **2b (ADR-003, item 8):** proíbe `jose`, `jose/*`, `@supabase/*` e qualquer especificador que contenha o segmento `infrastructure/supabase-auth`.
+  - Isso vale para o alias `@/infrastructure/supabase-auth/...` **e** para o caminho relativo. Em `no-restricted-imports`, use um `pattern` com `regex`, por exemplo `(^|/)infrastructure/supabase-auth(/|$)`.
+  - Cobre as mesmas formas da guarda 1.
+  - A mensagem começa por `ADR-003:`, por exemplo `ADR-003: Route Handlers usam só @/domains/auth; não importam jose, @supabase/* nem infrastructure/supabase-auth.`
+- **Continuam permitidos em `src/app/**`:** `next`, `@/domains/**` e os demais caminhos de `@/infrastructure/**`.
+
+*Cabeçalho (substitui o atual)*
+- **`FEATURE`:** `FOUNDATION-001; alterado pela AUTH-001 (guardas do ADR-003 e correção do L-06)`.
+- **Título da seção:** `GUARDAS DE ARQUITETURA (ADR-002 e ADR-003)`.
+- **Item 1:** o que a guarda 1 proíbe, com a origem de cada módulo; as formas cobertas, com a redação abaixo; e `Arquivos cobertos: .ts, .tsx, .mts, .cts, .js, .jsx, .mjs e .cjs.`
+- **Item 2:** as partes 2a e 2b; as mesmas formas; e `Arquivos cobertos: .ts, .tsx, .mts, .cts, .js, .jsx, .mjs e .cjs.` Declarar aqui também faz parte do L-06.
+- **Redação corrigida das formas (L-06):** "import e export estáticos (inclusive `import type` e `import x = require()`); `import()` dinâmico com especificador string ou template sem interpolação; `import("…")` em posição de tipo, só com string (o TypeScript recusa outro especificador nessa posição). Especificador calculado em tempo de execução não é verificável estaticamente (L-05). `require()` em `.js`/`.cjs` é barrado pela regra herdada `@typescript-eslint/no-require-imports` (L-04)."
+- **Uma linha final:** "Regressão: `eslint.config.test.ts` (suíte GL). Toda mudança neste arquivo exige `npm run test`."
+- **Comentários:** um comentário curto em cada objeto, citando o ADR-002 e/ou o ADR-003.
+
+**Dependências**
+
+Conforme a FC-14. Comandos:
+- `npm install --save-exact jose@<versão>`;
+- `npm install --save-dev --save-exact vitest@<versão>`.
+
+**Documentação no código** (acréscimo ao texto da v1)
+- Cada arquivo de teste e o `vitest.config.mts` levam um cabeçalho curto com:
+  - `ARQUIVO`;
+  - `DOMÍNIO` (`auth`, `infrastructure/supabase-auth` ou `foundation`);
+  - `FEATURE: AUTH-001`;
+  - objetivo;
+  - IDs dos cenários cobertos;
+  - nos testes de `src/`, uma linha dizendo como rodam sem rede.
+- O cabeçalho do `eslint.config.mjs` segue a seção "ESLint".
+- Os testes não precisam de comentários RELAÇÃO EXTERNA.
+
+**Testes (Vitest)**
+
+1. **Instalação:** conforme a FC-14. Nenhum outro pacote de teste.
+2. **Script:** `"test": "vitest run"` no `backend/package.json`. É uma execução única, sem watch. Nenhum outro script novo.
+3. **Configuração `backend/vitest.config.mts`:** extensão `.mts`, para ser ESM explícito, já que o `package.json` não declara `"type": "module"`.
+   - `resolve.alias`: `@/` → `<backend>/src/`, equivalente ao `paths` do `tsconfig.json`, calculado a partir de `import.meta.url`. Sem plugin.
+   - `test.include`: exatamente `["src/**/*.test.ts", "eslint.config.test.ts"]`.
+   - `test.environment: "node"`.
+   - `test.globals: false`: cada teste importa `describe`, `it`, `expect` e `vi` de `vitest`.
+   - Nada além disso: sem `setupFiles`, `coverage`, `reporters`, `pool`, `env`, `plugins` ou `server.deps`.
+4. **Local e nome dos arquivos:**
+   - teste de código: `<arquivo-testado>.test.ts`, na mesma pasta do arquivo testado;
+   - teste de configuração do `/backend`: na raiz do `/backend`, ao lado do arquivo de configuração (`eslint.config.test.ts`).
+   - A lista completa está em "Arquivos esperados".
+5. **Nome de cada caso:** começa pelo ID do cenário (`"B6 — …"`, `"H1 — …"`, `"GL9 — …"`).
+   - Os casos do QA usam `"QA-<n> — …"`.
+   - Um cenário com variantes pode usar `it.each`, mantendo o ID.
+6. **Sem rede:** vale para os testes de `domains/auth` e de `infrastructure/supabase-auth`.
+   - Em `beforeEach`, o `fetch` global é substituído (`vi.stubGlobal`) por uma função que lança erro.
+   - Em `afterEach`, ele é restaurado (`vi.unstubAllGlobals`).
+   - Cada arquivo confirma que essa função nunca foi chamada.
+   - Os issuers de teste usam o TLD reservado `.invalid`: `https://projeto-teste.supabase.invalid/auth/v1`, e para "outro projeto", `https://outro-projeto.supabase.invalid/auth/v1`.
+7. **Chaves e JWKS locais**, no arquivo `supabase-access-token-verifier.test.ts`, em `beforeAll`:
+   - gerar com o `jose` um par ES256 (`generateKeyPair("ES256")`), um par RS256 (`generateKeyPair("RS256", { modulusLength: 2048 })`) e um par "do atacante", que fica fora do JWKS;
+   - exportar o JWK público com `exportJWK` e acrescentar `kid` (distintos), `alg` e `use: "sig"`;
+   - montar `keySet = createLocalJWKSet({ keys: [...] })` e injetá-lo em `createSupabaseAccessTokenVerifier({ issuer, keySet })`;
+   - gerar os tokens com `SignJWT`:
+     - header `{ alg, kid, typ: "JWT" }`;
+     - `sub` UUID fixo, `session_id`, `role: "authenticated"`, `aud: "authenticated"`, `iss` e `iat`;
+     - `exp` relativo a `Date.now()`: 600 s no futuro para tokens válidos, 30 s ou mais no passado para vencidos e 2 s para os casos de tolerância;
+   - montar à mão o `alg: none` e o payload adulterado, com segmentos base64url (`Buffer.from(...).toString("base64url")`);
+   - gerar o HS256 com `SignJWT(...).sign(new TextEncoder().encode(JSON.stringify(jwkPublico)))`;
+   - no B18, usar um `keySet` que rejeita com `new TypeError("fetch failed")`, `new errors.JWKSTimeout()` e `new errors.JWKSInvalid()`;
+   - manter os utilitários de geração dentro do próprio arquivo de teste.
+8. **Ambiente:**
+   - `SUPABASE_URL` só é alterada com `vi.stubEnv` (ou salvando e restaurando `process.env`), e é restaurada em `afterEach` (`vi.unstubAllEnvs`);
+   - o verificador padrão e o `requireAuthenticatedIdentity` sem verificador injetado só são chamados com configuração ausente ou inválida. Assim, falham antes de criar o JWKS remoto;
+   - a derivação de uma configuração válida é testada chamando `loadSupabaseAuthConfig()` diretamente, com `https://projeto-teste.supabase.invalid` e com `https://projeto-teste.supabase.invalid/`.
+9. **Suíte GL** (`eslint.config.test.ts`):
+   - criar uma instância `new ESLint({ cwd: <backend> })` em `beforeAll`, com a configuração real do repositório: sem `overrideConfig` nem `overrideConfigFile`;
+   - em cada caso, rodar `lintText(codigo, { filePath: <backend>/<caminho virtual> })`. Nada é gravado em disco;
+   - asserções conforme E.5;
+   - o arquivo pode ter tempo limite próprio de até 60 s, por causa da carga dos plugins.
+10. **Proibido nos testes:**
+    - `vi.mock` e `vi.doMock` de `jose` ou de módulos do projeto. Use a injeção prevista nos contratos;
+    - snapshots;
+    - `.only`, `.skip` e `.todo`;
+    - espera real (`sleep`);
+    - ler `.env*`;
+    - rede, projeto real ou usuário real;
+    - `node:test`;
+    - APIs que não existem no Node 22.15.1 (RT-FOUND-03).
+11. **Typecheck, lint e build:**
+    - **`tsconfig.json`:** o `src/**/*.ts` já inclui os testes de `src/`. Acrescentar ao `include` só `"vitest.config.mts"` e `"eslint.config.test.ts"`. Nenhuma outra opção muda: não acrescentar `vitest/globals` a `types` e não criar outro `tsconfig`.
+    - **ESLint:** os testes são lintados como o resto do código (`eslint .`), sob as mesmas guardas. Nenhuma exceção para testes no `eslint.config.mjs` e nenhum `eslint-disable`.
+    - **Build:** o `next build` faz o typecheck pelo mesmo `tsconfig` e precisa passar com os testes incluídos. Nenhum teste é importado por rota, então nada de teste entra no bundle. Depois do build, o `tsconfig.json` não pode ter sido reescrito pelo Next.
+
+**Ao entregar**
+- Rodar em `/backend`: `npm run typecheck`, `npm run lint`, `npm run build` (sem `SUPABASE_URL` no ambiente) e `npm run test`.
+- Conferir `git diff --stat`:
+  - só aparecem os arquivos de "Arquivos esperados";
+  - o `tsconfig.json` tem só as duas entradas novas, mesmo depois do build;
+  - `next.config.ts`, `.gitignore` e `route.ts` não têm diff.
+- Registrar no relatório:
+  - as versões exatas do `jose`, do `vitest` e do `vite` resolvido;
+  - o resumo de vulnerabilidades impresso pelo `npm install`;
+  - a quantidade de casos por arquivo de teste;
+  - o mapa cenário → teste (B, H, GL);
+  - o resultado de cada comando;
+  - qualquer IMPLEMENTATION DIVERGENCE.
+- Não fazer commit nem deploy, não criar `.env*` e não configurar `SUPABASE_URL`.
+
+---
+
+### D. Organization Task (substitui a seção 6)
+
+**Localização**
+- **Domínio principal:** `auth`, em `backend/src/domains/auth/`.
+- **Infraestrutura:** `backend/src/infrastructure/supabase-auth/`.
+- **Tooling (`foundation`):**
+  - na raiz do `/backend`: `eslint.config.mjs`, `eslint.config.test.ts`, `vitest.config.mts`, `tsconfig.json`, `package.json` e `package-lock.json`;
+  - o teste da rota de saúde, em `backend/src/app/api/health/route.test.ts`.
+- **Secundários:** nenhum.
+- **Estrutura esperada:** a árvore de C, "Arquivos esperados".
+
+**Convenção de testes (vale a partir desta feature)**
+- Teste de código: `<arquivo>.test.ts`, na mesma pasta do arquivo testado.
+- Teste de configuração do `/backend`: na raiz do `/backend`, ao lado da configuração.
+- Extensão sempre `.test.ts`. Não usar `.spec.ts`, `.test.tsx` nem `.test.js`.
+- Proibido criar:
+  - `__tests__/`, `tests/`, `test/` ou `spec/`;
+  - `test-utils/`, `helpers/`, `fixtures/`, `mocks/`, `__mocks__/` ou `__snapshots__/`;
+  - arquivos `setup*`.
+- Utilitários de teste ficam dentro do próprio arquivo de teste.
+
+**Dependências permitidas**
+- `app/api/**` (futuro) → `@/domains/auth/*`, só pela API pública: `requireAuthenticatedIdentity`, os tipos e o erro.
+- `domains/auth/require-authenticated-identity.ts` → `@/infrastructure/supabase-auth/supabase-access-token-verifier` (composição padrão).
+- `infrastructure/supabase-auth/*` → `@/domains/auth/authenticated-identity` e `@/domains/auth/authentication-error`; e → `jose`.
+- `src/domains/auth/*.test.ts` → módulos da própria pasta (`./`), `vitest` e `node:*`.
+- `src/infrastructure/supabase-auth/*.test.ts` → módulos da própria pasta (`./`), tipos e erro de `@/domains/auth`, `jose`, `vitest` e `node:*`.
+- `src/app/api/health/route.test.ts` → `./route` e `vitest`.
+- `eslint.config.test.ts` → `eslint`, `vitest` e `node:*`.
+- `vitest.config.mts` → `vitest/config` e `node:*`.
+
+**Dependências proibidas**
+- `domains/**` → `next`, `jose`, `@supabase/*`.
+- `app/**` → `jose`, `@supabase/*` ou `infrastructure/supabase-auth`, pelo alias ou por caminho relativo.
+- Código de produção → `vitest` ou arquivos `*.test.ts`.
+- Testes → pacotes só transitivos (`vite`, `chai`, `@vitest/*`) ou módulos de outras áreas além dos listados acima.
+- `eslint.config.test.ts` → `src/**` ou `./eslint.config.mjs`. O teste usa a configuração por meio do próprio ESLint.
+- Qualquer arquivo → `../src` (frontend legado) ou `../supabase`.
+- Ciclo entre arquivos.
+
+**Possíveis violações estruturais**
+- Verificação de token dentro de Route Handler, `middleware.*` ou `proxy.*`. Também `backend/app/`, `pages/` ou `src/pages/` (L-02).
+- Tipos de autenticação em `shared/`, `lib/`, `utils/` ou `helpers/`.
+- Cliente genérico `infrastructure/supabase/` ou `supabase-js`.
+- Barrels (`index.ts`), pastas vazias e `.gitkeep`.
+- Helper de resposta HTTP de erro.
+- Rota nova.
+- Arquivo `.env*`.
+- Arquivo de exemplo com violações das guardas gravado em disco: quebraria o `npm run lint`. A suíte GL usa caminho virtual.
+- Configurações extras de teste: outro arquivo de teste na raiz além de `eslint.config.test.ts`, `vitest.config.ts`/`.js`, `vitest.workspace.*`, pasta `coverage/` ou `setupFiles`.
+- `.jsx` em qualquer lugar de `backend/src`.
+- `backend/supabase/`.
+
+O Organizador não muda regra. Problema funcional volta ao Arquiteto.
+
+---
+
+### E. QA Contract (substitui a seção 7)
+
+Validar contra:
+- o Feature Contract AUTH-001 v2;
+- o ADR-003;
+- a DEC-02;
+- o registro da FOUNDATION-001.
+
+Os testes dos cenários B, H e GL são escritos pelo Desenvolvedor (DEC-02). O QA revisa esses testes e acrescenta casos adversariais (E.8).
+
+#### E.1 Validação estática
+
+| ID | Cenário | Critério |
+|---|---|---|
+| S1 | Arquivos e locais conforme o OT; nada fora de `/backend`; em `/backend`, só os arquivos listados | 1, 18 |
+| S2 | `/api/health` é a única rota; `route.ts` sem diff; sem `middleware.*`, `proxy.*`, `backend/app/`, `pages/` nem `src/pages/` (L-02) | 2, 14 |
+| S3 | Dependências novas: só `jose` (`dependencies`) e `vitest` (`devDependencies`), sem `^` nem `~`; nenhuma proibida (FC-14); nenhum import de pacote só transitivo (DEC-08) | 13 |
+| S4 | `eslint.config.mjs` conforme a seção "ESLint" de C: um objeto de guarda por área; `jsx` nos dois `files`; mensagens com `ADR-002` ou `ADR-003`; cabeçalho com "Arquivos cobertos" nos itens 1 e 2 e com a redação corrigida | 12, 20 |
+| S5 | Só `SUPABASE_URL` é lida; nenhum segredo; nenhum `.env*`; nenhuma ocorrência de `vitqnyzuvrvkmnvshcpb` ou de URL de projeto no código, nos testes ou na configuração | 10 |
+| S6 | Token, header e payload nunca em `console`, mensagem, propriedade ou `cause` de erro | 11 |
+| S7 | Lista fechada de algoritmos; nada de `jku`, `x5u` ou `jwk`; JWKS e issuer só da configuração | 6 |
+| S8 | Identidade com só 3 campos e congelada; nenhuma leitura de `email`, `app_metadata` ou `user_metadata` para identidade ou autorização | 3 |
+| S9 | Sem AsyncLocalStorage, estado global ou cache de identidade | 14 |
+| S10 | Sem banco, `auth.users`, `profiles` ou cliente Supabase; `backend/supabase/` não existe | 19 |
+| S11 | Cabeçalhos didáticos (inclusive nos testes e no `vitest.config.mts`) e comentários RELAÇÃO EXTERNA | 17 |
+| S12 | Sem ciclo; imports conforme o OT, inclusive nos testes; convenção `@/` × `./` | 12 |
+| S13 | Convenções de teste: local e nome dos arquivos; ID no nome de cada caso; sem `.only`, `.skip` ou `.todo`; sem `vi.mock` de `jose` ou de módulos do projeto; sem snapshots; sem pastas genéricas | 16 |
+| S14 | `vitest.config.mts` conforme o item 3 de "Testes"; script `test` = `vitest run` | 15, 16 |
+| S15 | `tsconfig.json` com diff só no `include` (2 entradas); `next.config.ts` e `.gitignore` sem diff | 18 |
+| S16 | Nenhum `eslint-disable` nos arquivos da feature | 21 |
+| S17 | Nenhum `.jsx` em `backend/src` | 20 |
+| S18 | Classificação de falha pela origem (FC-5, passo 5) e regra 6 (requisição do JWKS fora do cache de dados do Next) | 9 |
+
+#### E.2 Validação por ferramentas
+
+| ID | Cenário | Critério |
+|---|---|---|
+| T1 | `npm run typecheck` | 15 |
+| T2 | `npm run lint` | 15 |
+| T3 | `npm run build` sem `SUPABASE_URL` no ambiente; depois, `git diff backend/tsconfig.json` igual ao esperado | 10, 15, 18 |
+| T4 | `npm run test`: ao menos os 5 arquivos encontrados; 0 falhas; 0 casos pulados | 15, 16 |
+| T5 | `npm run lint` na raiz não traz caminhos `backend/` | 18 |
+| T6 | `npm audit --omit=dev` = 0 | 15 |
+| T7 | `npm audit` sem advisory além do GHSA-vfj7-8cjw-p6xm (RT-FOUND-01) | 15 |
+
+#### E.3 Testes automatizados da AUTH-001 (cenários B)
+
+Chaves ES256 e RS256 geradas no teste, JWKS local, issuer `.invalid` e `fetch` bloqueado. Sem rede, sem projeto real e sem usuários reais.
+
+Arquivos de teste:
+- **[D]:** `src/domains/auth/require-authenticated-identity.test.ts`;
+- **[V]:** `src/infrastructure/supabase-auth/supabase-access-token-verifier.test.ts`;
+- **[C]:** `src/infrastructure/supabase-auth/supabase-auth-config.test.ts`.
+
+| ID | Cenário | Esperado | Arquivo |
+|---|---|---|---|
+| B1 | Token válido, ES256 e RS256 | `externalUserId = sub`, `sessionId = session_id`, `expiresAt = new Date(exp * 1000)`; exatamente 3 chaves; objeto congelado | V |
+| B2 | Sem `Authorization` | `AUTH_MISSING_CREDENTIAL`; verificador não chamado | D |
+| B3 | `Authorization` vazio ou só com espaços | `AUTH_MISSING_CREDENTIAL`; verificador não chamado | D |
+| B4 | Formatos inválidos (lista abaixo da tabela) | `AUTH_MALFORMED_CREDENTIAL`; verificador não chamado | D |
+| B5 | `bearer abc`; `BEARER abc` | Aceito; verificador chamado uma vez, com exatamente `abc`; devolve a identidade do verificador | D |
+| B6 | `exp` vencido há 30 s ou mais, com assinatura válida | `AUTH_TOKEN_EXPIRED` | V |
+| B7 | `exp` vencido, com assinatura inválida | `AUTH_INVALID_TOKEN` | V |
+| B8 | `nbf` 30 s ou mais no futuro; sem `exp` | `AUTH_INVALID_TOKEN` | V |
+| B9 | Payload adulterado, com a assinatura original | `AUTH_INVALID_TOKEN` | V |
+| B10 | Chave fora do JWKS: `kid` desconhecido; `kid` do JWKS com assinatura do atacante; header com `jwk` ou `jku` apontando para a chave do atacante | `AUTH_INVALID_TOKEN` | V |
+| B11 | `alg: none` | `AUTH_INVALID_TOKEN` | V |
+| B12 | HS256, inclusive com o JWK público serializado como segredo | `AUTH_INVALID_TOKEN` | V |
+| B13 | `iss` de outro projeto; sem `iss` | `AUTH_INVALID_TOKEN` | V |
+| B14 | `aud` diferente; sem `aud` | `AUTH_INVALID_TOKEN`. `aud` em lista que contém `authenticated`: aceito | V |
+| B15 | `role` `anon`, `service_role` ou ausente | `AUTH_INVALID_TOKEN` | V |
+| B16 | `is_anonymous: true` | `AUTH_INVALID_TOKEN`. `false` ou ausente: aceito | V |
+| B17 | Sem `sub`; `sub` que não é UUID; sem `session_id`; `session_id` vazio ou não string | `AUTH_INVALID_TOKEN` | V |
+| B18 | Resolvedor injetado rejeita com `TypeError("fetch failed")`, `JWKSTimeout` ou `JWKSInvalid` | `AUTH_VERIFICATION_UNAVAILABLE`; nunca identidade | V |
+| B19 | Configuração ausente ou inválida; derivação a partir de configuração válida | Detalhes abaixo da tabela | C, V, D |
+| B20 | Token só em query, cookie, `x-user-id` ou body | `AUTH_MISSING_CREDENTIAL`; verificador não chamado | D |
+| B21 | Token com `email`, `phone`, `app_metadata`, `user_metadata` e claims extras | A identidade não os contém (3 chaves) | V |
+| B22 | Em todo caso de falha de B2 a B19: mensagem, `String(erro)`, propriedades próprias (inclusive não enumeráveis) e cadeia de `cause` | Nenhum contém o token nem o header | D, V |
+| B23 | JWKS com duas chaves (ES256 e RS256, `kid` distintos) | Tokens das duas aceitos | V |
+| B24 | Guardas de ESLint | Substituído pela suíte GL (E.5) | — |
+| B25 | Tolerância: `exp` vencido há 2 s; `nbf` 2 s no futuro | Aceitos | V |
+| B26 | `AuthenticationError` lançado pelo verificador injetado | Chega ao chamador sem alteração (mesma instância e código) | D |
+
+Formatos do B4:
+- `Bearer`;
+- `Bearer ` (o `Headers` normaliza para `Bearer`);
+- `Basic dXNlcjpwYXNz`;
+- `Token abc`;
+- `Bearer a b`;
+- `Bearer  abc` (dois espaços);
+- `Bearer\tabc`;
+- `Bearer a,b`;
+- dois headers `Authorization`.
+
+Detalhes do B19:
+- **Valores inválidos:** `SUPABASE_URL` ausente, vazia, que não é URL, com `http:`, ou com caminho, query, fragmento ou credenciais.
+- **Com valor inválido:**
+  - [C] `loadSupabaseAuthConfig` lança `AUTH_VERIFICATION_UNAVAILABLE`;
+  - [V] o `verifySupabaseAccessToken` padrão devolve `AUTH_VERIFICATION_UNAVAILABLE`;
+  - [D] o `requireAuthenticatedIdentity` sem verificador injetado devolve `AUTH_VERIFICATION_UNAVAILABLE`.
+- **Com valor válido** ([C], com e sem barra final): issuer `…/auth/v1` e JWKS `…/auth/v1/.well-known/jwks.json`.
+
+#### E.4 Testes automatizados da FOUNDATION-001 (B1 e B2)
+
+Arquivo: `src/app/api/health/route.test.ts`.
+
+| ID | Cenário | Esperado |
+|---|---|---|
+| H1 | `GET()` de `src/app/api/health/route.ts` | Status 200; `content-type` começa por `application/json`; corpo igual a `{"status":"ok"}` |
+| H2 | Exportações do módulo `route.ts` | O único método HTTP exportado é `GET`: nenhum de `HEAD`, `POST`, `PUT`, `PATCH`, `DELETE` ou `OPTIONS` |
+
+#### E.5 Suíte GL: regressão das guardas de lint
+
+A suíte cobre o B3 da FOUNDATION-001, o B24 da AUTH-001 e o L-06.
+
+Como funciona:
+- Fica no arquivo `backend/eslint.config.test.ts`.
+- Cada caso roda `lintText` com caminho virtual, contra a configuração real.
+- Em todos os casos, nenhuma mensagem pode ser `fatal`.
+
+Legenda da tabela:
+- **"Acusa":** ao menos uma mensagem com severidade 2, da regra `no-restricted-imports` ou `no-restricted-syntax`, com a tag indicada no texto.
+- **"Não acusa":** nenhuma mensagem dessas duas regras.
+- **M:** o módulo do caso.
+- **`import()`:** fica dentro de uma função assíncrona exportada (por exemplo, `export async function f() { return import("M"); }`), para não depender de top-level await.
+
+| ID | Caminho virtual | Código | Esperado |
+|---|---|---|---|
+| GL1 | `src/domains/probe/probe.ts` | Para M ∈ {`next`, `next/server`}: `import x from "M"`; `import "M"`; `import type { X } from "M"`; `export { x } from "M"`; `export * from "M"`; `import s = require("M")`; `import("M")`; ``import(`M`)``; `type T = import("M").X` | Acusa, `ADR-002` |
+| GL2 | Idem | As mesmas formas, para M ∈ {`jose`, `jose/qualquer`, `@supabase/supabase-js`} | Acusa, `ADR-003` |
+| GL3 | `src/domains/probe/probe.<ext>`, com ext ∈ {`tsx`, `mts`, `cts`, `js`, `jsx`, `mjs`} | `import x from "next/server"`; `import x from "jose"`; `import()` de `next/server` e de `jose`. Em `js`, `jsx` e `mjs`, também com template sem interpolação | Acusa, com `ADR-002` ou `ADR-003` conforme o módulo |
+| GL4 | `src/domains/probe/probe.js` e `.cjs` | `require("next/server")`; `require("jose")`. No `.cjs`, também `import("next/server")` dentro de função | `require`: severidade 2 de qualquer regra (L-04). `import()`: acusa |
+| GL5 | `src/domains/probe/probe.ts` | `next-auth`, `nextSomething`, `@next/env`, `./next`, `../next`, `node:crypto`, ``import(`next/${x}`)``, `joseph`, `./jose`, `@supabase-community/x`, `@/domains/auth/authentication-error`, `@/infrastructure/supabase-auth/supabase-access-token-verifier` | Não acusa |
+| GL6 | `src/app/api/probe/route.ts` | `export const runtime = "edge"`; `= "experimental-edge"`; `const runtime = "nodejs"; export { runtime }`; `export { runtime } from "./x"` | Acusa, `ADR-002` |
+| GL7 | `src/app/api/probe/route.<ext>`, com ext ∈ {`tsx`, `mts`, `js`, `jsx`, `mjs`} | `export const runtime = "edge"` | Acusa, `ADR-002` |
+| GL8 | `src/app/api/probe/route.ts` | `export const runtime = "nodejs"`; `import { NextResponse } from "next/server"`; `import { requireAuthenticatedIdentity } from "@/domains/auth/require-authenticated-identity"`; `import type { AuthenticatedIdentity } from "@/domains/auth/authenticated-identity"` | Não acusa |
+| GL9 | `src/app/api/probe/route.ts` | `import { jwtVerify } from "jose"`; `import type { JWTPayload } from "jose"`; `import x from "jose/qualquer"`; `import { createClient } from "@supabase/supabase-js"`; `import { verifySupabaseAccessToken } from "@/infrastructure/supabase-auth/supabase-access-token-verifier"`; `import { loadSupabaseAuthConfig } from "../../../infrastructure/supabase-auth/supabase-auth-config"`; `import("jose")`; ``import(`jose`)``; `import("@/infrastructure/supabase-auth/supabase-auth-config")`; `type T = import("jose").JWTPayload` | Acusa, `ADR-003` |
+| GL10 | `src/app/api/probe/route.<ext>`, com ext ∈ {`js`, `jsx`, `mts`} | `import { jwtVerify } from "jose"`; `import x from "@/infrastructure/supabase-auth/supabase-auth-config"` | Acusa, `ADR-003` |
+| GL11 | Soma das restrições | No domínio: `import "next/server"; import "jose";`. No app: `export const runtime = "edge"; import { jwtVerify } from "jose";` | Em cada caso, duas mensagens: uma com `ADR-002` e uma com `ADR-003` |
+| GL12 | `src/infrastructure/supabase-auth/probe.ts` | `import { jwtVerify } from "jose"` | Não acusa |
+
+Correspondência com a origem dos casos:
+- **Sondagens R4 e R5 e os dois casos extras do registro da FOUNDATION-001 (B3):** GL1, GL3 (casos de `next`), GL4, os sete primeiros itens do GL5, GL6 e GL7.
+- **L-06:** os casos `.jsx` do GL3 e do GL7.
+- **B24 da AUTH-001:** GL2, os demais itens do GL5, e GL8 a GL12.
+
+#### E.6 Cenários com banco
+
+Nenhum.
+
+#### E.7 Não executáveis
+- **Integração real com o JWKS do projeto oficial:** NOT TESTED. Fica para a AUTH-003, a primeira rota protegida.
+- **Chaves assimétricas, TTL e confirmação de email no projeto novo:** verificação do PO.
+- **405 HTTP real do B2 da FOUNDATION-001:** só com servidor rodando, na AUTH-003. O H2 cobre o nível do módulo.
+- **Regra 6 (cache de dados do Next sobre o `fetch` do JWKS):** o `fetch` do Next não existe no Vitest. Fica com a revisão estática (S18) e a verificação na AUTH-003.
+
+#### E.8 Casos adversariais do QA
+- O QA pode acrescentar casos nos mesmos arquivos ou em um `*.test.ts` novo ao lado do arquivo testado, com nome `QA-<n> — …`.
+- Não altera `vitest.config.mts`, `package.json`, `tsconfig.json` nem código de produção.
+- Alvos sugeridos:
+  - caracteres de controle e Unicode no header;
+  - token muito grande;
+  - `exp` ou `nbf` não numéricos;
+  - `aud` como lista vazia;
+  - `crit` desconhecido no header;
+  - `sub` UUID em maiúsculas (deve ser aceito);
+  - combinações de B13 a B17 no mesmo token.
+
+#### E.9 Cenários padrão
+
+| Cenário | Cobertura |
+|---|---|
+| Happy path | B1, B5, B23, B25, H1 |
+| Invalid input | B2–B4, B19 |
+| Unauthorized | B6–B17, B20 |
+| Forbidden | Não se aplica (não há autorização) |
+| Cross-tenant | Não se aplica. O equivalente é token de outro projeto (B13) + S8 |
+| Transaction rollback | Não se aplica |
+| Dependency failure | B18, B19 |
+| Regression | H1, H2, suíte GL, T2, T3, T5, S2, S15 |
+
+---
+
+### F. Data Task (substitui o registro futuro da seção 4)
+
+A AUTH-001 continua sem DATA TASK. O texto abaixo é registro para a AUTH-002. **Não encaminhar ao Analista de Dados.**
+
+```text
+REQUISITO CONCEITUAL FUTURO — Usuário do Mescala (AUTH-002)
+
+Entidade:   users (DATA-DEC-019, opção A). Global, sem church_id.
+            Schema dedicado fora da Data API (DATA-DEC-020; nome do schema A DEFINIR).
+Ligação:    auth_user_id UNIQUE, com FK para auth.users do projeto
+            vitqnyzuvrvkmnvshcpb (DATA-DEC-019 + DEC-05).
+            1:1 com externalUserId (= sub). Obrigatória e imutável.
+Atributos:  DATA-DEC-013.
+Status ou revogação do usuário: A DEFINIR (bloqueio B8).
+Restrição a preservar:
+  - excluir a conta no provedor não pode apagar histórico
+    (05-REGRAS-DE-NEGOCIO#HIS-001, DATA-DEC-012). O comportamento da FK
+    na exclusão é decidido no contrato da AUTH-002, dentro desse limite.
+Migração do legado: não existe (DATA-DEC-022, complemento de 2026-10-22:
+            o banco oficial começa vazio).
+Migrations: backend/supabase/migrations/ (DEC-04, parte 1), aplicadas pelo PO.
+
+O QUE AINDA FALTA:
+  - DEC-06 (como o registro nasce);
+  - contrato FOUNDATION-002 e autorização explícita da Fase 4;
+  - DEC-04, parte 2 (ferramenta de acesso ao banco), para o código da AUTH-002.
+```
+
+---
+
+### G. Notas sobre a análise da v1 (§1 e §2)
+
+- **§1.3** retrata o repositório em 2026-10-06, quando `/backend` ainda não existia. O estado atual está em A.2.
+- **§1.4:**
+  - D4 está **resolvida** quanto ao backend oficial pela DEC-05 (projeto novo `vitqnyzuvrvkmnvshcpb`). Os projetos antigos ficam só para o legado.
+  - D5 foi corrigida pelo vault-brain em 2026-10-20.
+- **§1.6:**
+  - O benefício "usuários reais preservados" e a migração 1:1 de `profiles + auth.users` deixaram de valer (DEC-05; DATA-DEC-022, complemento de 2026-10-22).
+  - A escolha da opção A continua sustentada pelos demais critérios da comparação.
+  - A observação sobre a DATA-DEC-020 está resolvida: foi escolhida a opção A (acesso direto ao Postgres com papel sem BYPASSRLS), compatível com este contrato.
+- **§1.7 (substituído):**
+  - DEPENDS_ON: FOUNDATION-001, ADR-003 e DEC-02, todas cumpridas.
+  - Para operar: `SUPABASE_URL` configurada e chaves assimétricas ativas no projeto novo.
+- **§1.8, riscos:**
+  - **R2 (reescrito):** o pool de identidades do projeto novo não é compartilhado com o legado. O risco que resta é a confirmação de email desligada no projeto novo, que é condição do ADR-003 e está com o PO. Mitigação: email nunca prova identidade (ADR-003, item 6).
+  - **R3:** encerrado (DEC-05).
+  - **R7:** resolvido. Os cenários B, H e GL são obrigatórios na entrega.
+  - **R9 (novo):** a suíte GL pode passar por engano, por erro de parse ou por erro de outra regra. Mitigação: as asserções exigem a regra certa, a tag na mensagem e ausência de `fatal`.
+  - **R10 (novo):** o Vitest ou os tipos dele podem ser incompatíveis com TypeScript 6.0.3, Next 16.4.2 ou Node 22.15.1. Mitigação: política de versão (FC-14) e IMPLEMENTATION DIVERGENCE, sem mexer em `lib`, `types` ou `skipLibCheck`.
+  - **R1, R4, R5, R6 e R8:** sem mudança.
+- **§2 e "Texto proposto: ADR-003":** são histórico. A fonte normativa é `brain-mescala/decisoes/ADR-003-AUTENTICACAO.md`, aceito em 2026-10-21.
+
+---
+
+### H. Dependências entre features (substitui a seção 8)
+
+```text
+FOUNDATION-001 (APPROVED 2026-10-19, 7f26d30)
+   ├──► AUTH-001 Fundação de Autenticação            [READY v2; sem banco]
+   └──► FOUNDATION-002 Fundação de Persistência      [contrato não emitido; DEC-04 parte 2;
+             │                                         autorização da Fase 4; lacunas do registro
+             │                                         de 2026-10-21 (nome do schema etc.)]
+   AUTH-001 ─┴──► AUTH-002 Provisionamento do Usuário do Mescala  [DEC-06]
+                      ▼                               (DATA-DEC-013/018/019/020 decididas)
+                  AUTH-003 Usuário Atual + primeira rota protegida  [DEC-07; B8;
+                      ▼                               teste HTTP com servidor, incluindo o 405 real]
+                  CHURCH-001 Criar Igreja (o criador vira OWNER)  [pendências próprias,
+                      ▼                               por exemplo o status da Igreja, A DEFINIR]
+                  CHURCH-002 Contexto de Igreja (igreja atual, DATA-DEC-006)  [DEC-07]
+                      ▼
+                  ministérios, membros, programações, escalas…
+```
+
+- A AUTH-001 roda em paralelo à FOUNDATION-002, porque não usa banco.
+- Se a DEC-06 escolher criar o usuário na primeira requisição (JIT), a AUTH-002 e a AUTH-003 se fundem.
+
+**AUTH-001**
+- **DEPENDS_ON:** FOUNDATION-001, ADR-003 e DEC-02. Todas cumpridas.
+- **BLOCKS:** AUTH-002, AUTH-003, CHURCH-001, CHURCH-002 e toda rota protegida.
+- **RELATED_TO:**
+  - FOUNDATION-001: o L-06 é corrigido aqui, e B1 a B3 são automatizados aqui (H1, H2 e suíte GL);
+  - DEC-05, necessária para operar;
+  - DEC-08;
+  - RT-FOUND-01 (condições do audit);
+  - DATA-DEC-019 e DATA-DEC-020, nas features seguintes;
+  - DATA-DEC-011: convites dependem da confirmação de email ligada e de uma decisão sobre a Admin API;
+  - toda feature futura que alterar o `eslint.config.mjs` herda a suíte GL e precisa estendê-la.
+- **Saiu de RELATED_TO:** a DATA-DEC-023. Ela não se aplica desde 2026-10-22, e o pool do projeto novo não é compartilhado com o legado.
+
+---
+
+### I. Bloqueios (substitui a seção 9)
+
+| # | Item | Situação em 2026-10-22 | Bloqueia a AUTH-001? |
+|---|---|---|---|
+| B1 | DEC-03 (autenticação) | **Resolvido:** ADR-003 aceito em 2026-10-21 | Não |
+| B2 | DEC-02 (testes) | **Resolvido:** Vitest, decidido em 2026-10-22 e especificado neste adendo | Não |
+| B3 | FOUNDATION-001 | **Resolvido:** APPROVED em 2026-10-19 (`7f26d30`) | Não |
+| B4 | DEC-05 / D4 | **Resolvido:** projeto novo `vitqnyzuvrvkmnvshcpb`; D4 encerrada quanto ao backend oficial | Não |
+| B5 | Chaves assimétricas e TTL no projeto novo | **Aberto, com o PO** (condição do ADR-003) | Não; é condição de operação |
+| B6 | Confirmação de email em produção | **Aberto, com o PO** (condição do ADR-003) | Não |
+| B7 | DEC-06 (provisionamento) | **Aberto** | Não. Bloqueia a AUTH-002 |
+| B8 | Revogação do usuário no domínio | **Aberto, A DEFINIR** (`decisoes/PENDENCIAS#AUTH-001`; `seguranca/AUTENTICACAO`) | Não. Bloqueia a AUTH-003 |
+| B9 | DEC-07 (padrão HTTP de erros) | **Aberto** | Não. Bloqueia a AUTH-003 |
+| B10 | Dados para a AUTH-002 | **Parcial** | Não |
+
+Detalhes:
+- **B5:**
+  - Até a verificação do PO, o backend em operação rejeita todos os tokens (falha fechada).
+  - Sem chave assimétrica, o ADR-003 precisa ser revisto para validação remota antes da AUTH-003.
+- **B6:**
+  - O indício de 2026-10-06 vinha do `.env` do legado e não diz nada sobre o projeto novo.
+  - O item bloqueia features que usem email como evidência, como convites.
+- **B10:**
+  - Já decididos: DATA-DEC-013, 018, 019 e 020, e a DEC-04 parte 1.
+  - Ainda faltam: contrato FOUNDATION-002, autorização da Fase 4, DEC-06 e, para o código, a DEC-04 parte 2.
+  - Não há migração de dados do legado.
+
+**Nenhum BLOQUEIO DE DOMÍNIO novo.** A AUTH-001 v2 não toca nenhum ponto A DEFINIR.
+
+O parágrafo "Após o aceite do PO (não executado)" da v1 está superado: o vault-brain gravou o ADR-003 e atualizou as notas em 2026-10-21.
+
+Parei aqui. Não encaminhei nada aos executores.

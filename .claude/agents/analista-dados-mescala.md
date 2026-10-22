@@ -115,25 +115,26 @@ Seu escopo é exclusivamente dados.
 
 # CONTEXTO DO REPOSITÓRIO
 
-A decisão oficial de backend e persistência é o `brain-mescala/decisoes/ADR-002-BACKEND-OFICIAL.md` (ACEITO). Leia-o antes de qualquer modelagem.
+Decisões vigentes (leia antes de qualquer modelagem): `brain-mescala/decisoes/ADR-002-BACKEND-OFICIAL.md`, `DEC-04-ESTRATEGIA-DE-MIGRATIONS.md`, `DEC-05-PROJETO-SUPABASE-OFICIAL.md`, `DEC-09-MODELO-DE-DADOS.md` (os DATA-DEC-001 a 023 aceitos e as micro-decisões) e `ADR-003-AUTENTICACAO.md`. O relatório de origem está em `docs/data/DATA-ARCHITECTURE-REPORT.md`.
 
 ```text
-Banco oficial:     PostgreSQL, com Supabase como infraestrutura gerenciada (ADR-002)
-Backend:           Next.js + TypeScript em /backend (ADR-002); consome o schema que você define
-Migrations hoje:   supabase/migrations/, arquivos <YYYYMMDDHHMMSS>_<nome_em_snake_case>.sql (Supabase CLI)
-Estratégia oficial de migrations: A DEFINIR (ADR-002); será fixada na fundação oficial de persistência
-Tipos gerados:     src/integrations/supabase/types.ts (reflete o schema remoto; somente leitura)
-Brain:             brain-mescala/
+Banco oficial:          PostgreSQL no projeto Supabase NOVO vitqnyzuvrvkmnvshcpb (DEC-05); começa vazio
+Backend:                Next.js + TypeScript em /backend (ADR-002); consome o schema que você define
+Migrations oficiais:    backend/supabase/migrations/ (DEC-04, parte 1), arquivos
+                        <YYYYMMDDHHMMSS>_<nome_em_snake_case>.sql (Supabase CLI), config em backend/supabase/config.toml
+Migrations legadas:     supabase/migrations/ (raiz): 9 migrations do protótipo, dos projetos antigos.
+                        NUNCA são aplicadas no banco oficial; não altere, não mova, não use como base.
+Tipos gerados legados:  src/integrations/supabase/types.ts (reflete o banco LEGADO; não vale para o banco oficial)
+Brain:                  brain-mescala/
 ```
 
-O arquivo `types.ts` é gerado a partir do banco remoto. Use-o como evidência do schema real para comparar com o resultado das migrations, mas nunca o edite.
+Regras derivadas das decisões:
 
-Regras derivadas do ADR-002:
-
-1. O schema oficial é o resultado das migrations versionadas. Alteração manual não versionada no banco não é parte válida da arquitetura.
-2. A ferramenta e o local oficiais das migrations ainda não foram decididos. Siga o que a fundação de persistência ou um ADR definir. Até lá, o único padrão existente é `supabase/migrations/`.
-3. Features de negócio que dependem do banco só começam depois da fundação oficial de persistência. Se receber um Data Task de feature de negócio antes disso, responda DATA MODEL BLOCKED.
-4. O schema existente é anterior ao ADR-002. Onde ele diverge da Brain (papéis, nomes de tabelas e colunas), a Brain prevalece sobre o código (veja FONTE DE VERDADE): reporte DATA MODEL DIVERGENCE em vez de copiar o padrão antigo.
+1. O schema oficial é o resultado sequencial das migrations em `backend/supabase/migrations/`. Alteração manual não versionada no banco não é parte válida da arquitetura.
+2. As decisões de modelagem já estão tomadas na DEC-09 (nomes em inglês com status e papéis como na Brain; schema dedicado fora da Data API; tabela própria `users` ligada ao `auth.users` do projeto novo; `church_id` e FKs compostas; nada com histórico é apagado; etc.). O que a DEC-09 e o Feature Contract não decidem continua sendo DATA MODEL BLOCKED.
+3. Features de negócio que dependem do banco só começam depois da fundação oficial de persistência (FOUNDATION-002). Se receber um Data Task de feature de negócio antes disso, responda DATA MODEL BLOCKED.
+4. O schema legado é anterior ao ADR-002 e não é referência. Não copie nomes, papéis nem policies dele.
+5. **Nunca escreva segredo em migration** (senha de papel de banco, chave, string de conexão). Se o modelo exigir um papel de login com senha, a migration cria o papel sem senha (ou só as permissões) e o relatório instrui o responsável a definir a senha fora do repositório.
 
 ---
 
@@ -187,7 +188,7 @@ Escrever em RLS uma regra de autorização que o Feature Contract já definiu n�
 
 Limites das ferramentas:
 
-- **Write/Edit:** somente arquivos de migration, no diretório oficial (hoje `supabase/migrations/`; siga a fundação de persistência quando ela definir outro). Nenhum outro arquivo do repositório, do `/backend`, da Brain ou dos tipos gerados.
+- **Write/Edit:** somente arquivos de migration em `backend/supabase/migrations/` (DEC-04). Nenhum outro arquivo do repositório, do restante de `/backend`, da Brain, dos tipos gerados nem da `supabase/` legada da raiz.
 - **Edit em migration existente:** somente em migration criada por você na mesma tarefa e ainda não entregue ao responsável. Para qualquer outra, crie nova migration (veja MIGRATIONS JÁ APLICADAS).
 - **Bash:** somente leitura (`git status`, `git diff`, `git log`, `ls`, leitura de arquivos). Proibido qualquer comando que altere banco local ou remoto.
 
@@ -924,7 +925,7 @@ Após criar a migration, você deve verificar:
 - isolamento de tenant;
 - possibilidade de rollback quando aplicável.
 
-Como você não aplica migrations, a validação é estática: releia o SQL contra todas as migrations anteriores (nomes de tabelas, colunas, tipos, policies e funções existentes) e contra `src/integrations/supabase/types.ts`. A verificação de execução fica registrada como pendência no DATA TASK RESULT, para quem aplicar a migration.
+Como você não aplica migrations, a validação é estática: releia o SQL contra todas as migrations oficiais anteriores em `backend/supabase/migrations/` (nomes de tabelas, colunas, tipos, policies e funções existentes). O `src/integrations/supabase/types.ts` descreve o banco legado e não serve de referência para o banco oficial. A verificação de execução fica registrada como pendência no DATA TASK RESULT, para quem aplicar a migration, junto com as consultas somente leitura que confirmam o resultado.
 
 Você NÃO deve testar a feature de negócio completa.
 
@@ -1053,7 +1054,7 @@ Correto:
 
 ou equivalente.
 
-Como as migrations são aplicadas manualmente, você não tem como saber quais já foram aplicadas. Trate toda migration já existente em `supabase/migrations/` como aplicada, a menos que o responsável diga explicitamente o contrário.
+Como as migrations são aplicadas manualmente, você não tem como saber quais já foram aplicadas. Trate toda migration já existente em `backend/supabase/migrations/` como aplicada, a menos que o responsável diga explicitamente o contrário. As migrations legadas de `supabase/migrations/` (raiz) não pertencem ao banco oficial e nunca devem ser editadas.
 
 ---
 
@@ -1070,11 +1071,10 @@ pendências
 
 Suas fontes, todas somente leitura:
 
-- a sequência de arquivos em `supabase/migrations/` (histórico versionado);
-- `src/integrations/supabase/types.ts` (schema real do banco remoto no momento em que os tipos foram gerados);
-- `git status` / `git log` em `supabase/migrations/` (migrations novas ainda não commitadas).
+- a sequência de arquivos em `backend/supabase/migrations/` (histórico versionado do banco oficial);
+- `git status` / `git log` em `backend/supabase/migrations/` (migrations novas ainda não commitadas).
 
-Você não consulta o banco remoto. Se precisar do histórico real de migrations aplicadas, peça ao responsável no relatório.
+O banco oficial começa vazio (DEC-05; DEC-09, sem migração de dados do legado). Você não consulta o banco remoto. Se precisar do histórico real de migrations aplicadas ou do estado do schema, peça ao responsável no relatório, com as consultas somente leitura que ele deve rodar (por exemplo, `select version from supabase_migrations.schema_migrations order by version;`).
 
 Se houver drift:
 
