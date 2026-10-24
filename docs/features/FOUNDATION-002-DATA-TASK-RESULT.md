@@ -1042,6 +1042,7 @@ O que mede: se o dono (`postgres`) contorna a imutabilidade de `audit_log` com `
 - Termina sempre num erro proposital, que desfaz tudo, inclusive o `DISABLE TRIGGER` do I2.
 - Devolver o texto completo da mensagem de erro (`V2-QA-INFO - ERRO PROPOSITAL, TUDO FOI DESFEITO. ...`).
 - Resultado provável: I2 CONTORNADO; I1 depende da plataforma (o V1.23 mostra se `postgres` recebeu SET em `session_replication_role`).
+- **Resultado no projeto oficial (2026-10-23):** I1 e I2 CONTORNADOS. O V1.23 não tem entrada de `session_replication_role` para `postgres`: o I1 passa por um mecanismo da plataforma fora do `pg_parameter_acl`, e a premissa da linha anterior não se confirmou. Ver o R-16 do contrato (fechamento).
 
 ```sql
 do $info$
@@ -1082,7 +1083,7 @@ $info$;
 
 **Depois do bloco B:** rodar de novo, uma consulta por vez, o V1.11 (8 linhas, todas com `tgenabled = O`, o que mostra que o `DISABLE TRIGGER` do I2 foi desfeito) e o V1.20 (9 linhas, todas 0). Pelo A7 do contrato, repetir também o V1.13b e o V1.13c, que têm de sair idênticos aos de antes do V2.
 
-**Pendente de execução** (nada disso foi executado por mim):
+**Execução** (nada disso foi executado por mim; o PO rodou o V0 em 2026-10-22 e aplicou e verificou em 2026-10-23, pelo SQL Editor; saídas em `docs/features/FOUNDATION-002-SAIDAS-PO.md`):
 - aplicar as 9 migrations;
 - rodar o V0 antes de aplicar, uma consulta por vez (com o V0.4); depois da aplicação, o V1 uma consulta por vez (V1.1 a V1.24), o V2 integrado sozinho, o bloco B do QA sozinho (informativo) e de novo V1.20, V1.13b, V1.13c e V1.11;
 - conferir a Data API (A6).

@@ -17,6 +17,7 @@
 > - Decisões técnicas ARQ-F002-01 a 13: aceitas, sem veto.
 > - Sequência combinada com o PO: o Analista começa já; o trecho do Desenvolvedor (seção 8: `backend/supabase/config.toml` e `backend/.gitignore`) espera o encerramento da AUTH-001, porque o contrato v2 da AUTH-001 exige `backend/.gitignore` sem diff.
 > - **VERSÃO 2 (2026-10-22), emitida na revisão pré-aplicação (ARQ-F002-11):** marcadores trocados pelas respostas do PO; F002-QA-01 decidido (opção b, ARQ-F002-14); INSERT por coluna em `audit_log` (ARQ-F002-15); DIV-01 decidida (opção A, ARQ-F002-16); critério 11 lido como DML direto (R-16); riscos R-16 a R-19; Anexo A e QA Contract ajustados. ARQ-F002-14 a 16 são decisões técnicas: o PO pode vetá-las até o A3.
+> - **Fechamento (2026-10-23):** o PO aplicou as 9 migrations do commit `028f9ff` no projeto `vitqnyzuvrvkmnvshcpb` pelo SQL Editor, arquivo por arquivo (alternativa do A5; A3 e A4 não executados). QA fase 2 APPROVED (V1: 154 checagens OK; V2: PASS=133, FAIL=0, NOT_TESTED=0). ARCHITECT REVIEW final: **APPROVED_WITH_NOTES**. ARQ-F002-14 a 16 não foram vetadas até a aplicação e estão em vigor. Acréscimos do fechamento: ARQ-F002-17 a 19 (decisões técnicas, aceitas pelo PO sem veto em 2026-10-24); R-05 encerrado por decisão; R-16 confirmado; R-20; critérios 23 e 24 anotados. Evidências: `docs/features/FOUNDATION-002-SAIDAS-PO.md`, `docs/features/FOUNDATION-002-V1-CONSULTA-UNICA.sql` e `docs/features/FOUNDATION-002-V1-RESULTADO.csv`.
 
 ---
 
@@ -173,7 +174,7 @@ A feature cria estrutura e mecanismos de proteção. Não cria comportamento de 
 | R-02 | CLI rodada na raiz do repositório usa o vínculo legado (`supabase/.temp/project-ref`, divergência D4) | Comandos só a partir de `/backend`; conferir o project-ref antes de aplicar (Anexo A) |
 | R-03 | `supabase config push` sobrescreve a configuração remota (Auth, Data API) com valores locais, o que pode desligar condições do ADR-003 | `config.toml` mínimo, sem seções de Auth; comando proibido |
 | R-04 | `supabase db reset --linked` apaga o banco remoto | Proibido |
-| R-05 | Misturar SQL Editor e CLI deixa o histórico `supabase_migrations` divergente | Um único método. Recomendação: CLI |
+| R-05 | Misturar SQL Editor e CLI deixa o histórico `supabase_migrations` divergente | **Encerrado por decisão em 2026-10-23:** a aplicação foi pelo SQL Editor, que passa a ser o método único no projeto oficial (ARQ-F002-17). O projeto não tem `supabase_migrations` (V1.2); `supabase db push` e `supabase migration up` são proibidos nele (A9). Adotar a CLI depois exige `supabase migration repair` das versões já aplicadas, só por plano escrito do Arquiteto |
 | R-06 | Migration aplicada não pode ser editada | Revisão estática do QA e revisão pré-aplicação do Arquiteto **antes** de o PO aplicar (ARQ-F002-11) |
 | R-07 | Com FK RESTRICT para `auth.users`, excluir a conta no Supabase Auth falha quando ela já tem usuário do Mescala | Consequência aceita da DATA-DEC-012. Pedido de exclusão pela LGPD exige feature de anonimização |
 | R-08 | `audit_log` vai guardar dados pessoais em `before_data`/`after_data`, e a imutabilidade (trigger) bloqueia correções | A feature de anonimização trará migration própria |
@@ -184,10 +185,11 @@ A feature cria estrutura e mecanismos de proteção. Não cria comportamento de 
 | R-13 | AUTH-001 em paralelo pode mexer em `backend/.gitignore` | Conflito trivial, resolvido por quem entrar por último |
 | R-14 | O schema `public` continua exposto pela Data API | Nenhuma migration oficial cria objeto em `public` (D1) |
 | R-15 | Papéis administrativos da plataforma (`postgres`, `supabase_admin` e outros) mantêm acesso | Fora do modelo: o RLS protege o caminho da aplicação, não o plano administrativo do Supabase |
-| R-16 | A imutabilidade de `audit_log` vale para DML. O dono (`postgres`) pode contorná-la por DDL (`ALTER TABLE … DISABLE TRIGGER`) e, se a plataforma permitir, por `session_replication_role = replica`. Risco residual ligado ao R-08 | Plano administrativo (R-15). Nenhum papel de aplicação é dono nem tem CREATE (QD1 a QD6). DDL em `audit_log` só por migration revisada. O bloco B do QA mede o contorno; o resultado é informativo e não reprova |
+| R-16 | A imutabilidade de `audit_log` vale para DML. O dono (`postgres`) a contorna por DDL (`ALTER TABLE … DISABLE TRIGGER`, I2) e por `session_replication_role = replica` (I1). **Confirmado no projeto oficial em 2026-10-23** (bloco B: I1 e I2 CONTORNADOS). O SET de `session_replication_role` pelo `postgres` não vem de `pg_parameter_acl` (o V1.23 não tem entrada para ele): é um mecanismo da plataforma, que o catálogo consultado não mostra. Risco residual ligado ao R-08 | Plano administrativo (R-15). Nenhum papel de aplicação é dono nem tem CREATE (QD1 a QD6); `mescala_app` não consegue `session_replication_role` (QD4: 42501). DDL em `audit_log` só por migration revisada. O V1.23 não detecta o I1 nesta plataforma; a medida é o bloco B, informativo, que não reprova |
 | R-17 | O `lower()` de nomes com acento depende do locale do banco (RB). Se o locale não igualar maiúsculas acentuadas, a DATA-DEC-013 falha para nomes em português | V0.4 antes de aplicar. Se falhar, nada é aplicado: as migrations `create_ministries` e `create_ministry_functions` ganham collation explícita (contingência da revisão pré-aplicação) antes do A3 |
 | R-18 | Função criada no schema sem retirar EXECUTE de `PUBLIC` fica executável por `mescala_app`, porque o padrão global do PostgreSQL não é retirado por schema (DIV-01) | Convenção ARQ-F002-16. V1.12b e V1.14b a V1.14d como regressão fixa no QA de toda feature que crie função ou tabela em `mescala` |
 | R-19 | Os timestamps das 9 migrations (até `20261022150800`, 15:08 UTC de 2026-10-22) estão à frente do horário em que foram escritas. Uma migration gerada pela CLI antes desse instante ficaria fora de ordem | Toda migration nova tem timestamp maior que o da última da pasta (S1 do QA de cada feature); se a CLI gerar um menor, renomear antes da revisão |
+| R-20 | O projeto oficial tem um event trigger da plataforma, `ensure_rls` (dono `postgres`, evento `ddl_command_end`), que chama `public.rls_auto_enable()` em todo DDL, inclusive nas migrations do Mescala. Ele já existia antes da aplicação (V0.3b) e não é do Mescala. O corpo da função não foi lido | Objeto da plataforma, fora do modelo (R-15). Nenhuma migration o altera, desabilita ou remove, nem depende dele: o RLS continua explícito em todo `create_*` (ADR-002: o schema se reproduz num banco sem esse trigger). Em 2026-10-23, nenhum efeito em `mescala`: RLS habilitado e não forçado (V1.6) e EXECUTE só pela matriz (V1.12b). V1.6, V1.17 e V1.24 viram regressão fixa; mudança na linha de base da plataforma é registrada pelo QA na fase 2 e levada ao Arquiteto |
 
 ### 5.4 Decisões do Arquiteto neste contrato
 
@@ -211,6 +213,9 @@ São técnicas, dentro da competência do Arquiteto. O PO pode vetar qualquer um
 | ARQ-F002-14 | Em tabela de tenant, toda unicidade que um INSERT do backend pode atingir inclui `church_id`. Nesta feature: `ministry_memberships` UNIQUE(church_id, ministry_id, user_id); `ministry_functions` UNIQUE(church_id, ministry_id, nome em minúsculas); PK de `ministry_member_functions` (church_id, ministry_membership_id, ministry_function_id). Exceção: a PK `id` e os UNIQUE(x, id) alvo de FK, que só revelam a existência de um `id` que o chamador já tem; o backend nunca grava `id` vindo do cliente | F002-QA-01: o RLS só fixa `church_id`, e o índice único é checado antes da FK composta (que roda no fim do comando). Sem `church_id` na chave, um INSERT com ID de outra igreja responde 23505 em vez de 23503 e revela vínculo, nome ou habilitação da outra igreja (SEC-001; seção 17). Com as FKs compostas, a chave nova equivale à antiga |
 | ARQ-F002-15 | INSERT de `mescala_app` em `audit_log` só nas colunas `church_id`, `actor_user_id`, `action`, `entity_type`, `entity_id`, `before_data` e `after_data`. `id` e `occurred_at` vêm sempre do default do banco | O "quando" e a identidade do registro de auditoria não dependem do backend (`seguranca/AUDITORIA`: ator, data e alteração; DATA-DEC-021). O backend não precisa desses valores: não tem SELECT na tabela |
 | ARQ-F002-16 | DIV-01, opção A: o padrão global de privilégios do banco não é alterado. Toda migration que cria função em `mescala` retira EXECUTE de `PUBLIC` e concede explicitamente; toda tabela nova nasce sem privilégio para `PUBLIC` e para os papéis da Data API. ALTER DEFAULT PRIVILEGES sem IN SCHEMA é proibido | A opção B valeria para o banco inteiro, inclusive para objetos da plataforma e de extensões, e contraria o critério 2. O risco residual (R-18) não dá a ninguém mais que o `mescala_app` já tem: só ele tem USAGE no schema, e SECURITY DEFINER exige decisão explícita no contrato |
+| ARQ-F002-17 | Método único de aplicação no projeto oficial: SQL Editor (escolha do PO dentro da DEC-04, parte 1, item 3). O PO aplica, como `postgres`, só arquivos já commitados, um por vez, inteiro, sem texto selecionado, em aba nova, na ordem dos timestamps; se um falhar, para, devolve a mensagem literal e roda o V1 da feature antes de qualquer correção. Proibidos no projeto oficial: `supabase db push` (inclusive `--dry-run`) e `supabase migration up`; `supabase migration repair` só num plano escrito do Arquiteto para adotar a CLI. O registro de migrations aplicadas fica em `tecnico/BANCO-DE-DADOS` da Brain (versão, arquivo, feature, data, método, commit, evidência). Evidência mínima de cada aplicação, versionada em `docs/features/`: V0 e V1 da feature em consulta única (`<ID>-V0-CONSULTA-UNICA.sql` e `<ID>-V1-CONSULTA-UNICA.sql`, escritos pelo Analista e revisados pelo QA na fase 1), com saída literal, sem nada só declarado; o V1 exportado em CSV e versionado sem alteração (`<ID>-V1-RESULTADO.csv`), cobrindo os objetos da feature e a regressão fixa do schema inteiro (V1.6, V1.12b, V1.14a a V1.14d, V1.15 a V1.17, V1.24); o V2 num só bloco e a consulta de resíduo, quando o contrato pedir; e `<ID>-SAIDAS-PO.md` com data, commit, arquivos na ordem e as saídas literais | R-05: um método só. O projeto não tem `supabase_migrations` (V1.2), e a CLI veria as 9 migrations como pendentes e tentaria reaplicá-las (42P06 em `create schema mescala`). Sem esse histórico, o commit aplicado e as saídas do catálogo são o único vínculo entre o banco e o repositório. O SQL Editor mostra só o resultado da última instrução, daí a consulta única. O PO declarou que faz manualmente tudo o que toca o banco |
+| ARQ-F002-18 | QI3 (o CHECK de `audit_log` aceita o valor JSON `null` em `before_data` e `after_data`) é resolvido na CHURCH-001, primeira feature que grava `audit_log`, em duas camadas: (1) o helper de auditoria grava SQL NULL, nunca JSON `null`, com teste automatizado; (2) uma migration própria da CHURCH-001 substitui `audit_log_data_present_check` por uma regra em que nenhuma das duas colunas aceita JSON `null` e ao menos uma é não nula, aplicada antes da primeira linha de `audit_log`. Na verificação dessa feature, QI3 passa a esperar 23514 | O D5 exige ao menos um entre antes e depois preenchido, e JSON `null` não preenche nada (`seguranca/AUDITORIA`: identificar a alteração). Como na ARQ-F002-08, a regra de `audit_log` não depende só do backend. Custo marginal: a CHURCH-001 já traz migration (`address`, ARQ-F002-02), e a tabela fica vazia até ela. A FOUNDATION-002 não muda: migration aplicada não é editada. Se o PO vetar a camada 2, vale só a camada 1 |
+| ARQ-F002-19 | As evidências da aplicação ficam versionadas, por exceção ao critério 23: `docs/features/FOUNDATION-002-V1-CONSULTA-UNICA.sql` (a consulta que o PO rodou, sem alteração), `docs/features/FOUNDATION-002-V1-RESULTADO.csv` (o CSV exportado pelo PO, cópia byte a byte) e `docs/features/FOUNDATION-002-SAIDAS-PO.md` (contexto da aplicação e demais saídas literais) | Sem `supabase_migrations` (ARQ-F002-17), essas saídas são o único registro de que o banco oficial corresponde ao commit `028f9ff`. Nenhum segredo nelas (conferido pelo QA e pelo Arquiteto). Não entram dados alheios à aplicação, como a conta em que a CLI desta máquina estava logada |
 
 ### 5.5 Diferenças em relação à proposta da seção 13.2 do relatório
 
@@ -243,6 +248,7 @@ STATUS:  READY
 Histórico de versões:
 - **VERSÃO 1 (2026-10-22):** emitida com STATUS BLOCKED (B-01, B-02 e autorização da Fase 4 pendentes).
 - **VERSÃO 2 (2026-10-22), revisão pré-aplicação (ARQ-F002-11):** respostas do PO aplicadas (B-01 = `mescala`; B-02 = ATIVO, INATIVO); ARQ-F002-14 a 16; R-16 a R-19; critérios 2, 6, 8, 9, 11, 13 e 22 a 24 ajustados; Anexo A e QA Contract ajustados. A aplicação continua condicionada às pré-condições do Anexo A.
+- **Fechamento (2026-10-23), sem nova versão:** aplicação pelo SQL Editor; ARQ-F002-17 a 19; R-05, R-16 e R-20; seções 5 (etapa 6), 14, 16 e 18, critérios 23 e 24 e Anexo A (A5, A9 e A10) anotados; requisitos de herança acrescentados na seção 11. Nenhum requisito do banco desta feature mudou.
 
 ### 1. Objetivo
 - **O que faz:** cria, no projeto oficial `vitqnyzuvrvkmnvshcpb`:
@@ -291,7 +297,7 @@ Fluxo de entrega desta feature. Ajusta o `FLUXO-DE-ENTREGA` porque migration apl
 3. **Organizador:** confere a estrutura (Organization Task).
 4. **QA, fase 1:** revisão estática das migrations, da configuração e do script de verificação.
 5. **Arquiteto, revisão pré-aplicação:** APPROVED (libera a aplicação nas condições do Anexo A) ou CHANGES_REQUIRED. Um delta pedido nesta revisão volta ao Analista, passa pela revisão estática do QA (fase 1b) e pela confirmação do Arquiteto antes da etapa 6.
-6. **PO:** vincula a CLI, aplica as migrations, confere a Data API e roda a verificação (Anexo A). Devolve as saídas.
+6. **PO:** vincula a CLI, aplica as migrations, confere a Data API e roda a verificação (Anexo A). Devolve as saídas. Em 2026-10-23, a aplicação foi pelo SQL Editor, sem vincular a CLI (alternativa do A5; ARQ-F002-17).
 7. **QA, fase 2:** avalia as saídas e emite o QA RESULT final.
 8. **Arquiteto:** ARCHITECT REVIEW final.
 
@@ -401,7 +407,7 @@ Especificação fechada no Data Task (seção 7). Nenhum SQL neste contrato.
 ### 14. Dependências
 - **Decisões:** listadas na seção 4 da análise.
 - **Ferramentas:**
-  - Supabase CLI (do PO, para `link` e `db push`);
+  - Supabase CLI (prevista para `link` e `db push`; não usada na aplicação de 2026-10-23, que foi pelo SQL Editor; `db push` proibido no projeto oficial desde então, ARQ-F002-17);
   - SQL Editor do projeto (verificação).
 - **Do banco:** `auth.users` do projeto oficial; o gerador de UUID nativo do Postgres. **Nenhuma extensão.**
 - **npm:** nenhuma dependência nova.
@@ -418,7 +424,7 @@ Nenhum.
 ### 16. Auditoria
 - Cria a infraestrutura de auditoria (`audit_log`: igreja, ator, ação, entidade, id, antes, depois e quando; só inserção).
 - Não grava nenhum registro.
-- As mudanças desta feature são rastreadas pelo git e pelo histórico `supabase_migrations` (quando aplicadas pela CLI).
+- As mudanças desta feature são rastreadas pelo git e pelo histórico `supabase_migrations` (quando aplicadas pela CLI). A aplicação de 2026-10-23 foi pelo SQL Editor: o rastro é o commit `028f9ff`, as evidências versionadas (ARQ-F002-19) e o registro de migrations aplicadas da Brain (ARQ-F002-17).
 
 ### 17. Erros esperados
 A estrutura precisa produzir estes erros do Postgres, por SQLSTATE. O mapeamento para respostas HTTP é da DEC-07 e das features.
@@ -439,7 +445,7 @@ Um INSERT feito no contexto da igreja A com ministério, vínculo ou função da
 
 ### 18. Resultado esperado
 - Projeto `vitqnyzuvrvkmnvshcpb` com o schema `mescala`, as 8 tabelas vazias e protegidas, o papel `mescala_app` e as 4 funções.
-- Histórico de 9 migrations.
+- Histórico de 9 migrations: em `supabase_migrations`, se aplicadas pela CLI; pela alternativa do A5 (SQL Editor, usada em 2026-10-23), o histórico é o registro de migrations aplicadas em `tecnico/BANCO-DE-DADOS` da Brain, com as evidências versionadas (ARQ-F002-17 e 19).
 - Repositório com `backend/supabase/config.toml`, `backend/supabase/migrations/` (9 arquivos) e `backend/.gitignore` atualizado.
 - FOUNDATION-001 intacta.
 
@@ -473,8 +479,8 @@ Um INSERT feito no contexto da igreja A com ministério, vínculo ou função da
 20. A verificação não deixa resíduo: depois dela, as 8 tabelas têm 0 linhas, e nenhum papel ou privilégio novo persiste.
 21. `backend/supabase/config.toml` tem o conteúdo da seção 8. `backend/.gitignore` cobre `supabase/.temp/` e `supabase/.branches/`. `backend/supabase/` só contém `config.toml` e `migrations/`.
 22. `npm run typecheck`, `npm run lint` e `npm run build` passam em `/backend`. `backend/package.json` e `backend/package-lock.json` estão inalterados em relação ao commit que encerrar a AUTH-001. Nada mudou em `backend/src` por esta feature; nenhum `.jsx`.
-23. Fora de `/backend`, esta feature só muda `docs/features/FOUNDATION-002.md` e `docs/features/FOUNDATION-002-DATA-TASK-RESULT.md`. A `supabase/` da raiz (inclusive `supabase/.temp/project-ref`), `src/` e `.claude/` estão intactos; `brain-mescala/` só muda pela sincronização do vault-brain pedida na seção 12.
-24. Antes do A3: QA fase 1 APPROVED (inclusive a fase 1b, do delta da VERSÃO 2), revisão pré-aplicação do Arquiteto APPROVED, S15 e S16 executável OK. Na fase 2, o QA avaliou as saídas do V0, do V1, do V2 integrado e do bloco B.
+23. Fora de `/backend`, esta feature só muda `docs/features/FOUNDATION-002.md` e `docs/features/FOUNDATION-002-DATA-TASK-RESULT.md` e, por exceção aprovada na ARCHITECT REVIEW final (ARQ-F002-19), cria as evidências da aplicação `docs/features/FOUNDATION-002-SAIDAS-PO.md`, `docs/features/FOUNDATION-002-V1-CONSULTA-UNICA.sql` e `docs/features/FOUNDATION-002-V1-RESULTADO.csv`. A `supabase/` da raiz (inclusive `supabase/.temp/project-ref`), `src/` e `.claude/` estão intactos; `brain-mescala/` só muda pela sincronização do vault-brain pedida na seção 12.
+24. Antes da aplicação (A3 pela CLI ou, como ocorreu em 2026-10-23, A5 pelo SQL Editor): QA fase 1 APPROVED (inclusive a fase 1b, do delta da VERSÃO 2), revisão pré-aplicação do Arquiteto APPROVED, S15 e S16 executável OK. Na fase 2, o QA avaliou as saídas do V0, do V1, do V2 integrado e do bloco B. A confirmação do delta pelo Arquiteto (APPROVED, 2026-10-22) está registrada na nota `features/FOUNDATION-002` da Brain e na mensagem do commit `028f9ff`.
 25. Nenhuma tabela ou coluna além do contrato: sem atributos de `users`, sem `address`, sem status de usuário, sem `programs`, `invitations` ou tabela de impedimentos.
 
 ### 20. Fora do escopo
@@ -519,7 +525,7 @@ Um INSERT feito no contexto da igreja A com ministério, vínculo ou função da
   - depois, rodar `supabase db push`;
   - se algum arquivo falhar, parar e devolver a mensagem; não corrigir nada à mão no banco.
 
-  Alternativa permitida pela DEC-04: SQL Editor, um arquivo por vez, inteiro, na ordem. Nesse caso o histórico `supabase_migrations` não é preenchido, e o `db push` não deve ser usado depois sem orientação do Arquiteto. **Recomendação: CLI.**
+  Alternativa permitida pela DEC-04: SQL Editor, um arquivo por vez, inteiro, na ordem. Nesse caso o histórico `supabase_migrations` não é preenchido, e o `db push` não deve ser usado depois sem orientação do Arquiteto. Recomendação original: CLI. **Usada em 2026-10-23:** o PO aplicou as 9 migrations do commit `028f9ff` por esta alternativa; A3, A4 e os comandos `db push` acima não foram executados. Desde então, o SQL Editor é o método único no projeto oficial (ARQ-F002-17).
 - **A6.** No painel, em Data API → "Exposed schemas", confirmar que `mescala` não aparece. Opcional: uma requisição REST com a chave publishable pedindo o perfil `mescala` deve ser recusada.
 - **A7.** No SQL Editor, como `postgres`:
   - rodar o V1 **uma consulta por vez**, de V1.1 a V1.24 (somente leitura);
@@ -537,11 +543,12 @@ Um INSERT feito no contexto da igreja A com ministério, vínculo ou função da
   - `supabase db reset --linked`;
   - `supabase config push`;
   - `supabase db pull`;
-  - `supabase migration repair` sem orientação;
+  - `supabase db push`, inclusive `--dry-run`, e `supabase migration up` (ARQ-F002-17: o projeto não tem `supabase_migrations`, e a CLI tentaria reaplicar as migrations já aplicadas);
+  - `supabase migration repair` sem plano escrito do Arquiteto (só para uma eventual adoção da CLI, ARQ-F002-17);
   - `supabase functions deploy`;
   - qualquer comando da CLI na raiz do repositório;
   - conectar a integração GitHub ↔ Supabase.
-- **A10.** Opcional: rodar o Security Advisor do painel e anexar o resultado. Achado esperado: RLS sem policy em `mescala.users` (D8).
+- **A10.** Opcional: rodar o Security Advisor do painel e anexar o resultado. Achado esperado: RLS sem policy em `mescala.users` (D8). Não entregue em 2026-10-23; dispensado na ARCHITECT REVIEW final, sem efeito no aceite. Achado sobre objeto fora de `mescala` é da plataforma (R-15).
 
 ---
 
@@ -1108,7 +1115,7 @@ Testes automatizados de banco, como integração Vitest contra um banco descart�
 ```text
 FOUNDATION-001 (encerrada, 7f26d30)
  ├── AUTH-001 Fundação de Autenticação (sem banco; paralela; instala o Vitest)
- └── FOUNDATION-002 Fundação de Persistência  [READY v2; aplicação pelo PO pendente]
+ └── FOUNDATION-002 Fundação de Persistência  [aplicada em 2026-10-23; APPROVED_WITH_NOTES]
        ├── FOUNDATION-003 Cliente de banco do backend (proposta)  [DEC-04 parte 2]
        │     └── (+ AUTH-001) AUTH-002 Provisionamento do usuário  [DEC-06]
        │            └── AUTH-003 Usuário atual  [DEC-07; B8 da AUTH-001]
@@ -1149,6 +1156,12 @@ FOUNDATION-001 (encerrada, 7f26d30)
 - **FOUNDATION-003:** um único helper de transação define o contexto, só com `set_config(..., true)`, e um teste com duas transações seguidas na mesma conexão mostra que o contexto some depois de COMMIT e de ROLLBACK. O banco de teste precisa dos papéis do Supabase e de `auth.users` (stack local do Supabase ou equivalente; OBS-04 do Analista).
 - **Primeira feature que gravar `audit_log` (CHURCH-001):** o helper de auditoria grava SQL NULL, nunca JSON `null`, em `before_data` e `after_data` (RD); não informa `id` nem `occurred_at` (ARQ-F002-15); não usa RETURNING.
 - **Features que recebem IDs do cliente:** o backend nunca grava `id` vindo do cliente como chave de linha nova (exceção da ARQ-F002-14).
+
+**Requisitos acrescentados no fechamento (2026-10-23):**
+- **Toda feature que muda o banco oficial:** ARQ-F002-17 (SQL Editor; só arquivo commitado; V0 e V1 em consulta única escritos pelo Analista e revisados pelo QA na fase 1; evidências versionadas em `docs/features/`; registro de migrations aplicadas na Brain) e R-20 (RLS explícito em todo `create_*`; V1.6, V1.17 e V1.24 como regressão fixa).
+- **Primeira feature com V0 depois deste fechamento:** registrar, só por leitura, o corpo de `public.rls_auto_enable()`, para documentar o que o `ensure_rls` faz (R-20).
+- **CHURCH-001:** ARQ-F002-18 (helper sem JSON `null`, com teste, e migration própria que endurece `audit_log_data_present_check`; QI3 passa a esperar 23514).
+- **FOUNDATION-003:** o papel de login é criado pelo PO no SQL Editor, fora do repositório, com evidência de catálogo em consulta única (atributos e participação em `mescala_app`) e sem senha em nenhum arquivo. O `postgres` tem ADMIN OPTION sobre `mescala_app` (V1.13c), o que basta para essa concessão. Se o banco de teste escolhido for a stack local da CLI, ela roda só a partir de `/backend` e nunca contra o projeto oficial, e não terá o `ensure_rls`.
 
 ---
 
@@ -1248,6 +1261,6 @@ Registrar agora (decisões já tomadas), sem marcar nada como aplicado:
 - as convenções do schema oficial (ARQ-F002-14 e 16, R-19), em `tecnico/BANCO-DE-DADOS`;
 - `audit_log` imutável para DML, `id` e `occurred_at` do banco (ARQ-F002-15) e o risco residual R-16, em `seguranca/AUDITORIA`.
 
-Depois da ARCHITECT REVIEW final: registrar a aplicação (data, método, commit) e o estado do banco oficial.
+Depois da ARCHITECT REVIEW final: registrar a aplicação (data, método, commit) e o estado do banco oficial. Pedido 2 emitido na ARCHITECT REVIEW final de 2026-10-23.
 
 Parei aqui. Não encaminhei nada aos executores.
