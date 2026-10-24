@@ -1,7 +1,7 @@
 ---
 tipo: moc
 area: seguranca
-atualizado: 2026-10-22
+atualizado: 2026-10-24
 ---
 # MOC — Segurança
 - [[seguranca/AUTENTICACAO]]
@@ -22,7 +22,7 @@ atualizado: 2026-10-22
 - [[seguranca/RISCOS-DO-LEGADO]]: S1–S11 (leitura estática). A correção do legado ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-023 — Correção urgente de segurança no legado|DATA-DEC-023]]) não se aplica, porque o app legado não tem uso real; os riscos continuam nos projetos antigos enquanto estiverem ativos.
 - [[decisoes/PENDENCIAS#Condições operacionais do ADR-003|Condições operacionais do ADR-003]]: chaves assimétricas e confirmação de email, com o PO.
 - [[features/AUTH-001]]: implementada e encerrada em 2026-10-22 (commit `50eaa1f`); verificação do access token sem rota protegida. Riscos aceitos: [[decisoes/PENDENCIAS#RT-AUTH-01 — Cache de segmento do Next sobre a busca do JWKS|RT-AUTH-01]]; interpretação [[decisoes/PENDENCIAS#ARQ-AUTH-01 — Leitura literal das validações de claims|ARQ-AUTH-01]]; herança para a AUTH-003 em [[decisoes/PENDENCIAS#AUTH-001 — Fundação de Autenticação|PENDENCIAS]].
-- [[features/FOUNDATION-002]]: isolamento por igreja no banco (schema `mescala`, papel `mescala_app`, RLS por contexto, FKs compostas, unicidade com `church_id`) e `audit_log` imutável, decididos no contrato VERSÃO 2 e **ainda não aplicados** ([[seguranca/ISOLAMENTO-DE-DADOS]], [[seguranca/AUDITORIA]]).
+- [[features/FOUNDATION-002]]: isolamento por igreja no banco (schema `mescala`, papel `mescala_app`, RLS por contexto, FKs compostas, unicidade com `church_id`) e `audit_log` imutável, decididos no contrato VERSÃO 2 e **aplicados em 2026-10-23**; feature encerrada (APPROVED_WITH_NOTES). R-16 confirmado: o `postgres` contorna a imutabilidade de `audit_log` (plano administrativo); R-20: event trigger `ensure_rls` da plataforma ([[seguranca/ISOLAMENTO-DE-DADOS]], [[seguranca/AUDITORIA]]).
 - [[decisoes/PENDENCIAS#Pausar ou excluir os projetos antigos — DATA-DEC-022|Pausar ou excluir os projetos antigos]]: decisão operacional do PO, data A DEFINIR.
 - [[decisoes/PENDENCIAS#Cache do Supabase CLI no git|Cache do Supabase CLI no git]]: resolvido no repositório (commit `a034046`).
 - Regras de autorização em aberto: [[decisoes/PENDENCIAS#Outras pendências registradas|PENDENCIAS]].

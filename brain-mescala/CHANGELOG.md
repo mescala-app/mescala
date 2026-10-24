@@ -1,5 +1,46 @@
 # Changelog
 
+## 2026-10-24 — FOUNDATION-002 aplicada (2026-10-23) e encerrada
+Pedido 2 do Arquiteto (`arquiteto-mescala`), emitido na ARCHITECT REVIEW final da FOUNDATION-002 (**APPROVED_WITH_NOTES**, 2026-10-23), aplicado pelo agente [[agents/vault-brain]] depois do commit de fechamento `8ee70a6`. Fontes: a revisão final, o contrato `docs/features/FOUNDATION-002.md` com as substituições F-01 a F-18 e as evidências versionadas (`FOUNDATION-002-SAIDAS-PO.md`, `FOUNDATION-002-V1-CONSULTA-UNICA.sql` e `FOUNDATION-002-V1-RESULTADO.csv`). Fato repassado pela sessão principal: **ARQ-F002-17, 18 e 19 foram aceitas pelo PO sem veto em 2026-10-24**; ARQ-F002-14 a 16 continuam em vigor, sem veto. Nenhuma decisão do PO foi mudada; nenhum segredo nem dado da conta em que a CLI da máquina estava logada foi registrado.
+
+**Fatos registrados**
+- Aplicação das 9 migrations do commit `028f9ff` no projeto oficial em **2026-10-23**, pelo PO, pelo **SQL Editor**, arquivo por arquivo, como `postgres` (alternativa do A5; A3 e A4 pela CLI não executados). V0 em 2026-10-22.
+- QA fase 1b APPROVED, S15/S16 OK e confirmação do delta pelo Arquiteto (APPROVED) em 2026-10-22, antes do `028f9ff`; QA fase 2 APPROVED (V1: 154 checagens OK; V2: PASS=133, FAIL=0, NOT_TESTED=0; bloco B informativo).
+- Decisões do fechamento: **ARQ-F002-17** (SQL Editor como método único no projeto oficial; `supabase db push` e `supabase migration up` proibidos lá; evidência mínima E1 a E5; registro de migrations aplicadas na Brain), **ARQ-F002-18** (QI3 resolvido na CHURCH-001 em duas camadas) e **ARQ-F002-19** (evidências versionadas, exceção ao critério 23); **R-05** encerrado por decisão; **R-16** confirmado (o `postgres` contorna a imutabilidade de `audit_log` por I1 e I2; `mescala_app` não); **R-20** novo (event trigger `ensure_rls` da plataforma); A10 dispensado.
+
+**Nota da feature** ([[features/FOUNDATION-002]])
+- Frontmatter: `status: encerrada`, `implementacao: aplicada`, `aplicacao`, `commit` (`028f9ff` aplicado; `8ee70a6` fechamento), `revisao-final`.
+- "Situação em 2026-10-24" reescrita. **Correção:** a nota dizia "nada commitado" e "VERSÃO 2 ainda não commitada"; a VERSÃO 2 e o DATA TASK RESULT estão no `028f9ff`. Também: delta feito, fase 1b APPROVED e delta confirmado; Organizador e S15/S16 OK; ARQ-F002-14 a 16 em vigor; evidências com os SHA-256.
+- Tabela do fluxo: etapas 1 a 8 feitas; a etapa 6 foi pelo SQL Editor, sem `supabase link`.
+- Seção nova **"Revisões do Arquiteto"**: (a) pré-aplicação RETURN_TO_DATA_ANALYST, delta D-1 a D-5 e VERSÃO 2; (b) confirmação do delta APPROVED, com S-1 a S-6, o desvio `supabase --version` aceito, o SHA-1 do `config.toml` e a corroboração pela mensagem do `028f9ff` (registro que o critério 24 cita); (c) revisão final APPROVED_WITH_NOTES, com N-1 a N-4, as decisões 1 a 7 e as pendências P-1 a P-5.
+- Tabelas: decisões ARQ-F002-01 a 19 (17 a 19 aceitas sem veto em 2026-10-24); riscos R-01 a R-20 (R-05 encerrado, R-16 confirmado, R-20 novo; R-17 sem contingência). Herança com os acréscimos do fechamento (toda feature que muda o banco oficial, primeira feature com V0, FOUNDATION-003, AUTH-002, CHURCH-001, anonimização e o alinhamento da definição do Analista). "Próximo registro": feito.
+
+**Banco de dados** ([[tecnico/BANCO-DE-DADOS]])
+- Linha "Migrations" das Decisões: estrutura da Supabase CLI em `backend/supabase/`; aplicação manual pelo PO; no projeto oficial, só pelo SQL Editor (ARQ-F002-17).
+- "Estado atual", "Mecanismo" e "Ordem vinculante": aplicado em 2026-10-23.
+- Seções novas: **"Aplicação no projeto oficial (ARQ-F002-17)"** (método, o que fazer se um arquivo falhar, proibições, evidência mínima E1 a E5, quem escreve), **"Registro de migrations aplicadas"** (9 linhas: versão, arquivo, feature, data, método, commit, evidência), **"Estado do banco oficial em 2026-10-23"** (8 tabelas vazias; `mescala_app` NOLOGIN, sem papel de login; 4 funções, 39 constraints, 21 índices, 18 policies, 8 triggers; fora da Data API; sem `supabase_migrations`) e **"Linha de base da plataforma"** (PostgreSQL 17.11; UTF8, ICU `en-US`, `en_US.UTF-8`; `pg_c_utf8` e `und-x-icu`; `public.rls_auto_enable` e `ensure_rls`; 6 event triggers de `supabase_admin`; `pg_parameter_acl` só com `log_min_messages`; R-20).
+- Convenções: novas **5** (método e evidência, ARQ-F002-17) e **6** (RLS explícito; V1.6, V1.17 e V1.24 como regressão; R-20). "Que o PO pode vetar até o A3" virou "sem veto; em vigor desde a aplicação de 2026-10-23". O título da seção foi mantido, para não quebrar links.
+- Pendências: saiu "aplicação pendente"; entrou o registro, só por leitura, do corpo de `public.rls_auto_enable()` no próximo V0 (não é A DEFINIR).
+
+**Decisões e pendências**
+- [[decisoes/DEC-04-ESTRATEGIA-DE-MIGRATIONS]]: "Registro de 2026-10-23" nas consequências da parte 1 (FOUNDATION-002 aplicada pelo SQL Editor; método único no projeto oficial pela ARQ-F002-17, aceita sem veto; `db push` e `migration up` proibidos lá; `migration repair` só por plano do Arquiteto; estrutura e `config.toml` continuam). Os itens 1 a 4 não mudaram.
+- [[decisoes/PENDENCIAS]]: resumo da DEC-04 parte 1 cita o SQL Editor como método único; "Aplicação da FOUNDATION-002" e "não foram aplicadas" passaram a "aplicadas em 2026-10-23", com linha nova na tabela de decididas e resolvidas (título da seção ajustado; nenhum link apontava para ele); fonte nova. Nada novo como **A DEFINIR**.
+
+**Segurança**
+- [[seguranca/AUDITORIA]]: R-16 confirmado (I1 e I2 contornáveis pelo `postgres`; `mescala_app` não consegue, QD4; o mecanismo do I1 é da plataforma, fora do `pg_parameter_acl`); estrutura aplicada em 2026-10-23; ARQ-F002-18 no item da CHURCH-001.
+- [[seguranca/ISOLAMENTO-DE-DADOS]]: as duas ocorrências de "ainda não aplicado" passaram a "aplicado em 2026-10-23"; verificado R1 a R10, N1 a N3 e QT1 a QT4 (23503).
+
+**Fluxo de entrega** ([[features/FLUXO-DE-ENTREGA]])
+- No projeto oficial, aplicação só pelo SQL Editor, com a evidência mínima; o commit antes da aplicação passa a ser obrigatório.
+- Artefatos: migrations e DATA TASK RESULT no `028f9ff`; evidências em `docs/features/`; consultas `<ID>-V0/V1-CONSULTA-UNICA.sql`; ARCHITECT REVIEW da FOUNDATION-002 na nota da feature.
+- Seção nova **"Terceira execução completa: FOUNDATION-002"** (primeira com a etapa 2 e com aplicação). Linha da tabela de features: encerrada. Checagens herdadas da FOUNDATION-002: ARQ-F002-17 e R-20.
+
+**Linhas de status** ("não aplicadas" → "aplicada em 2026-10-23; encerrada (APPROVED_WITH_NOTES)")
+- [[00-MOC-MESCALA]], [[02-ARQUITETURA]], [[MOCs/MOC-ARQUITETURA]], [[MOCs/MOC-DADOS]], [[MOCs/MOC-GOVERNANCA]] (todas as ocorrências, inclusive as fontes fora do vault e a DEC-04), [[MOCs/MOC-SEGURANCA]], [[tecnico/BACKEND]], [[modulos/IGREJAS]], [[dados/ENTIDADES]], [[decisoes/DEC-09-MODELO-DE-DADOS]] (DATA-DEC-020), [[features/FOUNDATION-001]] e [[produto/ROADMAP]].
+- Também, por estarem defasadas: [[tecnico/CONVENCOES]] (ponteiro para as convenções 5 e 6) e os agentes [[agents/analista-de-dados]] (delta feito; V0 e V1 em consulta única; alinhamento da definição canônica à ARQ-F002-17), [[agents/arquiteto]], [[agents/desenvolvedor-backend]], [[agents/organizador]] e [[agents/qa]].
+
+**Continuam A DEFINIR** (sem mudança): o efeito de uma igreja INATIVO; o fluxo, as transições e o papel pretendido do convite; como a igreja atual chega à API; a DEC-04, parte 2.
+
 ## 2026-10-22 — AUTH-001 encerrada; FOUNDATION-002 na VERSÃO 2
 Dois pedidos de sincronização do Arquiteto (`arquiteto-mescala`), aceitos no fluxo do PO, aplicados pelo agente [[agents/vault-brain]]. Só foi registrado o que as fontes decidem; o que continua aberto ficou **A DEFINIR**. Nada da FOUNDATION-002 foi marcado como aplicado.
 

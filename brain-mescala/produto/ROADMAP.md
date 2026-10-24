@@ -20,7 +20,7 @@ Arquitetura: [[02-ARQUITETURA]].
 ## Pré-requisitos técnicos (ADR-002)
 Antes da Fase 1, o [[decisoes/ADR-002-BACKEND-OFICIAL|ADR-002]] exige:
 1. a fundação técnica do backend: [[features/FOUNDATION-001]] (**cumprida**: implementada e encerrada em 2026-10-19, commit `7f26d30`);
-2. a fundação oficial de persistência, antes das features que dependem do banco: **[[features/FOUNDATION-002]] — Fundação de Persistência**. As decisões de dados, o projeto Supabase e o local das migrations foram tomados em 2026-10-21 e 2026-10-22 ([[decisoes/DEC-09-MODELO-DE-DADOS|DEC-09]], [[decisoes/DEC-05-PROJETO-SUPABASE-OFICIAL|DEC-05]], [[decisoes/DEC-04-ESTRATEGIA-DE-MIGRATIONS|DEC-04]]). **Em andamento:** contrato VERSÃO 2 READY e Fase 4 autorizada em 2026-10-22; 9 migrations escritas e **não aplicadas**.
+2. a fundação oficial de persistência, antes das features que dependem do banco: **[[features/FOUNDATION-002]] — Fundação de Persistência**. As decisões de dados, o projeto Supabase e o local das migrations foram tomados em 2026-10-21 e 2026-10-22 ([[decisoes/DEC-09-MODELO-DE-DADOS|DEC-09]], [[decisoes/DEC-05-PROJETO-SUPABASE-OFICIAL|DEC-05]], [[decisoes/DEC-04-ESTRATEGIA-DE-MIGRATIONS|DEC-04]]). Contrato VERSÃO 2 READY e Fase 4 autorizada em 2026-10-22; **aplicada em 2026-10-23; encerrada (APPROVED_WITH_NOTES)**, commits `028f9ff` e `8ee70a6`. As features que usam o banco ainda dependem da FOUNDATION-003 (cliente de banco do backend; proposta).
 
 Em paralelo, a fundação de autenticação, que não usa banco, foi implementada e encerrada em 2026-10-22: [[features/AUTH-001]] ([[decisoes/ADR-003-AUTENTICACAO|ADR-003]], [[decisoes/DEC-02-BIBLIOTECA-DE-TESTES|DEC-02]]).
 

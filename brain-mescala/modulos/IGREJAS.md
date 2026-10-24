@@ -1,7 +1,7 @@
 ---
 tipo: modulo
 status: ativo
-atualizado: 2026-10-22
+atualizado: 2026-10-24
 ---
 # Igrejas
 A igreja é a raiz organizacional do tenant.
@@ -16,7 +16,7 @@ Fluxo de origem: [[fluxos/FLUXO-CADASTRO-IGREJA]].
 - **Atributos:** nome e endereço ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-013 — Atributos e unicidade de nomes|DATA-DEC-013]]).
 - **Inativação:** nada com histórico é apagado; a igreja ganha status e data de término ([[05-REGRAS-DE-NEGOCIO#HIS-001 — Nada com histórico é apagado|HIS-001]]).
 - **Status da Igreja:** **ATIVO, INATIVO** (decidido pelo PO em 2026-10-22, resposta ao B-02 do contrato FOUNDATION-002, opção A; [[dados/STATUS]]). É o mesmo conjunto de vínculos, ministérios e funções.
-- **Schema:** tabela `churches` no contrato [[features/FOUNDATION-002]] (escrita, não aplicada). O endereço entra com a CHURCH-001 (ARQ-F002-02), que também cria a igreja e o OWNER na mesma transação.
+- **Schema:** tabela `churches` no contrato [[features/FOUNDATION-002]] (aplicada em 2026-10-23, ainda vazia; feature encerrada, APPROVED_WITH_NOTES). O endereço entra com a CHURCH-001 (ARQ-F002-02), que também cria a igreja e o OWNER na mesma transação.
 
 ## Pendências
 - Efeito de uma igreja INATIVO (acesso, leitura e escrita): **A DEFINIR**, na feature que inativar a igreja. Até 2026-10-22, os próprios valores do status eram A DEFINIR ([[decisoes/PENDENCIAS#Lacunas observadas no registro de 2026-10-21|PENDENCIAS]]).

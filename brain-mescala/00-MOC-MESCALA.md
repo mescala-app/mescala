@@ -2,7 +2,7 @@
 tipo: moc
 projeto: Mescala
 status: ativo
-atualizado: 2026-10-22
+atualizado: 2026-10-24
 ---
 # Mescala — Mapa Central
 
@@ -42,7 +42,7 @@ Este é o ponto de entrada do cérebro do sistema.
 
 ## Estado atual do sistema
 - [[tecnico/BACKEND]]: backend oficial em `/backend` (Next.js + TypeScript + Node.js), criado pela [[features/FOUNDATION-001]]. Só tem a rota técnica `GET /api/health`. Desde a [[features/AUTH-001]] (2026-10-22), tem a verificação do access token em `domains/auth`, ainda sem rota protegida, e testes automatizados (Vitest). Ainda não tem regra de negócio nem banco.
-- Banco oficial: projeto Supabase novo `vitqnyzuvrvkmnvshcpb`, que começa vazio ([[decisoes/DEC-05-PROJETO-SUPABASE-OFICIAL|DEC-05]]; [[tecnico/BANCO-DE-DADOS]]). Schema oficial `mescala`. As 9 migrations da [[features/FOUNDATION-002]] estão escritas em `backend/supabase/migrations/` e **não foram aplicadas**.
+- Banco oficial: projeto Supabase novo `vitqnyzuvrvkmnvshcpb`, que começa vazio ([[decisoes/DEC-05-PROJETO-SUPABASE-OFICIAL|DEC-05]]; [[tecnico/BANCO-DE-DADOS]]). Schema oficial `mescala`. As 9 migrations da [[features/FOUNDATION-002]], em `backend/supabase/migrations/`, foram **aplicadas em 2026-10-23** pelo SQL Editor; a feature está encerrada (APPROVED_WITH_NOTES). O schema tem 8 tabelas, ainda vazias ([[tecnico/BANCO-DE-DADOS#Estado do banco oficial em 2026-10-23|estado do banco oficial]]).
 - [[tecnico/LEGADO-ATUAL]]: o app legado (frontend Vite + React gravando direto no Supabase, nos projetos antigos), não normativo e **sem uso real** (PO, 2026-10-22).
 - [[tecnico/DIVERGENCIAS-LEGADO]]: Brain × legado (D1–D5 e banco); D4 resolvida quanto ao backend oficial.
 - [[seguranca/RISCOS-DO-LEGADO]]: achados S1–S11, por leitura estática. A correção não se aplica; os riscos continuam nos projetos antigos enquanto estiverem ativos.
@@ -65,7 +65,7 @@ Este é o ponto de entrada do cérebro do sistema.
 - [[features/FLUXO-DE-ENTREGA]]
 - [[features/FOUNDATION-001]]: implementada e encerrada (ARCHITECT REVIEW APPROVED em 2026-10-19, commit `7f26d30`).
 - [[features/AUTH-001]]: implementada e encerrada (ARCHITECT REVIEW APPROVED_WITH_NOTES em 2026-10-22, commit `50eaa1f`).
-- [[features/FOUNDATION-002]] — Fundação de Persistência: contrato VERSÃO 2 READY e Fase 4 autorizada (2026-10-22); 9 migrations escritas e **não aplicadas**; revisões e aplicação pelo PO pendentes.
+- [[features/FOUNDATION-002]] — Fundação de Persistência: aplicada em 2026-10-23; encerrada (ARCHITECT REVIEW APPROVED_WITH_NOTES em 2026-10-23, commits `028f9ff` e `8ee70a6`).
 
 ## Governança
 - [[decisoes/ADR-001-ESTRUTURA-INICIAL]]

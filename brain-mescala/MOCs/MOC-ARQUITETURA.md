@@ -1,7 +1,7 @@
 ---
 tipo: moc
 area: arquitetura
-atualizado: 2026-10-22
+atualizado: 2026-10-24
 ---
 # MOC — Arquitetura
 - [[02-ARQUITETURA]]
@@ -23,7 +23,7 @@ atualizado: 2026-10-22
 ## Estado atual e pendências
 - [[features/FOUNDATION-001]]: implementada e encerrada; `/backend` existe, só com `GET /api/health`.
 - [[features/AUTH-001]]: implementada e encerrada em 2026-10-22 (commit `50eaa1f`); verificação do access token em `domains/auth`, testes com Vitest e convenções de código ([[tecnico/BACKEND#Convenções do código e dos testes (desde a AUTH-001)|tecnico/BACKEND]]).
-- [[features/FOUNDATION-002]]: contrato VERSÃO 2 READY; 9 migrations escritas e não aplicadas; convenções do schema oficial em [[tecnico/BANCO-DE-DADOS#Convenções do schema oficial (FOUNDATION-002, 2026-10-22)|tecnico/BANCO-DE-DADOS]].
+- [[features/FOUNDATION-002]]: aplicada em 2026-10-23; encerrada (APPROVED_WITH_NOTES); aplicação no projeto oficial só pelo SQL Editor ([[tecnico/BANCO-DE-DADOS#Aplicação no projeto oficial (ARQ-F002-17)|ARQ-F002-17]]); convenções do schema oficial em [[tecnico/BANCO-DE-DADOS#Convenções do schema oficial (FOUNDATION-002, 2026-10-22)|tecnico/BANCO-DE-DADOS]].
 - [[tecnico/LEGADO-ATUAL]]
 - [[tecnico/DIVERGENCIAS-LEGADO]]
 - [[features/FLUXO-DE-ENTREGA]]

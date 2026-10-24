@@ -2,7 +2,7 @@
 tipo: indice-pendencias
 status: pendente
 area: governanca
-atualizado: 2026-10-22
+atualizado: 2026-10-24
 relacionado:
   - "[[MOCs/MOC-GOVERNANCA]]"
   - "[[decisoes/ADR-002-BACKEND-OFICIAL]]"
@@ -26,18 +26,19 @@ relacionado:
 
 Exceção: [[#RT-FOUND-01 — Dívida de tooling no backend|RT-FOUND-01]], [[#L-07 — Guarda 2b não normaliza o especificador|L-07]], [[#RT-AUTH-01 — Cache de segmento do Next sobre a busca do JWKS|RT-AUTH-01]] e [[#RT-AUTH-02 — Composição padrão no domínio|RT-AUTH-02]] são riscos e limite **já aceitos** pelo Arquiteto. Estão aqui porque as condições e a reavaliação deles continuam abertas. O [[#L-06 — Arquivos .jsx fora das guardas de lint|L-06]] foi **encerrado em 2026-10-22** e fica como histórico.
 
-## Decididas em 2026-10-21 e 2026-10-22
+## Decididas e resolvidas de 2026-10-21 a 2026-10-23
 
 | Pendência | Data | Decisão | Nota |
 |---|---|---|---|
 | [[#DEC-03 — Autenticação\|DEC-03]] | 2026-10-21 | Supabase Auth do projeto oficial; backend como resource server sem estado, que só valida o access token (JWKS, `jose`) | [[decisoes/ADR-003-AUTENTICACAO\|ADR-003]] (aceito) |
 | [[#DEC-05 — Projeto Supabase oficial\|DEC-05]] | 2026-10-21 | Projeto novo `vitqnyzuvrvkmnvshcpb`; os antigos ficam só para o legado | [[decisoes/DEC-05-PROJETO-SUPABASE-OFICIAL\|DEC-05]] |
-| [[#DEC-04 — Estratégia de migrations e forma de acesso ao banco\|DEC-04]], **parte 1** | 2026-10-21 | Migrations oficiais em `backend/supabase/migrations/`; as legadas nunca rodam no banco novo; aplicação manual pelo PO | [[decisoes/DEC-04-ESTRATEGIA-DE-MIGRATIONS\|DEC-04]] (parte 2 aberta) |
+| [[#DEC-04 — Estratégia de migrations e forma de acesso ao banco\|DEC-04]], **parte 1** | 2026-10-21 | Migrations oficiais em `backend/supabase/migrations/`; as legadas nunca rodam no banco novo; aplicação manual pelo PO (no projeto oficial, só pelo SQL Editor desde 2026-10-23: ARQ-F002-17) | [[decisoes/DEC-04-ESTRATEGIA-DE-MIGRATIONS\|DEC-04]] (parte 2 aberta) |
 | DATA-DEC-001 a 023 | 2026-10-21 | Todas na opção recomendada do relatório, com as respostas sugeridas | [[decisoes/DEC-09-MODELO-DE-DADOS\|DEC-09]] |
 | [[#Micro-decisões deixadas em aberto pelo aceite de 2026-10-21\|Micro-decisões]] das DATA-DEC | 2026-10-22 | Status do convite e de vínculos, ministérios e funções; Escala nunca é cancelada; só o membro registra impedimento; app legado sem uso real | [[decisoes/DEC-09-MODELO-DE-DADOS#Micro-decisões de 2026-10-22\|DEC-09, complemento]] |
 | [[#DEC-02 — Biblioteca oficial de testes e quem escreve os testes\|DEC-02]] | 2026-10-22 | Vitest; o Desenvolvedor escreve os testes dos cenários do QA Contract e o QA revisa e acrescenta casos adversariais | [[decisoes/DEC-02-BIBLIOTECA-DE-TESTES\|DEC-02]] |
 | [[#Lacunas observadas no registro de 2026-10-21\|Lacunas observadas]] (bloqueios B-01 a B-04 da FOUNDATION-002) | 2026-10-22 | Schema `mescala`; status da Igreja ATIVO, INATIVO; alocação "ativa" = AGUARDANDO_CONFIRMACAO e CONFIRMADA; `invitations` nasce com a feature de convites (o fluxo continua A DEFINIR) | [[decisoes/DEC-09-MODELO-DE-DADOS#Respostas do PO aos bloqueios da FOUNDATION-002\|DEC-09, respostas aos bloqueios]] |
 | [[#Outras pendências registradas\|Autorização da Fase 4]] | 2026-10-22 | Concedida pelo PO para a FOUNDATION-002: o Analista cria as migrations, sem aplicar | [[features/FOUNDATION-002]] |
+| [[#Outras pendências registradas\|Aplicação da FOUNDATION-002]] | 2026-10-23 | Aplicadas em 2026-10-23 pelo PO, no projeto oficial, pelo SQL Editor (commit `028f9ff`); ARCHITECT REVIEW final APPROVED_WITH_NOTES; feature encerrada. ARQ-F002-17 a 19 aceitas pelo PO sem veto em 2026-10-24 | [[features/FOUNDATION-002]] |
 
 ## Continuam abertas
 - [[#DEC-04 — Estratégia de migrations e forma de acesso ao banco|DEC-04, parte 2]]: forma de acesso do backend ao banco (driver, query builder ou ORM).
@@ -47,7 +48,7 @@ Exceção: [[#RT-FOUND-01 — Dívida de tooling no backend|RT-FOUND-01]], [[#L-
 - [[#Lacunas observadas no registro de 2026-10-21|Lacunas observadas no registro]]: decididas em 2026-10-22 (B-01 a B-04 da FOUNDATION-002), exceto o fluxo, as transições e o papel pretendido do convite, e o efeito de uma igreja INATIVO, que continuam **A DEFINIR**.
 - [[#RT-FOUND-01 — Dívida de tooling no backend|RT-FOUND-01]], [[#L-07 — Guarda 2b não normaliza o especificador|L-07]], [[#RT-AUTH-01 — Cache de segmento do Next sobre a busca do JWKS|RT-AUTH-01]] e [[#RT-AUTH-02 — Composição padrão no domínio|RT-AUTH-02]] (aceitos com condições). Interpretação aceita com consequências para features futuras: [[#ARQ-AUTH-01 — Leitura literal das validações de claims|ARQ-AUTH-01]].
 - [[#AUTH-001 — Fundação de Autenticação|Herança da AUTH-001 para a AUTH-003]].
-- [[#Outras pendências registradas|Outras pendências]]: aplicação da FOUNDATION-002 pelo PO, regras de autorização em aberto, plano para o frontend legado.
+- [[#Outras pendências registradas|Outras pendências]]: regras de autorização em aberto, plano para o frontend legado. A aplicação da FOUNDATION-002 saiu daqui: aplicadas em 2026-10-23.
 
 ## Fontes
 - **DEC-02, DEC-03 e DEC-04:** seção "Decisões pendentes" do Feature Contract `docs/features/FOUNDATION-001.md` (fora do vault). Registro no vault: [[features/FOUNDATION-001]].
@@ -55,6 +56,7 @@ Exceção: [[#RT-FOUND-01 — Dívida de tooling no backend|RT-FOUND-01]], [[#L-
 - **RT-FOUND-01 e L-06:** ARCHITECT REVIEW da FOUNDATION-001 (APPROVED em 2026-10-19), que não foi gravada em arquivo. Registro permanente: [[features/FOUNDATION-001]].
 - **L-07, RT-AUTH-01, RT-AUTH-02, ARQ-AUTH-01 e o encerramento do L-06:** ARCHITECT REVIEW da AUTH-001 (APPROVED_WITH_NOTES em 2026-10-22), que não foi gravada no repositório. Registro permanente: [[features/AUTH-001]].
 - **B-01 a B-04 e autorização da Fase 4:** respostas do PO de 2026-10-22 aos bloqueios do contrato `docs/features/FOUNDATION-002.md` (fora do vault), registradas no cabeçalho dele. Pedido de registro: revisão pré-aplicação do Arquiteto (pedido 1). Registro: [[features/FOUNDATION-002]].
+- **Aplicação e encerramento da FOUNDATION-002, ARQ-F002-17 a 19, R-16 confirmado e R-20:** ARCHITECT REVIEW final (APPROVED_WITH_NOTES em 2026-10-23), que não foi gravada no repositório (pedido 2 ao vault-brain), e o fechamento do contrato no commit `8ee70a6`. O aceite de ARQ-F002-17 a 19 pelo PO, sem veto, em 2026-10-24, foi repassado pela sessão principal. Registro permanente: [[features/FOUNDATION-002]].
 - **DATA-DEC-001 a DATA-DEC-023:** seção 14 do relatório `docs/data/DATA-ARCHITECTURE-REPORT.md` (fora do vault), emitido pelo Analista de Dados em 2026-10-04. Todas aceitas pelo PO em 2026-10-21 na opção recomendada ([[decisoes/DEC-09-MODELO-DE-DADOS|DEC-09]]); o cabeçalho do relatório registra "decisões aceitas pelo PO em 2026-10-21".
 - **Decisões de 2026-10-22** (micro-decisões, Escala sem CANCELADA, DEC-02): decisões do PO repassadas pela sessão principal ao vault-brain em 2026-10-22.
 - No relatório, as tabelas abreviam "DATA-DEC-0xx" como "DEC-0xx" (três dígitos). DEC-01 a DEC-09 (dois dígitos) são outra série: decisões técnicas e de governança.
@@ -93,7 +95,7 @@ O [[decisoes/ADR-002-BACKEND-OFICIAL|ADR-002]] deixa essas escolhas fora do seu 
 
 ### DEC-04 — Estratégia de migrations e forma de acesso ao banco
 - **Situação:** **parte 1 DECIDIDA em 2026-10-21; parte 2 aberta.** Registro: [[decisoes/DEC-04-ESTRATEGIA-DE-MIGRATIONS|DEC-04]].
-- **Parte 1 (decidida):** migrations oficiais em `backend/supabase/migrations/` (Supabase CLI, configuração própria em `backend/supabase/config.toml`, ligada ao projeto `vitqnyzuvrvkmnvshcpb`). A `supabase/` da raiz continua com as 9 migrations legadas, ligadas ao app legado, e elas nunca são aplicadas no banco novo. Aplicação manual pelo PO (SQL Editor ou CLI). Integração GitHub ↔ Supabase: não conectar por enquanto; se for conectada, com diretório `backend/supabase` e deploy automático desligado.
+- **Parte 1 (decidida):** migrations oficiais em `backend/supabase/migrations/` (Supabase CLI, configuração própria em `backend/supabase/config.toml`, ligada ao projeto `vitqnyzuvrvkmnvshcpb`). A `supabase/` da raiz continua com as 9 migrations legadas, ligadas ao app legado, e elas nunca são aplicadas no banco novo. Aplicação manual pelo PO (SQL Editor ou CLI, pelo texto aceito). **No projeto oficial, o SQL Editor é o método único desde 2026-10-23** (ARQ-F002-17, aceita pelo PO sem veto em 2026-10-24; `supabase db push` e `supabase migration up` proibidos lá; [[decisoes/DEC-04-ESTRATEGIA-DE-MIGRATIONS|DEC-04, registro de 2026-10-23]]). Integração GitHub ↔ Supabase: não conectar por enquanto; se for conectada, com diretório `backend/supabase` e deploy automático desligado.
 - **Parte 2 (aberta):** forma de acesso do backend ao banco: driver, query builder ou ORM. **A DEFINIR.** A [[#DATA-DEC-020 — Onde o schema vive e modelo de RLS|DATA-DEC-020]], aceita na opção A, já implica conexão direta ao Postgres com papel sem BYPASSRLS.
 - **Bloqueava (até 2026-10-21):** a [[#DATA-DEC-020 — Onde o schema vive e modelo de RLS|DATA-DEC-020]], decidida no mesmo dia.
 - **Efeito anterior, substituído:** até 2026-10-21, as migrations eram criadas em `supabase/migrations/` (único padrão existente).
@@ -369,11 +371,11 @@ Superadas em 2026-10-22, pela decisão de que o legado não tem uso real: o dest
 ---
 
 ## Outras pendências registradas
-- **Contrato FOUNDATION-002 — Fundação de Persistência:** **emitido em 2026-10-22** pelo [[agents/arquiteto|Arquiteto]]; **VERSÃO 2, READY**. Registro: [[features/FOUNDATION-002]]. Até 2026-10-22, "contrato ainda não emitido".
-- **Autorização da Fase 4:** **concedida pelo PO em 2026-10-22** para a FOUNDATION-002. As 9 migrations estão escritas em `backend/supabase/migrations/` e **não foram aplicadas**. Continua valendo: nenhuma migration é criada sem contrato e sem autorização explícita do PO.
-- **Aplicação da FOUNDATION-002:** **pendente**, pelo PO, conforme o Anexo A do contrato, depois da fase 1b do QA, da confirmação do delta pelo Arquiteto, do Organizador e do S15/S16 do QA ([[features/FOUNDATION-002#Situação em 2026-10-22|situação]]).
+- **Contrato FOUNDATION-002 — Fundação de Persistência:** **emitido em 2026-10-22** pelo [[agents/arquiteto|Arquiteto]]; **VERSÃO 2, READY**; fechamento em 2026-10-23, sem nova versão (commit `8ee70a6`). Registro: [[features/FOUNDATION-002]]. Até 2026-10-22, "contrato ainda não emitido".
+- **Autorização da Fase 4:** **concedida pelo PO em 2026-10-22** para a FOUNDATION-002. As 9 migrations foram escritas em `backend/supabase/migrations/` e **aplicadas em 2026-10-23**. Continua valendo: nenhuma migration é criada sem contrato e sem autorização explícita do PO.
+- **Aplicação da FOUNDATION-002:** **aplicadas em 2026-10-23** pelo PO, no projeto oficial, pelo SQL Editor, arquivo por arquivo (commit `028f9ff`), depois da fase 1b do QA, da confirmação do delta pelo Arquiteto, do Organizador e do S15/S16 do QA. ARCHITECT REVIEW final APPROVED_WITH_NOTES em 2026-10-23; feature encerrada ([[features/FOUNDATION-002#Situação em 2026-10-24|situação]]). Até 2026-10-23, **pendente**.
 - **Inventário do banco legado:** **dispensado em 2026-10-22** (app legado sem uso real; sem migração de dados).
-- **Ordem do ADR-002:** **cumprida quanto à [[features/FOUNDATION-001]]** (implementada e aprovada em 2026-10-19, commit `7f26d30`). A fundação oficial de persistência, que vem em seguida, é a FOUNDATION-002: contrato VERSÃO 2 READY e Fase 4 autorizada em 2026-10-22; a aplicação no banco oficial ainda não aconteceu. A AUTH-001, que não usa banco, correu em paralelo e foi encerrada em 2026-10-22 ([[features/AUTH-001]]).
+- **Ordem do ADR-002:** **cumprida quanto à [[features/FOUNDATION-001]]** (implementada e aprovada em 2026-10-19, commit `7f26d30`). A fundação oficial de persistência, que vem em seguida, é a FOUNDATION-002: contrato VERSÃO 2 READY e Fase 4 autorizada em 2026-10-22; aplicada no banco oficial em 2026-10-23 e encerrada (APPROVED_WITH_NOTES). A AUTH-001, que não usa banco, correu em paralelo e foi encerrada em 2026-10-22 ([[features/AUTH-001]]).
 - **Regras de autorização em aberto** (relatório, seção 7; a fechar com o Arquiteto, não bloqueiam o schema):
   - ADMIN gerencia todos os ministérios?
   - O que o LEADER pode fazer fora da escala?

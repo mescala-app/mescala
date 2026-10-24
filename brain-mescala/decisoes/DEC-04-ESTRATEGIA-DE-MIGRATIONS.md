@@ -36,6 +36,11 @@ relacionado:
 - O schema oficial é reproduzível pelas migrations versionadas, como exige o [[decisoes/ADR-002-BACKEND-OFICIAL|ADR-002]].
 - Em 2026-10-21, `backend/supabase/` ainda não existe no repositório. Nenhuma migration oficial foi criada; a Fase 4 depende do contrato FOUNDATION-002 e de autorização explícita do PO ([[features/FLUXO-DE-ENTREGA]]).
 - **Registro de 2026-10-22:** o contrato [[features/FOUNDATION-002]] foi emitido (VERSÃO 2, READY) e o PO autorizou a Fase 4. `backend/supabase/` existe, com `config.toml` (só `project_id` como conteúdo funcional) e as 9 migrations da FOUNDATION-002 em `migrations/`, **escritas e não aplicadas**. Para a aplicação, depois das revisões, o contrato recomenda a CLI, sempre rodada a partir de `/backend` (nunca da raiz, que tem o vínculo legado); as convenções das migrations estão em [[tecnico/BANCO-DE-DADOS#Convenções do schema oficial (FOUNDATION-002, 2026-10-22)|tecnico/BANCO-DE-DADOS]]. A decisão não mudou.
+- **Registro de 2026-10-23:** a [[features/FOUNDATION-002]] foi aplicada pelo PO no projeto oficial pelo **SQL Editor**, arquivo por arquivo, a partir do commit `028f9ff` (a CLI não foi usada). Dentro do item 3, o SQL Editor passa a ser o **método único no projeto oficial** (ARQ-F002-17, decisão técnica do [[agents/arquiteto|Arquiteto]] na ARCHITECT REVIEW final, **aceita pelo PO sem veto em 2026-10-24**).
+  - `supabase db push` (inclusive `--dry-run`) e `supabase migration up` são proibidos lá; `supabase migration repair`, só por plano escrito do Arquiteto para uma eventual adoção da CLI. Motivo: o projeto não tem `supabase_migrations`, e a CLI tentaria reaplicar as migrations já aplicadas.
+  - A estrutura `backend/supabase/` (pasta `migrations/` e `config.toml`) continua.
+  - Os itens 1 a 4 da decisão não mudaram.
+  - Procedimento, evidência mínima e registro de migrations aplicadas: [[tecnico/BANCO-DE-DADOS#Aplicação no projeto oficial (ARQ-F002-17)|tecnico/BANCO-DE-DADOS]].
 
 ---
 

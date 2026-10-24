@@ -1,7 +1,7 @@
 ---
 tipo: arquitetura
 status: ativo
-atualizado: 2026-10-22
+atualizado: 2026-10-24
 relacionado:
   - "[[tecnico/FRONTEND]]"
   - "[[tecnico/BACKEND]]"
@@ -34,7 +34,7 @@ Veja [[05-REGRAS-DE-NEGOCIO]] e [[seguranca/AUTORIZACAO]].
 ## Estado atual
 - O backend oficial existe em `/backend` desde a [[features/FOUNDATION-001]] (implementada e encerrada em 2026-10-19, commit `7f26d30`): Next.js, TypeScript e runtime Node.js, só com a rota técnica `GET /api/health` ([[decisoes/DEC-01-ROTA-TECNICA-HEALTH|DEC-01]]). Ainda não tem regra de negócio nem banco ([[tecnico/BACKEND]]).
 - A [[features/AUTH-001]] foi implementada e encerrada em 2026-10-22 (commit `50eaa1f`): verificação do access token em `domains/auth` ([[decisoes/ADR-003-AUTENTICACAO|ADR-003]]), ainda sem rota protegida.
-- Em andamento: [[features/FOUNDATION-002]] — Fundação de Persistência (contrato VERSÃO 2 READY; 9 migrations escritas e não aplicadas). Ver [[features/FLUXO-DE-ENTREGA]].
+- [[features/FOUNDATION-002]] — Fundação de Persistência: aplicada em 2026-10-23; encerrada (APPROVED_WITH_NOTES). O schema oficial `mescala` existe no projeto oficial, e a aplicação de migrations lá é só pelo SQL Editor ([[tecnico/BANCO-DE-DADOS#Aplicação no projeto oficial (ARQ-F002-17)|ARQ-F002-17]]). Ver [[features/FLUXO-DE-ENTREGA]].
 - O app legado é um frontend Vite + React gravando direto no Supabase, protegido só por RLS, nos projetos antigos ([[tecnico/LEGADO-ATUAL]]). Ele não passa pelo backend oficial, o que contraria o princípio acima (divergência D1 em [[tecnico/DIVERGENCIAS-LEGADO]]). Em 2026-10-22, o PO registrou que ele não tem uso real.
 
 ## Pendências

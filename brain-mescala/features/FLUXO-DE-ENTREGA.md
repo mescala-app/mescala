@@ -14,7 +14,7 @@ relacionado:
   - "[[decisoes/DEC-08-DEPENDENCIAS-TRANSITIVAS]]"
   - "[[decisoes/DEC-02-BIBLIOTECA-DE-TESTES]]"
   - "[[decisoes/DEC-04-ESTRATEGIA-DE-MIGRATIONS]]"
-atualizado: 2026-10-22
+atualizado: 2026-10-24
 ---
 # Fluxo de entrega de features
 
@@ -35,9 +35,9 @@ Arquiteto → Analista de Dados → Desenvolvedor → Organizador → QA → Arq
 | 5 | [[agents/qa\|QA]] | Contrato + QA Contract + resultados anteriores | QA ANALYSIS e QA RESULT, com bug reports | `APPROVED`, `CHANGES_REQUIRED` ou `BLOCKED`, mais recomendação ao Arquiteto |
 | 6 | [[agents/arquiteto\|Arquiteto]] | Tudo acima | ARCHITECT REVIEW | `APPROVED`, `CHANGES_REQUIRED` ou `BLOCKED` |
 
-A etapa 2 só acontece quando a feature tem impacto no banco. Entre as etapas 2 e 3, o PO aplica as migrations manualmente (SQL Editor ou CLI) no projeto oficial `vitqnyzuvrvkmnvshcpb` ([[decisoes/DEC-04-ESTRATEGIA-DE-MIGRATIONS|DEC-04]]).
+A etapa 2 só acontece quando a feature tem impacto no banco. Entre as etapas 2 e 3, o PO aplica as migrations manualmente no projeto oficial `vitqnyzuvrvkmnvshcpb` ([[decisoes/DEC-04-ESTRATEGIA-DE-MIGRATIONS|DEC-04]]). **No projeto oficial, só pelo SQL Editor**, com a evidência mínima versionada em `docs/features/` (ARQ-F002-17, desde 2026-10-23; [[tecnico/BANCO-DE-DADOS#Aplicação no projeto oficial (ARQ-F002-17)|procedimento e evidência]]).
 
-**Migrations: revisão antes da aplicação** (convenção 4 do [[tecnico/BANCO-DE-DADOS#Convenções do schema oficial (FOUNDATION-002, 2026-10-22)|schema oficial]]). Migration aplicada não é editada; correção vira migration nova. Por isso, antes de o PO aplicar, vêm a revisão estática do QA e a revisão pré-aplicação do Arquiteto. Na [[features/FOUNDATION-002]], o contrato fixou esta ordem (ARQ-F002-11): Analista → Desenvolvedor → Organizador → QA fase 1 (estática) → revisão pré-aplicação do Arquiteto → aplicação pelo PO → QA fase 2 (saídas do PO) → ARCHITECT REVIEW final. Um delta pedido na revisão pré-aplicação volta ao Analista, passa pela fase 1b do QA e pela confirmação do Arquiteto antes da aplicação.
+**Migrations: revisão e commit antes da aplicação** (convenções 4 e 5 do [[tecnico/BANCO-DE-DADOS#Convenções do schema oficial (FOUNDATION-002, 2026-10-22)|schema oficial]]). Migration aplicada não é editada; correção vira migration nova. Por isso, antes de o PO aplicar, vêm a revisão estática do QA e a revisão pré-aplicação do Arquiteto. Na [[features/FOUNDATION-002]], o contrato fixou esta ordem (ARQ-F002-11): Analista → Desenvolvedor → Organizador → QA fase 1 (estática) → revisão pré-aplicação do Arquiteto → aplicação pelo PO → QA fase 2 (saídas do PO) → ARCHITECT REVIEW final. Um delta pedido na revisão pré-aplicação volta ao Analista, passa pela fase 1b do QA e pela confirmação do Arquiteto antes da aplicação. **Desde a ARQ-F002-17 (2026-10-23), o commit antes da aplicação é obrigatório:** o PO só aplica arquivo já commitado, porque o SHA do commit é o único vínculo entre o banco e o repositório. Na FOUNDATION-002, o commit `028f9ff` veio depois da confirmação do delta e antes da aplicação.
 
 ## Testes (DEC-02, decidida em 2026-10-22)
 - Biblioteca oficial: **Vitest** ([[decisoes/DEC-02-BIBLIOTECA-DE-TESTES|DEC-02]]), versão 5.0.5, instalada pela [[features/AUTH-001]] como dependência de desenvolvimento do `/backend`.
@@ -62,10 +62,11 @@ Cada agente para e reporta em vez de decidir sozinho:
 ## Onde ficam os artefatos (fora do vault)
 - Feature Contracts e QA Contracts: `docs/features/<ID>.md`.
 - Relatórios do Analista de Dados: `docs/data/` (hoje `docs/data/DATA-ARCHITECTURE-REPORT.md`).
-- Migrations oficiais: `backend/supabase/migrations/` ([[decisoes/DEC-04-ESTRATEGIA-DE-MIGRATIONS|DEC-04, parte 1]], 2026-10-21). Desde 2026-10-22, a pasta tem as 9 migrations da [[features/FOUNDATION-002]], escritas pelo Analista e **ainda não aplicadas** nem commitadas; `backend/supabase/config.toml` (configuração própria da CLI) também existe. A `supabase/migrations/` da raiz guarda só as 9 migrations do legado, que nunca rodam no banco oficial.
-- DATA TASK RESULT da FOUNDATION-002: `docs/features/FOUNDATION-002-DATA-TASK-RESULT.md` (ainda não commitado). O contrato prevê que o orquestrador integre nele o adendo do Analista e os complementos do QA.
+- Migrations oficiais: `backend/supabase/migrations/` ([[decisoes/DEC-04-ESTRATEGIA-DE-MIGRATIONS|DEC-04, parte 1]], 2026-10-21). Desde 2026-10-22, a pasta tem as 9 migrations da [[features/FOUNDATION-002]], escritas pelo Analista, **commitadas em `028f9ff`** e **aplicadas em 2026-10-23** ([[tecnico/BANCO-DE-DADOS#Registro de migrations aplicadas|registro de migrations aplicadas]]); `backend/supabase/config.toml` (configuração própria da CLI) está no mesmo commit. A `supabase/migrations/` da raiz guarda só as 9 migrations do legado, que nunca rodam no banco oficial.
+- DATA TASK RESULT da FOUNDATION-002: `docs/features/FOUNDATION-002-DATA-TASK-RESULT.md`, commitado em `028f9ff` (anotações D-01 e D-02 do fechamento no `8ee70a6`). O contrato prevê que o orquestrador integre nele o adendo do Analista e os complementos do QA.
+- Evidências da aplicação no banco oficial (ARQ-F002-17 e 19): em `docs/features/`, `<ID>-SAIDAS-PO.md`, `<ID>-V1-RESULTADO.csv` e as consultas `<ID>-V0-CONSULTA-UNICA.sql` e `<ID>-V1-CONSULTA-UNICA.sql`, escritas pelo Analista. As da FOUNDATION-002 estão no commit `8ee70a6`: `FOUNDATION-002-SAIDAS-PO.md`, `FOUNDATION-002-V1-CONSULTA-UNICA.sql` e `FOUNDATION-002-V1-RESULTADO.csv` (sem V0 em consulta única, que passou a ser exigido no fechamento dela).
 - Código do backend oficial: `/backend` ([[decisoes/ADR-002-BACKEND-OFICIAL|ADR-002]]), versionado desde o commit `7f26d30`.
-- ARCHITECT REVIEW: até agora não foram gravadas no repositório. As da FOUNDATION-001 e a da AUTH-001 estão registradas nas notas das features ([[features/FOUNDATION-001]], [[features/AUTH-001]]).
+- ARCHITECT REVIEW: até agora não foram gravadas no repositório. As da FOUNDATION-001, a da AUTH-001 e as da FOUNDATION-002 estão registradas nas notas das features ([[features/FOUNDATION-001]], [[features/AUTH-001]], [[features/FOUNDATION-002#Revisões do Arquiteto|FOUNDATION-002]]).
 - Definições dos agentes: `.claude/agents/*.md`.
 
 ## Regras que valem para todo o fluxo
@@ -90,9 +91,11 @@ Aceitas pelo Arquiteto na revisão da [[features/AUTH-001]] (2026-10-22). Valem 
 - **Testes:** convenções de [[tecnico/BACKEND#Convenções do código e dos testes (desde a AUTH-001)|tecnico/BACKEND]].
 
 ## Checagens herdadas da FOUNDATION-002
-Decididas no contrato da [[features/FOUNDATION-002]] (VERSÃO 2, 2026-10-22). Valem para **toda feature com migration**; o QA confere. ARQ-F002-14 a 16 são decisões técnicas que o PO pode vetar até o A3 da FOUNDATION-002.
-- Convenções do schema oficial: privilégios explícitos (ARQ-F002-16), unicidade com `church_id` (ARQ-F002-14), timestamp maior que o da última migration da pasta (R-19), migration aplicada não é editada ([[tecnico/BANCO-DE-DADOS#Convenções do schema oficial (FOUNDATION-002, 2026-10-22)|tecnico/BANCO-DE-DADOS]]).
+Decididas no contrato da [[features/FOUNDATION-002]] (VERSÃO 2, 2026-10-22, e fechamento, 2026-10-23). Valem para **toda feature com migration**; o QA confere. ARQ-F002-14 a 16 não foram vetadas e estão em vigor desde a aplicação de 2026-10-23; a ARQ-F002-17 foi aceita pelo PO sem veto em 2026-10-24.
+- Convenções do schema oficial: privilégios explícitos (ARQ-F002-16), unicidade com `church_id` (ARQ-F002-14), timestamp maior que o da última migration da pasta e do registro (R-19), migration aplicada não é editada, método e evidência (ARQ-F002-17) e RLS explícito (R-20) ([[tecnico/BANCO-DE-DADOS#Convenções do schema oficial (FOUNDATION-002, 2026-10-22)|tecnico/BANCO-DE-DADOS]]).
 - Regressão fixa no QA: EXECUTE por papel em todas as funções do schema (V1.12b) e privilégios de tabela, de coluna e dos papéis da Data API (V1.14b a V1.14d).
+- **Toda feature que muda o banco oficial (ARQ-F002-17):** aplicação pelo PO só pelo SQL Editor e só de arquivo commitado; V0 e V1 em consulta única, escritos pelo Analista e revisados pelo QA na fase 1; evidências E1 a E5 versionadas em `docs/features/`; registro de migrations aplicadas na Brain, depois da ARCHITECT REVIEW final ([[tecnico/BANCO-DE-DADOS#Aplicação no projeto oficial (ARQ-F002-17)|procedimento]]).
+- **R-20:** RLS explícito em todo `create_*`, sem depender do `ensure_rls` da plataforma; V1.6, V1.17 e V1.24 como regressão fixa; mudança na [[tecnico/BANCO-DE-DADOS#Linha de base da plataforma|linha de base da plataforma]] é registrada pelo QA na fase 2 e levada ao Arquiteto. A primeira feature com V0 registra, só por leitura, o corpo de `public.rls_auto_enable()`.
 
 ## Primeira execução completa: FOUNDATION-001
 O fluxo rodou de ponta a ponta pela primeira vez na [[features/FOUNDATION-001]], sem a etapa 2 (a feature não tem banco), e incluiu uma rodada de correção:
@@ -119,14 +122,30 @@ Arquiteto (v2 READY) → Desenvolvedor → Organizador → QA (APPROVED) → Arq
 - A ARCHITECT REVIEW não foi gravada no repositório; o registro permanente está na nota da feature.
 - Depois do APPROVED, a entrega foi commitada pelo orquestrador, com autorização do PO (`50eaa1f`, 16 arquivos, local).
 
+## Terceira execução completa: FOUNDATION-002
+O fluxo rodou de ponta a ponta pela terceira vez na [[features/FOUNDATION-002]]. É a **primeira execução com a etapa 2** (Analista de Dados) **e com aplicação no banco oficial**, na ordem que o contrato fixou (ARQ-F002-11):
+
+```text
+Arquiteto (v1 BLOCKED → v2) → Analista de Dados → QA fase 1 → Arquiteto, pré-aplicação (RETURN_TO_DATA_ANALYST)
+→ Analista (delta) → Desenvolvedor → Organizador → QA fase 1b + S15/S16 → Arquiteto (APPROVED, 2026-10-22)
+→ commit 028f9ff → PO (V0 em 2026-10-22; aplicação em 2026-10-23) → QA fase 2 (APPROVED) → Arquiteto (APPROVED_WITH_NOTES, 2026-10-23)
+```
+
+- A VERSÃO 1 do contrato saiu BLOCKED (B-01, B-02 e Fase 4); a VERSÃO 2 (READY) foi emitida na revisão pré-aplicação, depois das respostas do PO.
+- Houve uma rodada de correção **antes** da aplicação: a revisão pré-aplicação devolveu o delta D-1 a D-5 ao Analista, revisado na fase 1b do QA e confirmado pelo Arquiteto. Nenhuma migration aplicada foi editada.
+- O PO aplicou pelo SQL Editor, arquivo por arquivo (alternativa do A5 do contrato), sem vincular a CLI. O método virou regra no projeto oficial (ARQ-F002-17), com evidência mínima versionada e o [[tecnico/BANCO-DE-DADOS#Registro de migrations aplicadas|registro de migrations aplicadas]] na Brain.
+- APPROVED_WITH_NOTES equivale a APPROVED: nada voltou a nenhum executor; as notas viraram registros (N-1 a N-4; ARQ-F002-17 a 19; R-05 encerrado, R-16 confirmado, R-20).
+- As ARCHITECT REVIEW não foram gravadas no repositório; o registro permanente está na nota da feature, inclusive a confirmação do delta, que o critério 24 cita.
+- Commits: `028f9ff` (migrations, configuração da CLI, VERSÃO 2 do contrato e DATA TASK RESULT, antes da aplicação) e `8ee70a6` (fechamento do contrato e evidências).
+
 ## Features registradas
 | ID | Nome | Contrato | Implementação |
 |---|---|---|---|
 | [[features/FOUNDATION-001\|FOUNDATION-001]] | Inicialização do Backend Next.js | READY (v1, 2026-10-04) | implementada; ARCHITECT REVIEW APPROVED em 2026-10-19; commit `7f26d30`; **encerrada** |
 | [[features/AUTH-001\|AUTH-001]] | Fundação de Autenticação | READY (v2, 2026-10-22; v1 emitida em 2026-10-06). Versionado em `docs/features/AUTH-001.md` desde o commit `50a1cd6` | implementada; ARCHITECT REVIEW APPROVED (APPROVED_WITH_NOTES) em 2026-10-22; commit `50eaa1f`; **encerrada** |
-| [[features/FOUNDATION-002\|FOUNDATION-002]] | Fundação de Persistência | emitido em 2026-10-22; **READY (VERSÃO 2, 2026-10-22)**. Fase 4 autorizada pelo PO em 2026-10-22 | **em andamento:** 9 migrations escritas e **não aplicadas**; QA fase 1 APPROVED com condições; revisão pré-aplicação do Arquiteto = RETURN_TO_DATA_ANALYST (delta da VERSÃO 2 em curso; pendentes a fase 1b do QA e a confirmação do Arquiteto); trecho do Desenvolvedor feito; Organizador e QA (S15/S16) pendentes; nada commitado; aplicação pelo PO pendente |
+| [[features/FOUNDATION-002\|FOUNDATION-002]] | Fundação de Persistência | emitido em 2026-10-22; **READY (VERSÃO 2, 2026-10-22)**; fechamento em 2026-10-23, sem nova versão. Fase 4 autorizada pelo PO em 2026-10-22 | 9 migrations aplicadas em 2026-10-23 pelo SQL Editor (commit `028f9ff`); ARCHITECT REVIEW APPROVED_WITH_NOTES em 2026-10-23; fechamento e evidências no commit `8ee70a6`; **encerrada** |
 
-Próximas features previstas, segundo o contrato da FOUNDATION-002: FOUNDATION-003 (cliente de banco do backend; proposta, ID a confirmar), depois AUTH-002, AUTH-003, CHURCH-001 e CHURCH-002. FOUNDATION-004 (programação, escala e impedimentos) e a feature de convites também dependem da FOUNDATION-002 ([[features/FOUNDATION-002#Dependências entre features|dependências]]).
+Próximas features previstas, segundo o contrato da FOUNDATION-002 (que, encerrada, libera a FOUNDATION-003): FOUNDATION-003 (cliente de banco do backend; proposta, ID a confirmar), depois AUTH-002, AUTH-003, CHURCH-001 e CHURCH-002. FOUNDATION-004 (programação, escala e impedimentos) e a feature de convites também dependem da FOUNDATION-002 ([[features/FOUNDATION-002#Dependências entre features|dependências]]).
 
 ## Observação sobre o relatório de dados
 O `docs/data/DATA-ARCHITECTURE-REPORT.md` (2026-10-04) foi produzido executando o papel do Analista de Dados diretamente, a partir de um Data Task do PO, sem Feature Contract do Arquiteto. O próprio relatório registra que a fase de migrations precisa de um contrato do Arquiteto ou de uma declaração do PO de que o Data Task vale como contrato.

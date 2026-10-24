@@ -1,6 +1,6 @@
 ---
 tipo: tecnico
-atualizado: 2026-10-22
+atualizado: 2026-10-24
 ---
 # Convenções
 - regras de negócio documentadas antes de mudanças estruturais;
@@ -20,4 +20,4 @@ atualizado: 2026-10-22
 
 ## Convenções técnicas registradas em outras notas
 - **Código e testes do `/backend`** (pastas, nomes de arquivo, imports, composição, Vitest, local e nome dos testes; desde a AUTH-001, 2026-10-22): [[tecnico/BACKEND#Convenções do código e dos testes (desde a AUTH-001)|tecnico/BACKEND]].
-- **Schema oficial e migrations** (privilégios explícitos, unicidade com `church_id`, ordem dos timestamps, migration aplicada não é editada; FOUNDATION-002, 2026-10-22): [[tecnico/BANCO-DE-DADOS#Convenções do schema oficial (FOUNDATION-002, 2026-10-22)|tecnico/BANCO-DE-DADOS]]. São convenções técnicas, não regras de negócio `<ÁREA>-<NNN>`.
+- **Schema oficial e migrations** (privilégios explícitos, unicidade com `church_id`, ordem dos timestamps, migration aplicada não é editada; FOUNDATION-002, 2026-10-22; e, desde o fechamento de 2026-10-23, aplicação no projeto oficial só pelo SQL Editor, com evidência mínima e registro de migrations aplicadas, e RLS explícito): [[tecnico/BANCO-DE-DADOS#Convenções do schema oficial (FOUNDATION-002, 2026-10-22)|tecnico/BANCO-DE-DADOS]]. São convenções técnicas, não regras de negócio `<ÁREA>-<NNN>`.

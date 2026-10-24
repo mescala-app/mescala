@@ -18,7 +18,7 @@ relacionado:
   - "[[tecnico/BACKEND]]"
   - "[[decisoes/DEC-02-BIBLIOTECA-DE-TESTES]]"
   - "[[features/AUTH-001]]"
-atualizado: 2026-10-22
+atualizado: 2026-10-24
 ---
 # FOUNDATION-001 — Inicialização do Backend Next.js
 
@@ -152,7 +152,7 @@ Vale para **toda feature que alterar `backend/eslint.config.mjs`**.
 
 ## Dependências entre features
 - **DEPENDS_ON:** [[decisoes/ADR-002-BACKEND-OFICIAL|ADR-002]] (aceito); [[decisoes/DEC-01-ROTA-TECNICA-HEALTH|DEC-01]] (aceita).
-- **BLOCKS (segundo o contrato):** a fundação oficial de persistência e todas as features de negócio. Com a FOUNDATION-001 aprovada, essa dependência está cumprida. A fundação de persistência é a **[[features/FOUNDATION-002]]** (contrato emitido em 2026-10-22, VERSÃO 2 READY; migrations escritas e não aplicadas).
+- **BLOCKS (segundo o contrato):** a fundação oficial de persistência e todas as features de negócio. Com a FOUNDATION-001 aprovada, essa dependência está cumprida. A fundação de persistência é a **[[features/FOUNDATION-002]]** (contrato emitido em 2026-10-22, VERSÃO 2 READY; aplicada em 2026-10-23; encerrada, APPROVED_WITH_NOTES).
 - **RELATED_TO:** DEC-02 (decidida em 2026-10-22), DEC-03 (decidida em 2026-10-21 pelo [[decisoes/ADR-003-AUTENTICACAO|ADR-003]]) e DEC-04 (parte 1 decidida em 2026-10-21; parte 2 aberta).
 - **AUTH-001:** tinha a FOUNDATION-001 aprovada como uma de suas condições, cumprida. Implementada e encerrada em 2026-10-22 ([[features/AUTH-001]]): corrigiu o L-06 e automatizou B1 a B3.
 

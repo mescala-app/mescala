@@ -2,7 +2,7 @@
 tipo: tecnico
 camada: backend
 status: ativo
-atualizado: 2026-10-22
+atualizado: 2026-10-24
 relacionado:
   - "[[decisoes/ADR-002-BACKEND-OFICIAL]]"
   - "[[decisoes/ADR-003-AUTENTICACAO]]"
@@ -65,7 +65,7 @@ Referências: [[05-REGRAS-DE-NEGOCIO]], [[seguranca/AUTORIZACAO]], [[tecnico/API
 - **Configuração aceita como desvio (D-01):** o `next.config.ts` só fixa a raiz do projeto no `/backend`; qualquer outra opção exige contrato.
 - **Dependências:** só as aprovadas em contrato. Desde a AUTH-001: `jose` 6.2.13 (`dependencies`) e `vitest` 5.0.5 (`devDependencies`). Pacotes que estão no lockfile só como transitivos seguem a [[decisoes/DEC-08-DEPENDENCIAS-TRANSITIVAS|DEC-08]].
 - O app legado não passa pelo backend oficial e não tem uso real (2026-10-22) ([[tecnico/LEGADO-ATUAL]]).
-- Entrega pelo [[features/FLUXO-DE-ENTREGA]]. Em andamento: [[features/FOUNDATION-002]] (contrato VERSÃO 2 READY; 9 migrations escritas e não aplicadas). Ela cria `backend/supabase/` e não muda `backend/src`.
+- Entrega pelo [[features/FLUXO-DE-ENTREGA]]. A [[features/FOUNDATION-002]] foi aplicada em 2026-10-23 e está encerrada (APPROVED_WITH_NOTES): criou `backend/supabase/` e não mudou `backend/src`. O acesso do backend ao banco vem na FOUNDATION-003 (proposta).
 
 ## Convenções do código e dos testes (desde a AUTH-001)
 Definidas no contrato da [[features/AUTH-001]] e registradas pela ARCHITECT REVIEW dela (O-9). Valem para toda feature do `/backend`.

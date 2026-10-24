@@ -232,7 +232,7 @@ relacionado:
 - **Relação com a DEC-04:** o acesso direto ao Postgres fica implicado por esta decisão; a ferramenta (driver, query builder ou ORM) continua aberta na [[decisoes/DEC-04-ESTRATEGIA-DE-MIGRATIONS|DEC-04, parte 2]].
 - **Seção 13.3 do relatório:** toda tabela nasce com RLS habilitado; até haver policies, o estado padrão é RLS sem policy, que nega tudo à API pública.
 - **Nome do schema (resposta do PO ao B-01 da FOUNDATION-002, 2026-10-22, opção A):** **`mescala`**. Até essa resposta, era **A DEFINIR** (`mescala` era só exemplo do relatório).
-- **Especificação vinculante:** contrato [[features/FOUNDATION-002]] (papel `mescala_app`, contexto por transação, policies de isolamento por igreja; escrito nas migrations e ainda não aplicado). Resumo em [[tecnico/BANCO-DE-DADOS#Mecanismo do schema oficial (FOUNDATION-002)|tecnico/BANCO-DE-DADOS]].
+- **Especificação vinculante:** contrato [[features/FOUNDATION-002]] (papel `mescala_app`, contexto por transação, policies de isolamento por igreja; escrito nas migrations e aplicado em 2026-10-23; FOUNDATION-002 encerrada, APPROVED_WITH_NOTES). Resumo em [[tecnico/BANCO-DE-DADOS#Mecanismo do schema oficial (FOUNDATION-002)|tecnico/BANCO-DE-DADOS]].
 - **Aplicação:** [[seguranca/ISOLAMENTO-DE-DADOS]], [[seguranca/AUTORIZACAO]], [[tecnico/BANCO-DE-DADOS]], [[tecnico/BACKEND]].
 
 ### DATA-DEC-021 — Auditoria

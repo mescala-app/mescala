@@ -1,7 +1,7 @@
 ---
 tipo: modelo-dados
 status: ativo
-atualizado: 2026-10-22
+atualizado: 2026-10-24
 relacionado:
   - "[[decisoes/DEC-09-MODELO-DE-DADOS]]"
   - "[[dados/RELACIONAMENTOS]]"
@@ -9,7 +9,7 @@ relacionado:
 ---
 # Entidades
 
-Modelo conceitual. As decisões de 2026-10-21 e 2026-10-22 estão em [[decisoes/DEC-09-MODELO-DE-DADOS|DEC-09]]. Os identificadores do schema oficial são em inglês e os valores de status e papéis ficam como na Brain ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-018 — Nomenclatura e idioma|DATA-DEC-018]]). O detalhe físico (colunas, constraints, índices) de Usuário, Igreja, vínculos, Ministério, Função, habilitações e Registro de auditoria está no contrato [[features/FOUNDATION-002]] (VERSÃO 2, READY em 2026-10-22; migrations escritas e **não aplicadas**). Programação, Escala, Alocação e Disponibilidade ficam para a FOUNDATION-004 (proposta), e Convite, para a feature de convites. Schema oficial: `mescala`.
+Modelo conceitual. As decisões de 2026-10-21 e 2026-10-22 estão em [[decisoes/DEC-09-MODELO-DE-DADOS|DEC-09]]. Os identificadores do schema oficial são em inglês e os valores de status e papéis ficam como na Brain ([[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-018 — Nomenclatura e idioma|DATA-DEC-018]]). O detalhe físico (colunas, constraints, índices) de Usuário, Igreja, vínculos, Ministério, Função, habilitações e Registro de auditoria está no contrato [[features/FOUNDATION-002]] (VERSÃO 2, READY em 2026-10-22; migrations **aplicadas em 2026-10-23**; feature encerrada, APPROVED_WITH_NOTES). Programação, Escala, Alocação e Disponibilidade ficam para a FOUNDATION-004 (proposta), e Convite, para a feature de convites. Schema oficial: `mescala`.
 
 ## Igreja
 Tenant organizacional. Veja [[modulos/IGREJAS]].

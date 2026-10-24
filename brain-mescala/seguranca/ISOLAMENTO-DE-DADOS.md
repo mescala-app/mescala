@@ -1,7 +1,7 @@
 ---
 tipo: seguranca
 status: ativo
-atualizado: 2026-10-22
+atualizado: 2026-10-24
 relacionado:
   - "[[decisoes/DEC-09-MODELO-DE-DADOS]]"
   - "[[features/FOUNDATION-002]]"
@@ -21,7 +21,7 @@ Regra: [[05-REGRAS-DE-NEGOCIO#SEC-001 — Isolamento por igreja]].
 - **Banco oficial separado do legado:** o schema oficial fica no projeto Supabase novo `vitqnyzuvrvkmnvshcpb`, que começa vazio ([[decisoes/DEC-05-PROJETO-SUPABASE-OFICIAL|DEC-05]]; [[decisoes/DEC-09-MODELO-DE-DADOS#DATA-DEC-022 — Convivência com o legado e migração de dados|DATA-DEC-022]]).
 
 ## Mecanismo decidido na FOUNDATION-002
-Contrato [[features/FOUNDATION-002]], VERSÃO 2, READY em 2026-10-22. **Escrito nas migrations e ainda não aplicado.** Detalhe técnico: [[tecnico/BANCO-DE-DADOS#Mecanismo do schema oficial (FOUNDATION-002)|tecnico/BANCO-DE-DADOS]].
+Contrato [[features/FOUNDATION-002]], VERSÃO 2, READY em 2026-10-22. **Escrito nas migrations e aplicado no projeto oficial em 2026-10-23.** Verificado na aplicação (QA fase 2): R1 a R10 e N1 a N3; um INSERT no contexto de uma igreja com ministério, vínculo ou função de outra respondeu 23503, nunca 23505 (QT1 a QT4). Detalhe técnico: [[tecnico/BANCO-DE-DADOS#Mecanismo do schema oficial (FOUNDATION-002)|tecnico/BANCO-DE-DADOS]].
 - **Schema `mescala` fora da Data API.** `PUBLIC`, `anon`, `authenticated`, `service_role` e `authenticator` não têm acesso nenhum: sem USAGE, sem privilégio, sem policy.
 - **Papel `mescala_app`:** NOLOGIN, sem BYPASSRLS, sem CREATE, dono de nada; único papel com acesso ao schema. O papel de login vem na FOUNDATION-003, criado pelo PO fora do repositório.
 - **Contexto:** `mescala.current_user_id` (= `users.id`) e `mescala.current_church_id`, definidos pelo backend só com `set_config(..., true)`, por transação. Sem contexto, as funções de contexto devolvem NULL e nada é lido nem gravado (falha fechada).
@@ -36,7 +36,7 @@ Contrato [[features/FOUNDATION-002]], VERSÃO 2, READY em 2026-10-22. **Escrito 
 ## Pendências
 - Ferramenta de acesso ao banco: [[decisoes/PENDENCIAS#DEC-04 — Estratégia de migrations e forma de acesso ao banco|DEC-04, parte 2]] (FOUNDATION-003, proposta).
 - Nome do schema dedicado: **decidido em 2026-10-22**: `mescala` (B-01). Até então, **A DEFINIR** (`mescala` era exemplo do relatório).
-- Policies de RLS e constraints de isolamento: especificadas no contrato FOUNDATION-002 (matrizes D7 e D8), escritas nas migrations e **ainda não aplicadas**. Até 2026-10-22, "contrato ainda não emitido".
+- Policies de RLS e constraints de isolamento: especificadas no contrato FOUNDATION-002 (matrizes D7 e D8), escritas nas migrations e **aplicadas em 2026-10-23**. Até 2026-10-22, "contrato ainda não emitido".
 - Leituras entre igrejas que serão necessárias ("minhas igrejas", os próprios vínculos, a resolução do usuário): não existem ainda; vêm da CHURCH-002 e da AUTH-002/003, por policies explícitas.
 - Como a igreja atual chega à API: **A DEFINIR**, na CHURCH-002 ([[tecnico/API]]).
 
